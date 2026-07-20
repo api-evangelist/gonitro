@@ -1,0 +1,45 @@
+generated: '2026-07-19'
+method: searched
+source: openapi/gonitro-sign-openapi.json, openapi/gonitro-pdf-services-openapi.json
+docs: https://developers.gonitro.com/docs/authentication/credentials
+summary:
+  types:
+  - http
+  - oauth2
+  model: >-
+    Machine-to-machine OAuth 2.0 Client Credentials grant (RFC 6749). Create an
+    API application in the Nitro Admin Portal to obtain a Client ID and Client
+    Secret, exchange them at the token endpoint for a short-lived JWT access
+    token, then send it as an HTTP Bearer token on every API request.
+  api_key_in: []
+  oauth2_flows:
+  - clientCredentials
+  token_endpoint: https://api.gonitro.dev/oauth/token
+  token_operation: getTokenRfc6749
+  token_format: JWT
+  token_response_fields:
+  - access_token
+  - token_type
+  - expires_in
+  credential_rotation: https://developers.gonitro.com/docs/authentication/credential-rotation
+  scopes: none
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  applied_globally: true
+  sources:
+  - openapi/gonitro-sign-openapi.json
+  - openapi/gonitro-pdf-services-openapi.json
+- name: OAuth2ClientCredentials
+  type: oauth2
+  flow: clientCredentials
+  tokenUrl: https://api.gonitro.dev/oauth/token
+  note: >-
+    Documented client-credentials flow. The OpenAPI declares the resulting
+    bearer token as securityScheme `bearerAuth`; the token endpoint accepts
+    clientID/clientSecret JSON (AuthTokenRequest) and returns an RFC 6749
+    OAuth2 token response. No OAuth scopes are defined.
+  sources:
+  - openapi/gonitro-sign-openapi.json
