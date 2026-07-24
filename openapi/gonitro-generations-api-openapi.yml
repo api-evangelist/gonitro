@@ -1,0 +1,262 @@
+openapi: 3.0.3
+info:
+  title: Nitro PDF Services Public Authentication Generations API
+  description: 'REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro''s published per-tool OpenAPI reference fragments; schemas preserved verbatim.'
+  version: '1.0'
+servers:
+- url: https://api.gonitro.dev
+  description: API server
+security:
+- BearerAuth: []
+tags:
+- name: Generations
+paths:
+  /generations:
+    post:
+      tags:
+      - Generations
+      summary: Fill Forms
+      description: 'Generate PDF document with filled form fields
+
+
+        This endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: create-fillable-forms, fill-forms.'
+      parameters:
+      - name: Accept
+        in: header
+        schema:
+          $ref: '#/components/schemas/AcceptHeader'
+      - name: Prefer
+        in: header
+        schema:
+          $ref: '#/components/schemas/PreferHeader'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                method:
+                  type: string
+                  description: 'The Generations'' endpoint method: `fill-forms`'
+                  default: fill-forms
+                  enum:
+                  - fill-forms
+                params:
+                  $ref: '#/components/schemas/FormFillParams'
+                file:
+                  type: string
+                  format: binary
+                  description: The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).
+                delivery:
+                  $ref: '#/components/schemas/DeliverySingleFileOut'
+              required:
+              - method
+              - params
+      responses:
+        '200':
+          description: 'Returns either JSON or binary output depending on the Accept header (defaults to JSON).
+
+            JSON responses include a file URL for synchronous tasks or a job status for asynchronous tasks.'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/PlatformOperationFileResult'
+                - $ref: '#/components/schemas/AsyncJobResponse'
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '413':
+          $ref: '#/components/responses/ContentTooLarge'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+      - BearerAuth: []
+      operationId: generateDocument
+      x-nitro-tools:
+      - create-fillable-forms
+      - fill-forms
+components:
+  schemas:
+    PlatformOperationFileResult:
+      type: object
+      title: Sync - Single File
+      properties:
+        file:
+          $ref: '#/components/schemas/FileInfo'
+    HTTPCall:
+      type: object
+      properties:
+        URL:
+          type: string
+          description: Your delivery endpoint URL
+          nullable: false
+          format: uri
+        verb:
+          type: string
+          description: The HTTP method
+          default: PUT
+          enum:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
+        headers:
+          type: array
+          nullable: true
+          description: Headers your file delivery endpoint might need (Optional)
+          items:
+            $ref: '#/components/schemas/Header'
+      required:
+      - URL
+      - verb
+    Header:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+      - name
+      - value
+    AcceptHeader:
+      type: string
+      enum:
+      - application/json
+      - application/octet-stream
+      - '*/*'
+      default: '*/*'
+      description: "Controls response format and behavior. See endpoint description above for detailed response combinations.\n- `application/json`: Returns JSON response with operation result\n- `application/octet-stream`: Returns binary file content \n- `*/*`: Defaults to JSON response"
+    FileInfo:
+      type: object
+      properties:
+        URL:
+          type: string
+          format: uri
+          description: URL with processed file for download. Field will be `null` if `delivery` parameter for post-processing upload is defined.
+          nullable: true
+        contentType:
+          type: string
+          description: The file type
+          example: application/json
+        metadata:
+          type: object
+          properties:
+            fileSizeBytes:
+              type: number
+              nullable: true
+            pageCount:
+              type: number
+              description: Number of pages in resulting document.
+              nullable: true
+    Callback:
+      type: object
+      description: POST endpoint that will get JOB ID and location when processing starts only on async processesing (see example above)
+      properties:
+        URL:
+          type: string
+          description: Your POST endpoint callback URL.
+          nullable: false
+          format: uri
+        headers:
+          type: array
+          description: Headers your callback endpoint might need
+          items:
+            $ref: '#/components/schemas/Header'
+      required:
+      - URL
+    DeliverySingleFileOut:
+      type: object
+      properties:
+        uploadResultTo:
+          $ref: '#/components/schemas/HTTPCall'
+        callback:
+          $ref: '#/components/schemas/Callback'
+      description: "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint."
+    FormFillParams:
+      title: Fill Forms
+      type: object
+      properties:
+        strict:
+          type: boolean
+          default: false
+          description: Controls validation behavior when filling form fields. When `true`, requests fail with 422 if the input contains unknown field names or omits required fields; when `false`, unrecognized fields are silently ignored and only matching fields are filled.
+          example: true
+        fields:
+          type: array
+          nullable: true
+          default: null
+          description: Inline field name/value pairs to fill, as an alternative to supplying the values in a CSV, JSON, XFDF, or FDF data file.
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: Name of the PDF form field to fill.
+              value:
+                description: Value to set for the field. May be a string, number, boolean, or null.
+                nullable: true
+                oneOf:
+                - type: string
+                - type: integer
+                - type: number
+                - type: boolean
+            required:
+            - field
+            - value
+          example:
+          - field: firstName
+            value: Jane
+          - field: lastName
+            value: Doe
+    PreferHeader:
+      type: string
+      enum:
+      - respond-async
+      description: 'Controls synchronous vs asynchronous operation. See endpoint description above for behavior details.
+
+        - `respond-async`: Makes request asynchronous, returns job status for polling
+
+        - No value: Synchronous response'
+    AsyncJobResponse:
+      type: object
+      title: Async - Job
+      properties:
+        jobID:
+          type: string
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        status:
+          type: string
+          enum:
+          - running
+        progress:
+          type: number
+          description: Progress of the job as a float between 0.0 and 1.0
+          format: float
+          default: 0
+          example: 0
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

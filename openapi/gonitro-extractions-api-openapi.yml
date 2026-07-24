@@ -1,0 +1,335 @@
+openapi: 3.0.3
+info:
+  title: Nitro PDF Services Public Authentication Extractions API
+  description: 'REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro''s published per-tool OpenAPI reference fragments; schemas preserved verbatim.'
+  version: '1.0'
+servers:
+- url: https://api.gonitro.dev
+  description: API server
+security:
+- BearerAuth: []
+tags:
+- name: Extractions
+paths:
+  /extractions:
+    post:
+      tags:
+      - Extractions
+      summary: Extract Fillable Form Data from PDF
+      description: 'Extract the data of a PDF''s existing AcroForm — field names, current values, field types and positions — as JSON, XFDF, FDF, or CSV
+
+
+        This endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: extract-fillable-form-data, extract-invoices, forms, get-properties, pii, smart-detect-form-fields, tables, text, text-box.'
+      parameters:
+      - name: Accept
+        in: header
+        schema:
+          $ref: '#/components/schemas/AcceptHeader'
+      - name: Prefer
+        in: header
+        schema:
+          $ref: '#/components/schemas/PreferHeader'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                method:
+                  type: string
+                  description: 'The Extractions'' endpoint method: `extract-fillable-form-data`'
+                  default: extract-fillable-form-data
+                  enum:
+                  - extract-fillable-form-data
+                params:
+                  $ref: '#/components/schemas/ExtractFillableFormDataParams'
+                file:
+                  $ref: '#/components/schemas/FileUpload'
+                delivery:
+                  $ref: '#/components/schemas/DeliverySingleFileOut'
+              required:
+              - method
+              - file
+      responses:
+        '200':
+          description: "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\n JSON responses describe the extracted form-field data for synchronous tasks, or a job status for asynchronous tasks."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/ExtractFillableFormDataResponse'
+                - $ref: '#/components/schemas/AsyncJobResponse'
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '413':
+          $ref: '#/components/responses/ContentTooLarge'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+      - BearerAuth: []
+      operationId: extractFromDocument
+      x-nitro-tools:
+      - extract-fillable-form-data
+      - extract-invoices
+      - forms
+      - get-properties
+      - pii
+      - smart-detect-form-fields
+      - tables
+      - text
+      - text-box
+components:
+  schemas:
+    ExtractFillableFormDataParams:
+      title: Fillable Form Data
+      type: object
+      properties:
+        format:
+          type: string
+          description: 'Output format for the extracted form data.
+
+            - `json` (default): structured JSON with one `formFields` entry per form-field widget
+
+            - `xfdf`: Adobe XFDF form-data document of field name/value pairs
+
+            - `fdf`: Adobe FDF form-data document of field name/value pairs
+
+            - `csv`: CSV with columns `name,value,fieldType,pageIndex,x,y,width,height`, one row per widget'
+          default: json
+          enum:
+          - json
+          - xfdf
+          - fdf
+          - csv
+    HTTPCall:
+      type: object
+      properties:
+        URL:
+          type: string
+          description: Your delivery endpoint URL
+          nullable: false
+          format: uri
+        verb:
+          type: string
+          description: The HTTP method
+          default: PUT
+          enum:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
+        headers:
+          type: array
+          nullable: true
+          description: Headers your file delivery endpoint might need (Optional)
+          items:
+            $ref: '#/components/schemas/Header'
+      required:
+      - URL
+      - verb
+    Header:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+      - name
+      - value
+    AcceptHeader:
+      type: string
+      enum:
+      - application/json
+      - application/octet-stream
+      - '*/*'
+      default: '*/*'
+      description: "Controls response format and behavior. See endpoint description above for detailed response combinations.\n- `application/json`: Returns JSON response with operation result\n- `application/octet-stream`: Returns binary file content \n- `*/*`: Defaults to JSON response"
+    FileUpload:
+      description: "The file to process. It can be provided as a binary upload or as a JSON remote file reference. \n\n"
+      oneOf:
+      - type: string
+        format: binary
+        description: "#### Binary file \n Standard multipart file binary upload field"
+      - type: object
+        title: Remote file
+        properties:
+          URL:
+            type: string
+            format: uri
+            description: URL of the remote file to process
+          contentType:
+            type: string
+            description: The MIME type of the remote file
+            example: application/pdf
+        required:
+        - URL
+        - contentType
+        description: "#### Remote file \n JSON objects containing file URL and content type, sent with specific multipart encoding: `type` and `filename`. The playground **doesn't support** them. Plase test with an alternative tool (Ex: Postman). \n\nExample cURL file field for remote file:\n```bash\n--form 'file={\n   \"URL\":\"https://your-file.pdf\",\n   \"contentType\":\"application/pdf\"\n}\n;type=application/vnd.gonitro.url+json\n;filename=https://your-file.pdf'\n```"
+    Callback:
+      type: object
+      description: POST endpoint that will get JOB ID and location when processing starts only on async processesing (see example above)
+      properties:
+        URL:
+          type: string
+          description: Your POST endpoint callback URL.
+          nullable: false
+          format: uri
+        headers:
+          type: array
+          description: Headers your callback endpoint might need
+          items:
+            $ref: '#/components/schemas/Header'
+      required:
+      - URL
+    DeliverySingleFileOut:
+      type: object
+      properties:
+        uploadResultTo:
+          $ref: '#/components/schemas/HTTPCall'
+        callback:
+          $ref: '#/components/schemas/Callback'
+      description: "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint."
+    FillableFormField:
+      type: object
+      description: A single form-field widget read from the PDF's existing AcroForm.
+      properties:
+        pageIndex:
+          type: integer
+          description: Zero-based index of the page the field widget is on.
+          example: 0
+        fieldType:
+          type: string
+          description: The kind of form field.
+          enum:
+          - TextBox
+          - CheckBox
+          - RadioButton
+          - ComboBox
+          - ListBox
+          - Signature
+          example: TextBox
+        name:
+          type: string
+          description: The fully-qualified AcroForm field name. Radio-button groups produce one entry per widget, repeating the group name.
+          example: text_name
+        value:
+          type: string
+          description: The field's current value. `""` when unfilled; check boxes report `"true"` or `"false"`.
+          example: John
+        boundingBox:
+          type: array
+          description: The widget's position and size in PDF points, as `[x, y, width, height]`.
+          items:
+            type: number
+          minItems: 4
+          maxItems: 4
+          example:
+          - 61.2
+          - 130.5
+          - 240
+          - 18
+        choices:
+          type: array
+          nullable: true
+          description: The available options of a `ComboBox`/`ListBox` field, or a radio-button group's export values. `null` for other field types.
+          items:
+            type: string
+          example: null
+      required:
+      - pageIndex
+      - fieldType
+      - name
+      - value
+      - boundingBox
+      - choices
+    PreferHeader:
+      type: string
+      enum:
+      - respond-async
+      description: 'Controls synchronous vs asynchronous operation. See endpoint description above for behavior details.
+
+        - `respond-async`: Makes request asynchronous, returns job status for polling
+
+        - No value: Synchronous response'
+    ExtractFillableFormDataResponse:
+      type: object
+      title: Sync - Fillable Form Data
+      description: A flat list of the form-field widgets in the PDF's existing AcroForm, with their names, current values, types, and positions. Empty when the PDF has no AcroForm.
+      properties:
+        formFields:
+          type: array
+          description: The extracted form fields, one entry per widget.
+          items:
+            $ref: '#/components/schemas/FillableFormField'
+      required:
+      - formFields
+      example:
+        formFields:
+        - pageIndex: 0
+          fieldType: TextBox
+          name: text_name
+          value: John
+          boundingBox:
+          - 61.2
+          - 130.5
+          - 240
+          - 18
+          choices: null
+        - pageIndex: 0
+          fieldType: CheckBox
+          name: checkbox_active
+          value: 'true'
+          boundingBox:
+          - 61.2
+          - 190.1
+          - 12
+          - 12
+          choices: null
+        - pageIndex: 0
+          fieldType: RadioButton
+          name: radio_group_app
+          value: App1
+          boundingBox:
+          - 61.2
+          - 220.7
+          - 12
+          - 12
+          choices:
+          - App1
+          - App2
+          - App3
+    AsyncJobResponse:
+      type: object
+      title: Async - Job
+      properties:
+        jobID:
+          type: string
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        status:
+          type: string
+          enum:
+          - running
+        progress:
+          type: number
+          description: Progress of the job as a float between 0.0 and 1.0
+          format: float
+          default: 0
+          example: 0
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,327 @@
+openapi: 3.0.3
+info:
+  title: Nitro PDF Services Public Authentication Transformations API
+  description: 'REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro''s published per-tool OpenAPI reference fragments; schemas preserved verbatim.'
+  version: '1.0'
+servers:
+- url: https://api.gonitro.dev
+  description: API server
+security:
+- BearerAuth: []
+tags:
+- name: Transformations
+paths:
+  /transformations:
+    post:
+      tags:
+      - Transformations
+      summary: Watermark PDF
+      description: 'Overlay a watermark image onto specific pages of a PDF document
+
+
+        This endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: compress, delete, flatten, merge, ocr, optimize, protect, redact, rotate, set-properties, split, unprotect, watermark.'
+      parameters:
+      - name: Accept
+        in: header
+        schema:
+          $ref: '#/components/schemas/AcceptHeader'
+      - name: Prefer
+        in: header
+        schema:
+          $ref: '#/components/schemas/PreferHeader'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                method:
+                  type: string
+                  description: 'The Transformations'' endpoint method: `watermark`'
+                  default: watermark
+                  enum:
+                  - watermark
+                params:
+                  $ref: '#/components/schemas/WatermarkParams'
+                files:
+                  $ref: '#/components/schemas/FilesUpload'
+                delivery:
+                  $ref: '#/components/schemas/DeliverySingleFileOut'
+              required:
+              - method
+              - params
+              - files
+      responses:
+        '200':
+          description: "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\n JSON responses include a file URL for synchronous tasks or a job status for asynchronous tasks."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/PlatformOperationFileResult'
+                - $ref: '#/components/schemas/AsyncJobResponse'
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '413':
+          $ref: '#/components/responses/ContentTooLarge'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+      - BearerAuth: []
+      operationId: transformDocument
+      x-nitro-tools:
+      - compress
+      - delete
+      - flatten
+      - merge
+      - ocr
+      - optimize
+      - protect
+      - redact
+      - rotate
+      - set-properties
+      - split
+      - unprotect
+      - watermark
+components:
+  schemas:
+    PlatformOperationFileResult:
+      type: object
+      title: Sync - Single File
+      properties:
+        file:
+          $ref: '#/components/schemas/FileInfo'
+    FilesUpload:
+      type: array
+      items:
+        description: "The files to process. They can be provided as a binary uploads or as a JSON with remote file references. \n\n"
+        oneOf:
+        - type: string
+          format: binary
+          description: "#### Binary files \n Standard multipart file binary upload field"
+        - type: object
+          properties:
+            URL:
+              type: string
+              format: uri
+              description: URL of the remote file to process
+            contentType:
+              type: string
+              description: The MIME type of the remote file
+              example: application/pdf
+          required:
+          - URL
+          - contentType
+          description: "#### Remote files \n JSON objects containing file URL and content type, sent with specific multipart encoding: `type` and `filename`. The playground **doesn't support** them. Plase test with an alternative tool (Ex: Postman). \n\nExample cURL for remote files:\n```bash\n--form 'files={\n   \"URL\":\"https://your-file-1.pdf\",\n   \"contentType\":\"application/pdf\"\n}\n;type=application/vnd.gonitro.url+json\n;filename=https://your-file-1.pdf' \\\n--form 'files={\n   \"URL\":\"https://your-file-2.pdf\",\n   \"contentType\":\"application/pdf\"\n}\n;type=application/vnd.gonitro.url+json\n;filename=https://your-file-2.pdf'\n```"
+      example:
+      - '@SampleFile1.pdf'
+      - '@SampleFile2.pdf'
+    HTTPCall:
+      type: object
+      properties:
+        URL:
+          type: string
+          description: Your delivery endpoint URL
+          nullable: false
+          format: uri
+        verb:
+          type: string
+          description: The HTTP method
+          default: PUT
+          enum:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
+        headers:
+          type: array
+          nullable: true
+          description: Headers your file delivery endpoint might need (Optional)
+          items:
+            $ref: '#/components/schemas/Header'
+      required:
+      - URL
+      - verb
+    WatermarkParams:
+      title: Watermark
+      type: object
+      description: Parameters controlling watermark placement, sizing, and appearance on each PDF page.
+      properties:
+        boundingBox:
+          type: array
+          items:
+            type: number
+            format: float
+          minItems: 4
+          maxItems: 4
+          description: Bounding box coordinates `[x0, y0, x1, y1]` in PDF points. Defines the area where the watermark image will be placed.
+          example:
+          - 210
+          - 10
+          - 290
+          - 60
+        opacity:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          default: 1
+          description: Watermark transparency. `0.0` = fully transparent, `1.0` = fully opaque.
+          example: 0.75
+        rotation:
+          type: number
+          format: float
+          default: 0
+          description: Rotation angle in degrees to apply to the watermark image.
+          example: 15
+        pageIndices:
+          type: array
+          items:
+            type: integer
+          nullable: true
+          description: Zero-based page indices where the watermark should be applied. If `null` or omitted, the watermark is applied to all pages. Negative values are rejected; out-of-range indices are ignored.
+          example:
+          - 0
+          - 1
+        flip:
+          type: string
+          enum:
+          - horizontal
+          - vertical
+          - both
+          nullable: true
+          description: Optionally mirror the watermark image horizontally, vertically, or both.
+        rotateWithPage:
+          type: boolean
+          default: false
+          description: When true, the watermark rotates along with the page if the page itself has a rotation applied.
+        centerOnPage:
+          type: boolean
+          default: false
+          description: When true, the watermark is centered on the page. `boundingBox` is still required. Also accepts `center_on_page`.
+        contentDepth:
+          type: string
+          enum:
+          - above_existing
+          - below_existing
+          default: below_existing
+          description: Controls whether the watermark renders above or below the existing page content. Values use underscores, not hyphens. Also accepts `content_depth`.
+        fitToPageWidth:
+          type: boolean
+          default: false
+          description: When true, scales the watermark image to fit the page width. Requires `boundingBox` for vertical positioning unless `fitToPageHeight` is also true. Also accepts `fit_to_page_width`.
+        fitToPageHeight:
+          type: boolean
+          default: false
+          description: When true, scales the watermark image to fit the page height. Requires `boundingBox` for horizontal positioning unless `fitToPageWidth` is also true. Also accepts `fit_to_page_height`.
+      required:
+      - boundingBox
+    Header:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+      - name
+      - value
+    AcceptHeader:
+      type: string
+      enum:
+      - application/json
+      - application/octet-stream
+      - '*/*'
+      default: '*/*'
+      description: "Controls response format and behavior. See endpoint description above for detailed response combinations.\n- `application/json`: Returns JSON response with operation result\n- `application/octet-stream`: Returns binary file content \n- `*/*`: Defaults to JSON response"
+    FileInfo:
+      type: object
+      properties:
+        URL:
+          type: string
+          format: uri
+          description: URL with processed file for download. Field will be `null` if `delivery` parameter for post-processing upload is defined.
+          nullable: true
+        contentType:
+          type: string
+          description: The file type
+          example: application/json
+        metadata:
+          type: object
+          properties:
+            fileSizeBytes:
+              type: number
+              nullable: true
+            pageCount:
+              type: number
+              description: Number of pages in resulting document.
+              nullable: true
+    Callback:
+      type: object
+      description: POST endpoint that will get JOB ID and location when processing starts only on async processesing (see example above)
+      properties:
+        URL:
+          type: string
+          description: Your POST endpoint callback URL.
+          nullable: false
+          format: uri
+        headers:
+          type: array
+          description: Headers your callback endpoint might need
+          items:
+            $ref: '#/components/schemas/Header'
+      required:
+      - URL
+    DeliverySingleFileOut:
+      type: object
+      properties:
+        uploadResultTo:
+          $ref: '#/components/schemas/HTTPCall'
+        callback:
+          $ref: '#/components/schemas/Callback'
+      description: "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint."
+    PreferHeader:
+      type: string
+      enum:
+      - respond-async
+      description: 'Controls synchronous vs asynchronous operation. See endpoint description above for behavior details.
+
+        - `respond-async`: Makes request asynchronous, returns job status for polling
+
+        - No value: Synchronous response'
+    AsyncJobResponse:
+      type: object
+      title: Async - Job
+      properties:
+        jobID:
+          type: string
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        status:
+          type: string
+          enum:
+          - running
+        progress:
+          type: number
+          description: Progress of the job as a float between 0.0 and 1.0
+          format: float
+          default: 0
+          example: 0
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,279 @@
+openapi: 3.0.3
+info:
+  title: Nitro PDF Services Public Authentication Conversions API
+  description: 'REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro''s published per-tool OpenAPI reference fragments; schemas preserved verbatim.'
+  version: '1.0'
+servers:
+- url: https://api.gonitro.dev
+  description: API server
+security:
+- BearerAuth: []
+tags:
+- name: Conversions
+paths:
+  /conversions:
+    post:
+      tags:
+      - Conversions
+      summary: PDF to PDF/A
+      description: 'Convert a PDF file to PDF/A archival format
+
+
+        This endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: imgtopdf, misctopdf, mstopdf, pdfa, pdftoimg, pdftoms.'
+      parameters:
+      - name: Accept
+        in: header
+        schema:
+          $ref: '#/components/schemas/AcceptHeader'
+      - name: Prefer
+        in: header
+        schema:
+          $ref: '#/components/schemas/PreferHeader'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                method:
+                  type: string
+                  description: 'The Conversions'' endpoint method: `convert`'
+                  default: convert
+                  enum:
+                  - convert
+                params:
+                  $ref: '#/components/schemas/ConversionPDFAParams'
+                file:
+                  $ref: '#/components/schemas/FileUpload'
+                delivery:
+                  $ref: '#/components/schemas/DeliverySingleFileOut'
+              required:
+              - method
+              - params
+              - file
+      responses:
+        '200':
+          description: "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\n JSON responses include a file URL for synchronous tasks or a job status for asynchronous tasks."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/PlatformOperationFileResult'
+                - $ref: '#/components/schemas/AsyncJobResponse'
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '413':
+          $ref: '#/components/responses/ContentTooLarge'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+      - BearerAuth: []
+      operationId: convertDocument
+      x-nitro-tools:
+      - imgtopdf
+      - misctopdf
+      - mstopdf
+      - pdfa
+      - pdftoimg
+      - pdftoms
+components:
+  schemas:
+    PlatformOperationFileResult:
+      type: object
+      title: Sync - Single File
+      properties:
+        file:
+          $ref: '#/components/schemas/FileInfo'
+    HTTPCall:
+      type: object
+      properties:
+        URL:
+          type: string
+          description: Your delivery endpoint URL
+          nullable: false
+          format: uri
+        verb:
+          type: string
+          description: The HTTP method
+          default: PUT
+          enum:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
+        headers:
+          type: array
+          nullable: true
+          description: Headers your file delivery endpoint might need (Optional)
+          items:
+            $ref: '#/components/schemas/Header'
+      required:
+      - URL
+      - verb
+    Header:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+      - name
+      - value
+    AcceptHeader:
+      type: string
+      enum:
+      - application/json
+      - application/octet-stream
+      - '*/*'
+      default: '*/*'
+      description: "Controls response format and behavior. See endpoint description above for detailed response combinations.\n- `application/json`: Returns JSON response with operation result\n- `application/octet-stream`: Returns binary file content \n- `*/*`: Defaults to JSON response"
+    FileUpload:
+      description: "The file to process. It can be provided as a binary upload or as a JSON remote file reference. \n\n"
+      oneOf:
+      - type: string
+        format: binary
+        description: "#### Binary file \n Standard multipart file binary upload field"
+      - type: object
+        title: Remote file
+        properties:
+          URL:
+            type: string
+            format: uri
+            description: URL of the remote file to process
+          contentType:
+            type: string
+            description: The MIME type of the remote file
+            example: application/pdf
+        required:
+        - URL
+        - contentType
+        description: "#### Remote file \n JSON objects containing file URL and content type, sent with specific multipart encoding: `type` and `filename`. The playground **doesn't support** them. Plase test with an alternative tool (Ex: Postman). \n\nExample cURL file field for remote file:\n```bash\n--form 'file={\n   \"URL\":\"https://your-file.pdf\",\n   \"contentType\":\"application/pdf\"\n}\n;type=application/vnd.gonitro.url+json\n;filename=https://your-file.pdf'\n```"
+    FileInfo:
+      type: object
+      properties:
+        URL:
+          type: string
+          format: uri
+          description: URL with processed file for download. Field will be `null` if `delivery` parameter for post-processing upload is defined.
+          nullable: true
+        contentType:
+          type: string
+          description: The file type
+          example: application/json
+        metadata:
+          type: object
+          properties:
+            fileSizeBytes:
+              type: number
+              nullable: true
+            pageCount:
+              type: number
+              description: Number of pages in resulting document.
+              nullable: true
+    Callback:
+      type: object
+      description: POST endpoint that will get JOB ID and location when processing starts only on async processesing (see example above)
+      properties:
+        URL:
+          type: string
+          description: Your POST endpoint callback URL.
+          nullable: false
+          format: uri
+        headers:
+          type: array
+          description: Headers your callback endpoint might need
+          items:
+            $ref: '#/components/schemas/Header'
+      required:
+      - URL
+    DeliverySingleFileOut:
+      type: object
+      properties:
+        uploadResultTo:
+          $ref: '#/components/schemas/HTTPCall'
+        callback:
+          $ref: '#/components/schemas/Callback'
+      description: "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint."
+    PreferHeader:
+      type: string
+      enum:
+      - respond-async
+      description: 'Controls synchronous vs asynchronous operation. See endpoint description above for behavior details.
+
+        - `respond-async`: Makes request asynchronous, returns job status for polling
+
+        - No value: Synchronous response'
+    ConversionPDFAParams:
+      title: PDF/A
+      type: object
+      required:
+      - to
+      - conformance
+      properties:
+        to:
+          type: string
+          enum:
+          - pdfa
+          default: pdfa
+          description: Target format for the conversion.
+        conformance:
+          type: string
+          enum:
+          - 1b
+          - 1a
+          - 2b
+          - 2u
+          - 2a
+          - 3b
+          - 3u
+          - 3a
+          description: PDF/A conformance level. Levels ending in `a` (accessible) require the source PDF to be tagged; untagged PDFs submitted with an `a`-level conformance will return an error. Use `b` or `u` variants for general-purpose archiving.
+          example: 2b
+        imageQuality:
+          type: number
+          format: float
+          minimum: 0.01
+          maximum: 1
+          default: 0.8
+          description: Image compression quality during conversion. `1.0` preserves maximum quality; `0.01` applies maximum compression. Lower values reduce file size at the cost of image fidelity.
+          example: 0.8
+        copyMetadata:
+          type: boolean
+          default: true
+          description: When `true`, document metadata (author, creation date, title, etc.) is preserved in the output. When `false`, metadata is stripped.
+          example: true
+    AsyncJobResponse:
+      type: object
+      title: Async - Job
+      properties:
+        jobID:
+          type: string
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        status:
+          type: string
+          enum:
+          - running
+        progress:
+          type: number
+          description: Progress of the job as a float between 0.0 and 1.0
+          format: float
+          default: 0
+          example: 0
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

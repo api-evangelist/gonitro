@@ -1,0 +1,621 @@
+openapi: 3.0.3
+info:
+  title: Nitro PDF Services Public Authentication Jobs API
+  description: 'REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro''s published per-tool OpenAPI reference fragments; schemas preserved verbatim.'
+  version: '1.0'
+servers:
+- url: https://api.gonitro.dev
+  description: API server
+security:
+- BearerAuth: []
+tags:
+- name: Jobs
+paths:
+  /jobs/{jobID}:
+    get:
+      tags:
+      - Jobs
+      summary: Get Job Result
+      description: "Get result of asynchronous Job.\n\n A Job is Nitro’s asynchronous file processing for PDF Transformation, Conversion, and Extraction operations."
+      parameters:
+      - name: Accept
+        in: header
+        schema:
+          $ref: '#/components/schemas/AcceptHeader'
+      - name: jobID
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the job.
+      responses:
+        '200':
+          description: Job result
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/PlatformJobResultCompleted'
+                - $ref: '#/components/schemas/JobResultFailedGeneric'
+                - $ref: '#/components/schemas/JobCanceledResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '413':
+          $ref: '#/components/responses/ContentTooLarge'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+      - BearerAuth: []
+      operationId: getJobResult
+  /jobs/{jobID}/status:
+    get:
+      tags:
+      - Jobs
+      summary: Get Job Status
+      description: "Get status of asynchronous Job.\n\n A Job is Nitro’s asynchronous file processing for PDF Transformation, Conversion, and Extraction operations."
+      parameters:
+      - name: Accept
+        in: header
+        schema:
+          $ref: '#/components/schemas/AcceptEventHeader'
+      - name: jobID
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the job.
+      responses:
+        '200':
+          description: "Job status and status-related data. \n Available statuses: `running`, `completed`, `failed`, `canceled`."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/JobStatusRunning'
+                - $ref: '#/components/schemas/PlatformJobResultCompleted'
+                - $ref: '#/components/schemas/JobResultFailedGeneric'
+                - $ref: '#/components/schemas/JobCanceledResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '410':
+          $ref: '#/components/responses/FileNoLongerAvailable'
+        '413':
+          $ref: '#/components/responses/ContentTooLarge'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+      - BearerAuth: []
+      operationId: getJobStatus
+components:
+  schemas:
+    TextBoxMatch:
+      type: object
+      properties:
+        matchedText:
+          type: string
+          description: The full matched text.
+          example: Scope of Services
+        boxes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TextBoxBox'
+          description: The bounding boxes covering the match, one per line of text.
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/TextBoxGroup'
+          description: For regex queries, the capture groups of the match. Empty for literal queries.
+      required:
+      - matchedText
+      - boxes
+      - groups
+    PlatformOperationFilesResult:
+      type: object
+      title: Sync - Multiple Files
+      properties:
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileInfo'
+    TableData:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the table (if available)
+        cells:
+          type: array
+          items:
+            type: array
+            items:
+              oneOf:
+              - type: string
+              - type: number
+          description: 2D array representing table cell values. The first value index refers to the row, and the second the column.
+        footers:
+          type: array
+          items:
+            type: string
+          description: Array of footer text/notes for the table.
+        confidences:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+          description: 2D array of confidence scores corresponding to each extracted cell.
+        averageConfidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Average confidence score for the entire table.
+        headerCells:
+          type: array
+          items:
+            type: array
+            items:
+              type: integer
+            minItems: 2
+            maxItems: 2
+          description: Array of [row, column] coordinates identifying header cells (1-based)
+        summaryCells:
+          type: array
+          items:
+            type: array
+            items:
+              type: integer
+            minItems: 2
+            maxItems: 2
+          description: Array of [row, column] coordinates identifying summary cells (1-based)
+      required:
+      - title
+      - cells
+      - footers
+      - confidences
+      - averageConfidence
+      - headerCells
+      - summaryCells
+    TextBoxGroup:
+      type: object
+      properties:
+        index:
+          type: integer
+          description: One-based index of the capture group within the regular expression.
+          example: 1
+        text:
+          type: string
+          description: The text captured by the group.
+        boxes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TextBoxBox'
+          description: The bounding boxes covering the group, one per line of text.
+      required:
+      - index
+      - text
+      - boxes
+    FileInfo:
+      type: object
+      properties:
+        URL:
+          type: string
+          format: uri
+          description: URL with processed file for download. Field will be `null` if `delivery` parameter for post-processing upload is defined.
+          nullable: true
+        contentType:
+          type: string
+          description: The file type
+          example: application/json
+        metadata:
+          type: object
+          properties:
+            fileSizeBytes:
+              type: number
+              nullable: true
+            pageCount:
+              type: number
+              description: Number of pages in resulting document.
+              nullable: true
+    AcceptEventHeader:
+      type: string
+      enum:
+      - application/json
+      - application/event-stream
+      - '*/*'
+      default: '*/*'
+      description: "Controls response format and behavior. See endpoint description above for detailed response combinations.\n- `application/json`: Returns JSON response with operation result\n- `application/event-stream`:  Enables Server-Sent Events for real-time updates \n- `*/*`: Defaults to JSON response"
+    TablesResultType:
+      type: object
+      title: Tables
+      properties:
+        tables:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtractedTable'
+          description: Array of extracted tables from the document
+      required:
+      - tables
+    JobStatusRunning:
+      type: object
+      title: Running
+      properties:
+        jobID:
+          type: string
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        status:
+          type: string
+          enum:
+          - running
+        progress:
+          type: number
+          description: Progress of the job as a float between 0.0 and 1.0
+          format: float
+          default: 0
+          example: 0
+    StringResultType:
+      type: string
+      title: Text
+    AcceptHeader:
+      type: string
+      enum:
+      - application/json
+      - application/octet-stream
+      - '*/*'
+      default: '*/*'
+      description: "Controls response format and behavior. See endpoint description above for detailed response combinations.\n- `application/json`: Returns JSON response with operation result\n- `application/octet-stream`: Returns binary file content \n- `*/*`: Defaults to JSON response"
+    TextBoxBox:
+      type: object
+      properties:
+        pageIndex:
+          type: integer
+          description: Page index where the text was found (0-based).
+        boundingBox:
+          type: array
+          items:
+            type: number
+          minItems: 4
+          maxItems: 4
+          description: Bounding box coordinates in points [x, y, width, height]. Check the [Bounding Box Guideline](/build-nitro/bounding-box).
+          example:
+          - 200
+          - 100
+          - 100
+          - 20
+        textPiece:
+          type: string
+          description: The text covered by this box (a single line of the match).
+      required:
+      - pageIndex
+      - boundingBox
+      - textPiece
+    TextBoxQuery:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The text or regular expression to search for.
+          example: John Doe
+        isRegex:
+          type: boolean
+          default: false
+          description: Whether `text` should be treated as a regular expression.
+        regexFlags:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            enum:
+            - ignore-case
+            - multiline
+            - dot-all
+          description: Regex matching flags; only allowed when `isRegex` is `true`.
+      required:
+      - text
+    ExtractedTable:
+      type: object
+      properties:
+        ID:
+          type: string
+          description: Unique identifier for the extracted table
+        pageIndices:
+          type: array
+          items:
+            type: integer
+          description: Array of page indices where the table appears (0-based)
+        tableData:
+          $ref: '#/components/schemas/TableData'
+      required:
+      - ID
+      - pageIndices
+      - tableData
+    PIIResultType:
+      type: object
+      title: PII Boxes
+      properties:
+        PIIBoxes:
+          type: array
+          items:
+            $ref: '#/components/schemas/PIIBox'
+          description: Array of detected PII bounding boxes
+      required:
+      - PIIBoxes
+    FormField:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the form field.
+        value:
+          type: string
+          description: The extracted value of the form field.
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          example: 97.65
+          description: Confidence score for the form field extraction.
+      required:
+      - name
+      - value
+      - confidence
+    JobCanceledResponse:
+      type: object
+      title: Canceled
+      properties:
+        jobID:
+          type: string
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        status:
+          type: string
+          enum:
+          - canceled
+    JobResultFailedGeneric:
+      type: object
+      title: Failed
+      properties:
+        jobID:
+          type: string
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        status:
+          type: string
+          enum:
+          - failed
+        error:
+          $ref: '#/components/schemas/JobError'
+    PIIBox:
+      type: object
+      properties:
+        ID:
+          type: string
+          description: A unique identifier for a PII detection group. Multiple individual PII entries can share the same ID, indicating they belong to the same group or type of PII.
+          example: ccc05519-e71c-4226-bbff-72df3fb2d442
+        text:
+          type: string
+          description: The complete text block that contains PII. For instance, the full text of an address spaning multiple content boxes.
+          example: 10 Wall Street, NY 03183
+        textPiece:
+          type: string
+          description: The specific piece of text identified as PII inside a box.
+          example: 10 Wall Street
+        pageIndex:
+          type: integer
+          description: Page index where the PII was found (0-based).
+          example: 0
+        boundingBox:
+          type: array
+          items:
+            type: number
+          minItems: 4
+          maxItems: 4
+          description: Bounding box coordinates in points [x, y, width, height]. Check the [Bounding Box Guideline](/build-nitro/bounding-box).
+          example:
+          - 200
+          - 100
+          - 100
+          - 20
+        PIIType:
+          type: string
+          description: Type of PII detected
+          enum:
+          - ADDRESS
+          - AGE
+          - AWS_ACCESS_KEY
+          - AWS_SECRET_KEY
+          - CREDIT_DEBIT_CVV
+          - CREDIT_DEBIT_EXPIRY
+          - CREDIT_DEBIT_NUMBER
+          - DATE_TIME
+          - DRIVER_ID
+          - EMAIL
+          - INTERNATIONAL_BANK_ACCOUNT_NUMBER
+          - IP_ADDRESS
+          - LICENSE_PLATE
+          - MAC_ADDRESS
+          - NAME
+          - PASSWORD
+          - PHONE
+          - PIN
+          - SWIFT_CODE
+          - URL
+          - USERNAME
+          - VEHICLE_IDENTIFICATION_NUMBER
+          - CA_HEALTH_NUMBER
+          - CA_SOCIAL_INSURANCE_NUMBER
+          - IN_AADHAAR
+          - IN_NREGA
+          - IN_PERMANENT_ACCOUNT_NUMBER
+          - IN_VOTER_NUMBER
+          - UK_NATIONAL_HEALTH_SERVICE_NUMBER
+          - UK_NATIONAL_INSURANCE_NUMBER
+          - UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER
+          - BANK_ACCOUNT_NUMBER
+          - BANK_ROUTING
+          - PASSPORT_NUMBER
+          - US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER
+          - SSN
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Confidence score for the PII detection.
+          example: 0.94
+      required:
+      - ID
+      - text
+      - textPiece
+      - pageIndex
+      - boundingBox
+      - PIIType
+      - confidence
+    TextBoxResultType:
+      type: object
+      title: Text Boxes
+      properties:
+        textBoxes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TextBoxQueryResult'
+          description: One result per query, in the same order as the request's `queries`.
+      required:
+      - textBoxes
+    JobError:
+      type: object
+      description: Error information if the job failed.
+      properties:
+        type:
+          type: string
+          example: PDFIsPasswordProtected
+          enum:
+          - BrokenDownloadURL
+          - ConversionFailed
+          - PDFIsPasswordProtected
+        title:
+          type: string
+          example: PDF is password protected
+    PropertiesTypes:
+      title: Properties
+      type: object
+      properties:
+        title:
+          type: string
+          description: The document's title
+        author:
+          type: string
+          description: The document's author
+        subject:
+          type: string
+          description: The document's subject
+        keywords:
+          type: string
+          description: Document keywords
+        creator:
+          type: string
+          description: The document's creator/application
+        producer:
+          type: string
+          description: PDF document's producer or encoding software
+        creationDate:
+          type: string
+          description: Document creation date in PDF date format
+        modDate:
+          type: string
+          description: Document modification date in PDF date format
+        trapped:
+          type: string
+          description: PDF trapped status
+      required:
+      - title
+      - author
+      - subject
+      - keywords
+      - creator
+      - producer
+      - creationDate
+      - modDate
+      - trapped
+    PlatformOperationFileResult:
+      type: object
+      title: Sync - Single File
+      properties:
+        file:
+          $ref: '#/components/schemas/FileInfo'
+    PlatformJobResultCompleted:
+      allOf:
+      - type: object
+        properties:
+          jobID:
+            type: string
+            example: 01234567-89ab-cdef-0123-456789abcdef
+          status:
+            type: string
+            enum:
+            - completed
+      - type: object
+        title: Completed
+        properties:
+          result:
+            description: "The result is returned as data in the same format as the original request's synchronous response type. \n Transformations and Conversions return one or more files, while Extractions return a JSON object containing the requested data."
+            oneOf:
+            - $ref: '#/components/schemas/PlatformOperationFileResult'
+            - $ref: '#/components/schemas/PlatformOperationFilesResult'
+            - $ref: '#/components/schemas/StringResultType'
+            - $ref: '#/components/schemas/TablesResultType'
+            - $ref: '#/components/schemas/TextBoxResultType'
+            - $ref: '#/components/schemas/PIIResultType'
+            - $ref: '#/components/schemas/PropertiesTypes'
+            - $ref: '#/components/schemas/FormResultType'
+    FormResultType:
+      type: object
+      title: Form Fields
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FormField'
+          description: Array of extracted form fields from the document
+        averageConfidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          example: 96.5
+          description: Average confidence score for all form fields
+      required:
+      - fields
+      - averageConfidence
+    TextBoxQueryResult:
+      type: object
+      properties:
+        query:
+          $ref: '#/components/schemas/TextBoxQuery'
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/TextBoxMatch'
+          description: All matches found for the query, empty if the query did not match.
+      required:
+      - query
+      - matches
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
