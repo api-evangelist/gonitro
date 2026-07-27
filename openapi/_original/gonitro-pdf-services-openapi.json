@@ -1,0 +1,2823 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Nitro PDF Services Public API",
+    "description": "REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro's published per-tool OpenAPI reference fragments; schemas preserved verbatim.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.gonitro.dev",
+      "description": "API server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Conversions"
+    },
+    {
+      "name": "Transformations"
+    },
+    {
+      "name": "Extractions"
+    },
+    {
+      "name": "Generations"
+    },
+    {
+      "name": "Jobs"
+    }
+  ],
+  "paths": {
+    "/transformations": {
+      "post": {
+        "tags": [
+          "Transformations"
+        ],
+        "summary": "Watermark PDF",
+        "description": "Overlay a watermark image onto specific pages of a PDF document\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: compress, delete, flatten, merge, ocr, optimize, protect, redact, rotate, set-properties, split, unprotect, watermark.",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/AcceptHeader"
+            }
+          },
+          {
+            "name": "Prefer",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/PreferHeader"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "description": "The Transformations' endpoint method: `watermark`",
+                    "default": "watermark",
+                    "enum": [
+                      "watermark"
+                    ]
+                  },
+                  "params": {
+                    "$ref": "#/components/schemas/WatermarkParams"
+                  },
+                  "files": {
+                    "$ref": "#/components/schemas/FilesUpload"
+                  },
+                  "delivery": {
+                    "$ref": "#/components/schemas/DeliverySingleFileOut"
+                  }
+                },
+                "required": [
+                  "method",
+                  "params",
+                  "files"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\n JSON responses include a file URL for synchronous tasks or a job status for asynchronous tasks.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/PlatformOperationFileResult"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AsyncJobResponse"
+                    }
+                  ]
+                }
+              },
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "413": {
+            "$ref": "#/components/responses/ContentTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "operationId": "transformDocument",
+        "x-nitro-tools": [
+          "compress",
+          "delete",
+          "flatten",
+          "merge",
+          "ocr",
+          "optimize",
+          "protect",
+          "redact",
+          "rotate",
+          "set-properties",
+          "split",
+          "unprotect",
+          "watermark"
+        ]
+      }
+    },
+    "/generations": {
+      "post": {
+        "tags": [
+          "Generations"
+        ],
+        "summary": "Fill Forms",
+        "description": "Generate PDF document with filled form fields\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: create-fillable-forms, fill-forms.",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/AcceptHeader"
+            }
+          },
+          {
+            "name": "Prefer",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/PreferHeader"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "description": "The Generations' endpoint method: `fill-forms`",
+                    "default": "fill-forms",
+                    "enum": [
+                      "fill-forms"
+                    ]
+                  },
+                  "params": {
+                    "$ref": "#/components/schemas/FormFillParams"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file."
+                  },
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format)."
+                  },
+                  "delivery": {
+                    "$ref": "#/components/schemas/DeliverySingleFileOut"
+                  }
+                },
+                "required": [
+                  "method",
+                  "params"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\nJSON responses include a file URL for synchronous tasks or a job status for asynchronous tasks.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/PlatformOperationFileResult"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AsyncJobResponse"
+                    }
+                  ]
+                }
+              },
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "413": {
+            "$ref": "#/components/responses/ContentTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "operationId": "generateDocument",
+        "x-nitro-tools": [
+          "create-fillable-forms",
+          "fill-forms"
+        ]
+      }
+    },
+    "/extractions": {
+      "post": {
+        "tags": [
+          "Extractions"
+        ],
+        "summary": "Extract Fillable Form Data from PDF",
+        "description": "Extract the data of a PDF's existing AcroForm \u2014 field names, current values, field types and positions \u2014 as JSON, XFDF, FDF, or CSV\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: extract-fillable-form-data, extract-invoices, forms, get-properties, pii, smart-detect-form-fields, tables, text, text-box.",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/AcceptHeader"
+            }
+          },
+          {
+            "name": "Prefer",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/PreferHeader"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "description": "The Extractions' endpoint method: `extract-fillable-form-data`",
+                    "default": "extract-fillable-form-data",
+                    "enum": [
+                      "extract-fillable-form-data"
+                    ]
+                  },
+                  "params": {
+                    "$ref": "#/components/schemas/ExtractFillableFormDataParams"
+                  },
+                  "file": {
+                    "$ref": "#/components/schemas/FileUpload"
+                  },
+                  "delivery": {
+                    "$ref": "#/components/schemas/DeliverySingleFileOut"
+                  }
+                },
+                "required": [
+                  "method",
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\n JSON responses describe the extracted form-field data for synchronous tasks, or a job status for asynchronous tasks.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ExtractFillableFormDataResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AsyncJobResponse"
+                    }
+                  ]
+                }
+              },
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "413": {
+            "$ref": "#/components/responses/ContentTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "operationId": "extractFromDocument",
+        "x-nitro-tools": [
+          "extract-fillable-form-data",
+          "extract-invoices",
+          "forms",
+          "get-properties",
+          "pii",
+          "smart-detect-form-fields",
+          "tables",
+          "text",
+          "text-box"
+        ]
+      }
+    },
+    "/conversions": {
+      "post": {
+        "tags": [
+          "Conversions"
+        ],
+        "summary": "PDF to PDF/A",
+        "description": "Convert a PDF file to PDF/A archival format\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: imgtopdf, misctopdf, mstopdf, pdfa, pdftoimg, pdftoms.",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/AcceptHeader"
+            }
+          },
+          {
+            "name": "Prefer",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/PreferHeader"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "description": "The Conversions' endpoint method: `convert`",
+                    "default": "convert",
+                    "enum": [
+                      "convert"
+                    ]
+                  },
+                  "params": {
+                    "$ref": "#/components/schemas/ConversionPDFAParams"
+                  },
+                  "file": {
+                    "$ref": "#/components/schemas/FileUpload"
+                  },
+                  "delivery": {
+                    "$ref": "#/components/schemas/DeliverySingleFileOut"
+                  }
+                },
+                "required": [
+                  "method",
+                  "params",
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\n JSON responses include a file URL for synchronous tasks or a job status for asynchronous tasks.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/PlatformOperationFileResult"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AsyncJobResponse"
+                    }
+                  ]
+                }
+              },
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "413": {
+            "$ref": "#/components/responses/ContentTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "operationId": "convertDocument",
+        "x-nitro-tools": [
+          "imgtopdf",
+          "misctopdf",
+          "mstopdf",
+          "pdfa",
+          "pdftoimg",
+          "pdftoms"
+        ]
+      }
+    },
+    "/jobs/{jobID}": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Get Job Result",
+        "description": "Get result of asynchronous Job.\n\n A Job is Nitro\u2019s asynchronous file processing for PDF Transformation, Conversion, and Extraction operations.",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/AcceptHeader"
+            }
+          },
+          {
+            "name": "jobID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the job."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/PlatformJobResultCompleted"
+                    },
+                    {
+                      "$ref": "#/components/schemas/JobResultFailedGeneric"
+                    },
+                    {
+                      "$ref": "#/components/schemas/JobCanceledResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "413": {
+            "$ref": "#/components/responses/ContentTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "operationId": "getJobResult"
+      }
+    },
+    "/jobs/{jobID}/status": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Get Job Status",
+        "description": "Get status of asynchronous Job.\n\n A Job is Nitro\u2019s asynchronous file processing for PDF Transformation, Conversion, and Extraction operations.",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/AcceptEventHeader"
+            }
+          },
+          {
+            "name": "jobID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the job."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job status and status-related data. \n Available statuses: `running`, `completed`, `failed`, `canceled`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/JobStatusRunning"
+                    },
+                    {
+                      "$ref": "#/components/schemas/PlatformJobResultCompleted"
+                    },
+                    {
+                      "$ref": "#/components/schemas/JobResultFailedGeneric"
+                    },
+                    {
+                      "$ref": "#/components/schemas/JobCanceledResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "410": {
+            "$ref": "#/components/responses/FileNoLongerAvailable"
+          },
+          "413": {
+            "$ref": "#/components/responses/ContentTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "operationId": "getJobStatus"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ExtractTablesResponse": {
+        "type": "object",
+        "title": "Sync - Tables",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/TablesResultType"
+          }
+        },
+        "required": [
+          "result"
+        ]
+      },
+      "TablesResultType": {
+        "type": "object",
+        "title": "Tables",
+        "properties": {
+          "tables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExtractedTable"
+            },
+            "description": "Array of extracted tables from the document"
+          }
+        },
+        "required": [
+          "tables"
+        ]
+      },
+      "ExtractedTable": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "description": "Unique identifier for the extracted table"
+          },
+          "pageIndices": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of page indices where the table appears (0-based)"
+          },
+          "tableData": {
+            "$ref": "#/components/schemas/TableData"
+          }
+        },
+        "required": [
+          "ID",
+          "pageIndices",
+          "tableData"
+        ]
+      },
+      "TableData": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the table (if available)"
+          },
+          "cells": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            "description": "2D array representing table cell values. The first value index refers to the row, and the second the column."
+          },
+          "footers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of footer text/notes for the table."
+          },
+          "confidences": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "float",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "description": "2D array of confidence scores corresponding to each extracted cell."
+          },
+          "averageConfidence": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Average confidence score for the entire table."
+          },
+          "headerCells": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "description": "Array of [row, column] coordinates identifying header cells (1-based)"
+          },
+          "summaryCells": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "description": "Array of [row, column] coordinates identifying summary cells (1-based)"
+          }
+        },
+        "required": [
+          "title",
+          "cells",
+          "footers",
+          "confidences",
+          "averageConfidence",
+          "headerCells",
+          "summaryCells"
+        ]
+      },
+      "ExtractTextBoxResponse": {
+        "type": "object",
+        "title": "Sync - Text Box",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/TextBoxResultType"
+          }
+        },
+        "required": [
+          "result"
+        ]
+      },
+      "TextBoxResultType": {
+        "type": "object",
+        "title": "Text Boxes",
+        "properties": {
+          "textBoxes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TextBoxQueryResult"
+            },
+            "description": "One result per query, in the same order as the request's `queries`."
+          }
+        },
+        "required": [
+          "textBoxes"
+        ]
+      },
+      "TextBoxQueryResult": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "$ref": "#/components/schemas/TextBoxQuery"
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TextBoxMatch"
+            },
+            "description": "All matches found for the query, empty if the query did not match."
+          }
+        },
+        "required": [
+          "query",
+          "matches"
+        ]
+      },
+      "TextBoxMatch": {
+        "type": "object",
+        "properties": {
+          "matchedText": {
+            "type": "string",
+            "description": "The full matched text.",
+            "example": "Scope of Services"
+          },
+          "boxes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TextBoxBox"
+            },
+            "description": "The bounding boxes covering the match, one per line of text."
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TextBoxGroup"
+            },
+            "description": "For regex queries, the capture groups of the match. Empty for literal queries."
+          }
+        },
+        "required": [
+          "matchedText",
+          "boxes",
+          "groups"
+        ]
+      },
+      "TextBoxGroup": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "description": "One-based index of the capture group within the regular expression.",
+            "example": 1
+          },
+          "text": {
+            "type": "string",
+            "description": "The text captured by the group."
+          },
+          "boxes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TextBoxBox"
+            },
+            "description": "The bounding boxes covering the group, one per line of text."
+          }
+        },
+        "required": [
+          "index",
+          "text",
+          "boxes"
+        ]
+      },
+      "TextBoxBox": {
+        "type": "object",
+        "properties": {
+          "pageIndex": {
+            "type": "integer",
+            "description": "Page index where the text was found (0-based)."
+          },
+          "boundingBox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "Bounding box coordinates in points [x, y, width, height]. Check the [Bounding Box Guideline](/build-nitro/bounding-box).",
+            "example": [
+              200,
+              100,
+              100,
+              20
+            ]
+          },
+          "textPiece": {
+            "type": "string",
+            "description": "The text covered by this box (a single line of the match)."
+          }
+        },
+        "required": [
+          "pageIndex",
+          "boundingBox",
+          "textPiece"
+        ]
+      },
+      "GetPropertiesResponse": {
+        "type": "object",
+        "title": "Sync - Properties",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/PropertiesTypes"
+          }
+        },
+        "required": [
+          "result"
+        ]
+      },
+      "PropertiesTypes": {
+        "title": "Properties",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The document's title"
+          },
+          "author": {
+            "type": "string",
+            "description": "The document's author"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The document's subject"
+          },
+          "keywords": {
+            "type": "string",
+            "description": "Document keywords"
+          },
+          "creator": {
+            "type": "string",
+            "description": "The document's creator/application"
+          },
+          "producer": {
+            "type": "string",
+            "description": "PDF document's producer or encoding software"
+          },
+          "creationDate": {
+            "type": "string",
+            "description": "Document creation date in PDF date format"
+          },
+          "modDate": {
+            "type": "string",
+            "description": "Document modification date in PDF date format"
+          },
+          "trapped": {
+            "type": "string",
+            "description": "PDF trapped status"
+          }
+        },
+        "required": [
+          "title",
+          "author",
+          "subject",
+          "keywords",
+          "creator",
+          "producer",
+          "creationDate",
+          "modDate",
+          "trapped"
+        ]
+      },
+      "ExtractFormsResponse": {
+        "type": "object",
+        "title": "Sync - Forms",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/FormResultType"
+          }
+        },
+        "required": [
+          "result"
+        ]
+      },
+      "FormResultType": {
+        "type": "object",
+        "title": "Form Fields",
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FormField"
+            },
+            "description": "Array of extracted form fields from the document"
+          },
+          "averageConfidence": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 100,
+            "example": 96.5,
+            "description": "Average confidence score for all form fields"
+          }
+        },
+        "required": [
+          "fields",
+          "averageConfidence"
+        ]
+      },
+      "FormField": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the form field."
+          },
+          "value": {
+            "type": "string",
+            "description": "The extracted value of the form field."
+          },
+          "confidence": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 100,
+            "example": 97.65,
+            "description": "Confidence score for the form field extraction."
+          }
+        },
+        "required": [
+          "name",
+          "value",
+          "confidence"
+        ]
+      },
+      "AcceptHeader": {
+        "type": "string",
+        "enum": [
+          "application/json",
+          "application/octet-stream",
+          "*/*"
+        ],
+        "default": "*/*",
+        "description": "Controls response format and behavior. See endpoint description above for detailed response combinations.\n- `application/json`: Returns JSON response with operation result\n- `application/octet-stream`: Returns binary file content \n- `*/*`: Defaults to JSON response"
+      },
+      "AcceptEventHeader": {
+        "type": "string",
+        "enum": [
+          "application/json",
+          "application/event-stream",
+          "*/*"
+        ],
+        "default": "*/*",
+        "description": "Controls response format and behavior. See endpoint description above for detailed response combinations.\n- `application/json`: Returns JSON response with operation result\n- `application/event-stream`:  Enables Server-Sent Events for real-time updates \n- `*/*`: Defaults to JSON response"
+      },
+      "PreferHeader": {
+        "type": "string",
+        "enum": [
+          "respond-async"
+        ],
+        "description": "Controls synchronous vs asynchronous operation. See endpoint description above for behavior details.\n- `respond-async`: Makes request asynchronous, returns job status for polling\n- No value: Synchronous response"
+      },
+      "AsyncJobResponse": {
+        "type": "object",
+        "title": "Async - Job",
+        "properties": {
+          "jobID": {
+            "type": "string",
+            "example": "01234567-89ab-cdef-0123-456789abcdef"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "running"
+            ]
+          },
+          "progress": {
+            "type": "number",
+            "description": "Progress of the job as a float between 0.0 and 1.0",
+            "format": "float",
+            "default": 0,
+            "example": 0
+          }
+        }
+      },
+      "JobStatusRunning": {
+        "type": "object",
+        "title": "Running",
+        "properties": {
+          "jobID": {
+            "type": "string",
+            "example": "01234567-89ab-cdef-0123-456789abcdef"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "running"
+            ]
+          },
+          "progress": {
+            "type": "number",
+            "description": "Progress of the job as a float between 0.0 and 1.0",
+            "format": "float",
+            "default": 0,
+            "example": 0
+          }
+        }
+      },
+      "JobError": {
+        "type": "object",
+        "description": "Error information if the job failed.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "PDFIsPasswordProtected",
+            "enum": [
+              "BrokenDownloadURL",
+              "ConversionFailed",
+              "PDFIsPasswordProtected"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "example": "PDF is password protected"
+          }
+        }
+      },
+      "JobResultFailedGeneric": {
+        "type": "object",
+        "title": "Failed",
+        "properties": {
+          "jobID": {
+            "type": "string",
+            "example": "01234567-89ab-cdef-0123-456789abcdef"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "failed"
+            ]
+          },
+          "error": {
+            "$ref": "#/components/schemas/JobError"
+          }
+        }
+      },
+      "JobCanceledResponse": {
+        "type": "object",
+        "title": "Canceled",
+        "properties": {
+          "jobID": {
+            "type": "string",
+            "example": "01234567-89ab-cdef-0123-456789abcdef"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "canceled"
+            ]
+          }
+        }
+      },
+      "FileInfo": {
+        "type": "object",
+        "properties": {
+          "URL": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL with processed file for download. Field will be `null` if `delivery` parameter for post-processing upload is defined.",
+            "nullable": true
+          },
+          "contentType": {
+            "type": "string",
+            "description": "The file type",
+            "example": "application/json"
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "fileSizeBytes": {
+                "type": "number",
+                "nullable": true
+              },
+              "pageCount": {
+                "type": "number",
+                "description": "Number of pages in resulting document.",
+                "nullable": true
+              }
+            }
+          }
+        }
+      },
+      "FileUpload": {
+        "description": "The file to process. It can be provided as a binary upload or as a JSON remote file reference. \n\n",
+        "oneOf": [
+          {
+            "type": "string",
+            "format": "binary",
+            "description": "#### Binary file \n Standard multipart file binary upload field"
+          },
+          {
+            "type": "object",
+            "title": "Remote file",
+            "properties": {
+              "URL": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the remote file to process"
+              },
+              "contentType": {
+                "type": "string",
+                "description": "The MIME type of the remote file",
+                "example": "application/pdf"
+              }
+            },
+            "required": [
+              "URL",
+              "contentType"
+            ],
+            "description": "#### Remote file \n JSON objects containing file URL and content type, sent with specific multipart encoding: `type` and `filename`. The playground **doesn't support** them. Plase test with an alternative tool (Ex: Postman). \n\nExample cURL file field for remote file:\n```bash\n--form 'file={\n   \"URL\":\"https://your-file.pdf\",\n   \"contentType\":\"application/pdf\"\n}\n;type=application/vnd.gonitro.url+json\n;filename=https://your-file.pdf'\n```"
+          }
+        ]
+      },
+      "FilesUpload": {
+        "type": "array",
+        "items": {
+          "description": "The files to process. They can be provided as a binary uploads or as a JSON with remote file references. \n\n",
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "binary",
+              "description": "#### Binary files \n Standard multipart file binary upload field"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "URL": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "URL of the remote file to process"
+                },
+                "contentType": {
+                  "type": "string",
+                  "description": "The MIME type of the remote file",
+                  "example": "application/pdf"
+                }
+              },
+              "required": [
+                "URL",
+                "contentType"
+              ],
+              "description": "#### Remote files \n JSON objects containing file URL and content type, sent with specific multipart encoding: `type` and `filename`. The playground **doesn't support** them. Plase test with an alternative tool (Ex: Postman). \n\nExample cURL for remote files:\n```bash\n--form 'files={\n   \"URL\":\"https://your-file-1.pdf\",\n   \"contentType\":\"application/pdf\"\n}\n;type=application/vnd.gonitro.url+json\n;filename=https://your-file-1.pdf' \\\n--form 'files={\n   \"URL\":\"https://your-file-2.pdf\",\n   \"contentType\":\"application/pdf\"\n}\n;type=application/vnd.gonitro.url+json\n;filename=https://your-file-2.pdf'\n```"
+            }
+          ]
+        },
+        "example": [
+          "@SampleFile1.pdf",
+          "@SampleFile2.pdf"
+        ]
+      },
+      "PlatformOperationFileResult": {
+        "type": "object",
+        "title": "Sync - Single File",
+        "properties": {
+          "file": {
+            "$ref": "#/components/schemas/FileInfo"
+          }
+        }
+      },
+      "PlatformOperationFilesResult": {
+        "type": "object",
+        "title": "Sync - Multiple Files",
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileInfo"
+            }
+          }
+        }
+      },
+      "PlatformResponseText": {
+        "type": "object",
+        "title": "Sync - Text",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/StringResultType"
+          }
+        }
+      },
+      "StringResultType": {
+        "type": "string",
+        "title": "Text"
+      },
+      "PlatformResponse": {
+        "type": "object",
+        "title": "Sync",
+        "properties": {
+          "result": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PlatformOperationFileResult"
+              },
+              {
+                "$ref": "#/components/schemas/PlatformOperationFilesResult"
+              }
+            ]
+          }
+        }
+      },
+      "Header": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ]
+      },
+      "HTTPCall": {
+        "type": "object",
+        "properties": {
+          "URL": {
+            "type": "string",
+            "description": "Your delivery endpoint URL",
+            "nullable": false,
+            "format": "uri"
+          },
+          "verb": {
+            "type": "string",
+            "description": "The HTTP method",
+            "default": "PUT",
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "DELETE",
+              "PATCH"
+            ]
+          },
+          "headers": {
+            "type": "array",
+            "nullable": true,
+            "description": "Headers your file delivery endpoint might need (Optional)",
+            "items": {
+              "$ref": "#/components/schemas/Header"
+            }
+          }
+        },
+        "required": [
+          "URL",
+          "verb"
+        ]
+      },
+      "Callback": {
+        "type": "object",
+        "description": "POST endpoint that will get JOB ID and location when processing starts only on async processesing (see example above)",
+        "properties": {
+          "URL": {
+            "type": "string",
+            "description": "Your POST endpoint callback URL.",
+            "nullable": false,
+            "format": "uri"
+          },
+          "headers": {
+            "type": "array",
+            "description": "Headers your callback endpoint might need",
+            "items": {
+              "$ref": "#/components/schemas/Header"
+            }
+          }
+        },
+        "required": [
+          "URL"
+        ]
+      },
+      "DeliverySingleFileOut": {
+        "type": "object",
+        "properties": {
+          "uploadResultTo": {
+            "$ref": "#/components/schemas/HTTPCall"
+          },
+          "callback": {
+            "$ref": "#/components/schemas/Callback"
+          }
+        },
+        "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint."
+      },
+      "DeliveryMultiFileOut": {
+        "type": "object",
+        "properties": {
+          "uploadResultsTo": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HTTPCall"
+            }
+          }
+        },
+        "description": "This endpoint lets you supply your own URLs to receive the multiple-file outputs. The URLs may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint."
+      },
+      "PlatformJobResultCompleted": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "jobID": {
+                "type": "string",
+                "example": "01234567-89ab-cdef-0123-456789abcdef"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "completed"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "title": "Completed",
+            "properties": {
+              "result": {
+                "description": "The result is returned as data in the same format as the original request's synchronous response type. \n Transformations and Conversions return one or more files, while Extractions return a JSON object containing the requested data.",
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PlatformOperationFileResult"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PlatformOperationFilesResult"
+                  },
+                  {
+                    "$ref": "#/components/schemas/StringResultType"
+                  },
+                  {
+                    "$ref": "#/components/schemas/TablesResultType"
+                  },
+                  {
+                    "$ref": "#/components/schemas/TextBoxResultType"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PIIResultType"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PropertiesTypes"
+                  },
+                  {
+                    "$ref": "#/components/schemas/FormResultType"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ShortMSOfficeMIMEType": {
+        "type": "string",
+        "default": "docx",
+        "enum": [
+          "docx",
+          "xlsx",
+          "pptx"
+        ],
+        "description": "Microsoft Office formats"
+      },
+      "ShortImageMIMEType": {
+        "type": "string",
+        "enum": [
+          "png",
+          "jpeg"
+        ],
+        "default": "png"
+      },
+      "ShortMiscMIMEType": {
+        "type": "string",
+        "enum": [
+          "html",
+          "json",
+          "csv",
+          "xml",
+          "eps"
+        ]
+      },
+      "ConversionParams": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "enum": [
+              "pdf"
+            ],
+            "default": "pdf"
+          }
+        }
+      },
+      "ConversionPDFAParams": {
+        "title": "PDF/A",
+        "type": "object",
+        "required": [
+          "to",
+          "conformance"
+        ],
+        "properties": {
+          "to": {
+            "type": "string",
+            "enum": [
+              "pdfa"
+            ],
+            "default": "pdfa",
+            "description": "Target format for the conversion."
+          },
+          "conformance": {
+            "type": "string",
+            "enum": [
+              "1b",
+              "1a",
+              "2b",
+              "2u",
+              "2a",
+              "3b",
+              "3u",
+              "3a"
+            ],
+            "description": "PDF/A conformance level. Levels ending in `a` (accessible) require the source PDF to be tagged; untagged PDFs submitted with an `a`-level conformance will return an error. Use `b` or `u` variants for general-purpose archiving.",
+            "example": "2b"
+          },
+          "imageQuality": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0.01,
+            "maximum": 1,
+            "default": 0.8,
+            "description": "Image compression quality during conversion. `1.0` preserves maximum quality; `0.01` applies maximum compression. Lower values reduce file size at the cost of image fidelity.",
+            "example": 0.8
+          },
+          "copyMetadata": {
+            "type": "boolean",
+            "default": true,
+            "description": "When `true`, document metadata (author, creation date, title, etc.) is preserved in the output. When `false`, metadata is stripped.",
+            "example": true
+          }
+        }
+      },
+      "ConversionMSOfficeParams": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "$ref": "#/components/schemas/ShortMSOfficeMIMEType"
+          }
+        }
+      },
+      "ConversionImageParams": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "$ref": "#/components/schemas/ShortImageMIMEType",
+            "default": "png"
+          }
+        }
+      },
+      "ExtractTextParams": {
+        "title": "Text",
+        "type": "object",
+        "properties": {
+          "pageIndices": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of page indices to extract text from (0-based)",
+            "example": [
+              0,
+              1,
+              2,
+              5,
+              9,
+              23
+            ]
+          },
+          "readingOrder": {
+            "type": "boolean",
+            "description": "Extract text in reading order (left-to-right, top-to-bottom) \n Unordered extraction returns the same output each time for the same file.",
+            "default": true
+          }
+        }
+      },
+      "PIIBboxExtractionParams": {
+        "title": "PIIB Box",
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "Language code for PII detection",
+            "default": "en",
+            "enum": [
+              "en",
+              "es"
+            ]
+          }
+        }
+      },
+      "TextboxExtractionParams": {
+        "title": "Text Box",
+        "type": "object",
+        "properties": {
+          "queries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TextBoxQuery"
+            },
+            "description": "Array of queries to search for in the PDF file."
+          }
+        },
+        "required": [
+          "queries"
+        ]
+      },
+      "TextBoxQuery": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The text or regular expression to search for.",
+            "example": "John Doe"
+          },
+          "isRegex": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether `text` should be treated as a regular expression."
+          },
+          "regexFlags": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "ignore-case",
+                "multiline",
+                "dot-all"
+              ]
+            },
+            "description": "Regex matching flags; only allowed when `isRegex` is `true`."
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "PIIBox": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "description": "A unique identifier for a PII detection group. Multiple individual PII entries can share the same ID, indicating they belong to the same group or type of PII.",
+            "example": "ccc05519-e71c-4226-bbff-72df3fb2d442"
+          },
+          "text": {
+            "type": "string",
+            "description": "The complete text block that contains PII. For instance, the full text of an address spaning multiple content boxes.",
+            "example": "10 Wall Street, NY 03183"
+          },
+          "textPiece": {
+            "type": "string",
+            "description": "The specific piece of text identified as PII inside a box.",
+            "example": "10 Wall Street"
+          },
+          "pageIndex": {
+            "type": "integer",
+            "description": "Page index where the PII was found (0-based).",
+            "example": 0
+          },
+          "boundingBox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "Bounding box coordinates in points [x, y, width, height]. Check the [Bounding Box Guideline](/build-nitro/bounding-box).",
+            "example": [
+              200,
+              100,
+              100,
+              20
+            ]
+          },
+          "PIIType": {
+            "type": "string",
+            "description": "Type of PII detected",
+            "enum": [
+              "ADDRESS",
+              "AGE",
+              "AWS_ACCESS_KEY",
+              "AWS_SECRET_KEY",
+              "CREDIT_DEBIT_CVV",
+              "CREDIT_DEBIT_EXPIRY",
+              "CREDIT_DEBIT_NUMBER",
+              "DATE_TIME",
+              "DRIVER_ID",
+              "EMAIL",
+              "INTERNATIONAL_BANK_ACCOUNT_NUMBER",
+              "IP_ADDRESS",
+              "LICENSE_PLATE",
+              "MAC_ADDRESS",
+              "NAME",
+              "PASSWORD",
+              "PHONE",
+              "PIN",
+              "SWIFT_CODE",
+              "URL",
+              "USERNAME",
+              "VEHICLE_IDENTIFICATION_NUMBER",
+              "CA_HEALTH_NUMBER",
+              "CA_SOCIAL_INSURANCE_NUMBER",
+              "IN_AADHAAR",
+              "IN_NREGA",
+              "IN_PERMANENT_ACCOUNT_NUMBER",
+              "IN_VOTER_NUMBER",
+              "UK_NATIONAL_HEALTH_SERVICE_NUMBER",
+              "UK_NATIONAL_INSURANCE_NUMBER",
+              "UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER",
+              "BANK_ACCOUNT_NUMBER",
+              "BANK_ROUTING",
+              "PASSPORT_NUMBER",
+              "US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER",
+              "SSN"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Confidence score for the PII detection.",
+            "example": 0.94
+          }
+        },
+        "required": [
+          "ID",
+          "text",
+          "textPiece",
+          "pageIndex",
+          "boundingBox",
+          "PIIType",
+          "confidence"
+        ]
+      },
+      "PIIExtractionResult": {
+        "type": "object",
+        "title": "Sync - PII boxes",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/PIIResultType"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "example": {
+          "result": {
+            "PIIBoxes": [
+              {
+                "ID": "ccc05519-e71c-4226-bbff-72df3fb2d442",
+                "text": "John Doe\\n",
+                "textPiece": "John Doe\\n",
+                "pageIndex": 0,
+                "boundingBox": [
+                  200,
+                  100,
+                  100,
+                  20
+                ],
+                "PIIType": "NAME",
+                "confidence": 0.94
+              },
+              {
+                "ID": "ccc05519-e71c-4226-bbff-72df3fb2d442",
+                "text": "Street name\\n2345\\n02234",
+                "textPiece": "Street name",
+                "pageIndex": 0,
+                "boundingBox": [
+                  200,
+                  140,
+                  100,
+                  20
+                ],
+                "PIIType": "ADDRESS",
+                "confidence": 0.9
+              }
+            ]
+          }
+        }
+      },
+      "PIIResultType": {
+        "type": "object",
+        "title": "PII Boxes",
+        "properties": {
+          "PIIBoxes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PIIBox"
+            },
+            "description": "Array of detected PII bounding boxes"
+          }
+        },
+        "required": [
+          "PIIBoxes"
+        ]
+      },
+      "PermissionType": {
+        "type": "string",
+        "enum": [
+          "print",
+          "modify",
+          "copy",
+          "annotate",
+          "form",
+          "assemble",
+          "print-hq"
+        ]
+      },
+      "PDFPasswordProtectionParams": {
+        "type": "object",
+        "description": "PDF protection parameters. You must provide either ownerPassword, userPassword, or both. They cannot both be null.",
+        "properties": {
+          "ownerPassword": {
+            "type": "string",
+            "description": "The PDF owner's password to overwrite permissions. 40 characters max. Nullable if `userPassword` is defined.",
+            "example": "owner-secret",
+            "nullable": true
+          },
+          "userPassword": {
+            "type": "string",
+            "description": "The PDF user password. 40 characters max. Nullable if `ownerPassword` is defined.",
+            "example": "user-secret",
+            "nullable": true
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionType"
+            },
+            "nullable": true,
+            "example": [
+              "print",
+              "copy"
+            ]
+          }
+        }
+      },
+      "UnprotectParams": {
+        "type": "object",
+        "properties": {
+          "ownerPassword": {
+            "type": "string",
+            "description": "Owner password to unlock PDF",
+            "example": "owner-secret"
+          },
+          "userPassword": {
+            "type": "string",
+            "description": "User password to unlock the PDF",
+            "example": "user-secret"
+          }
+        }
+      },
+      "Rotation": {
+        "title": "Rotate",
+        "type": "object",
+        "properties": {
+          "rotations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "page_index": {
+                  "type": "integer",
+                  "description": "Page index to rotate (0-based)"
+                },
+                "amount": {
+                  "type": "integer",
+                  "enum": [
+                    -270,
+                    -180,
+                    -90,
+                    0,
+                    90,
+                    180,
+                    270,
+                    360
+                  ],
+                  "description": "Rotation amount in degrees"
+                }
+              },
+              "required": [
+                "page_index",
+                "amount"
+              ]
+            },
+            "description": "Array of page rotations to apply",
+            "example": [
+              {
+                "page_index": 0,
+                "amount": 90
+              }
+            ]
+          }
+        },
+        "required": [
+          "rotations"
+        ]
+      },
+      "SplitParams": {
+        "title": "Split",
+        "type": "object",
+        "properties": {
+          "pageIndices": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "description": "Array of page index arrays - each sub-array represents pages for one output file",
+            "example": [
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                3,
+                4
+              ]
+            ]
+          }
+        },
+        "required": [
+          "pageIndices"
+        ]
+      },
+      "DeletePagesParams": {
+        "title": "Delete Pages",
+        "type": "object",
+        "properties": {
+          "pageIndices": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of page indices to delete (0-based)",
+            "example": [
+              0,
+              2
+            ]
+          }
+        },
+        "required": [
+          "pageIndices"
+        ]
+      },
+      "SetPropertiesParams": {
+        "title": "Set Properties",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The document's title",
+            "example": "My Document Title"
+          },
+          "author": {
+            "type": "string",
+            "description": "The documents' author",
+            "example": "John Doe"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The document's subject",
+            "example": "An Interesting Subject"
+          },
+          "keywords": {
+            "type": "string",
+            "description": "Document keywords",
+            "example": "example, pdf, metadata"
+          },
+          "creator": {
+            "type": "string",
+            "description": "The document's creator",
+            "example": "Doe John"
+          },
+          "producer": {
+            "type": "string",
+            "description": "PDF document's producer or the encoding software",
+            "example": "Nitro PDF"
+          }
+        }
+      },
+      "RedactParams": {
+        "title": "Redact",
+        "type": "object",
+        "properties": {
+          "redactions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "pageIndex": {
+                  "type": "integer",
+                  "description": "Zero-based page index to position a reaction box."
+                },
+                "boundingBox": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 4,
+                  "maxItems": 4,
+                  "description": "An array of numbers in the format [x, y, w, h] that defines the redaction's bounding box on the page: \n - `x, y` are the coordinates of the top-left corner, measured in points (pt). \n - `w, h` are the width and height of the bounding box, also in points (pt). \n\n For more information on calculating positions, see the [Bounding Box Guide](/build-nitro/bounding-box)."
+                }
+              },
+              "required": [
+                "pageIndex",
+                "boundingBox"
+              ]
+            },
+            "description": "Array of redaction areas bounding boxes and corresponding page indices.",
+            "example": [
+              {
+                "pageIndex": 0,
+                "boundingBox": [
+                  100,
+                  100,
+                  200,
+                  120
+                ]
+              },
+              {
+                "pageIndex": 1,
+                "boundingBox": [
+                  50,
+                  50,
+                  150,
+                  70
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "redactions"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "A URI reference that identifies the problem type"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The HTTP status code"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence"
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence"
+          }
+        }
+      },
+      "BadRequestProblemDetail": {
+        "type": "object",
+        "description": "Bad Request error details",
+        "example": {
+          "type": "https://developers.gonitro.com/docs/build-nitro/errors#400-bad-request",
+          "title": "Bad Request",
+          "status": 400,
+          "detail": "Request validation failed",
+          "instance": "/platform/transformations"
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ErrorResponse"
+          }
+        ]
+      },
+      "UnauthorizedProblemDetail": {
+        "type": "object",
+        "description": "Unauthorized error details",
+        "example": {
+          "type": "https://developers.gonitro.com/docs/build-nitro/errors#401-unauthorized",
+          "title": "Unauthorized",
+          "status": 401,
+          "detail": "Missing or invalid Authorization header",
+          "instance": "/platform/transformations"
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ErrorResponse"
+          }
+        ]
+      },
+      "NotFoundProblemDetail": {
+        "type": "object",
+        "description": "Not Found error details",
+        "example": {
+          "type": "https://developers.gonitro.com/docs/build-nitro/errors#404-not-found",
+          "title": "Not Found",
+          "status": 404,
+          "detail": "Resource not found",
+          "instance": "/platform/transformations"
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ErrorResponse"
+          }
+        ]
+      },
+      "ConflictProblemDetail": {
+        "type": "object",
+        "description": "Conflict error details",
+        "example": {
+          "type": "https://developers.gonitro.com/docs/build-nitro/errors#409-conflict",
+          "title": "Conflict",
+          "status": 409,
+          "detail": "Resource conflict",
+          "instance": "/platform/transformations"
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ErrorResponse"
+          }
+        ]
+      },
+      "ContentTooLargeProblemDetail": {
+        "type": "object",
+        "description": "Content too large error details",
+        "example": {
+          "type": "https://developers.gonitro.com/docs/build-nitro/errors#413-content-too-large",
+          "title": "Content too large",
+          "status": 413,
+          "detail": "Uploaded document exceeds the file size limit",
+          "instance": "/platform/transformations"
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ErrorResponse"
+          }
+        ]
+      },
+      "UnsupportedMediaTypeProblemDetail": {
+        "type": "object",
+        "description": "Unsupported Media Type error details",
+        "example": {
+          "type": "https://developers.gonitro.com/docs/build-nitro/errors#415-unsupported-media-type",
+          "title": "Unsupported Media Type",
+          "status": 415,
+          "detail": "The provided media type is not supported",
+          "instance": "/platform/transformations"
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ErrorResponse"
+          }
+        ]
+      },
+      "FileNoLongerAvailableProblemDetail": {
+        "type": "object",
+        "description": "File No Longer Available error details",
+        "example": {
+          "type": "FileNoLongerAvailable",
+          "title": "The requested file is no longer available",
+          "status": 410
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ErrorResponse"
+          }
+        ]
+      },
+      "UnprocessableEntityProblemDetail": {
+        "type": "object",
+        "description": "Unprocessable Entity error details",
+        "example": {
+          "type": "https://developers.gonitro.com/docs/build-nitro/errors#422-unprocessable-entity",
+          "title": "Unprocessable Entity",
+          "status": 422,
+          "detail": "The request was well-formed but could not be processed",
+          "instance": "/platform/transformations"
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ErrorResponse"
+          }
+        ]
+      },
+      "InternalServerErrorProblemDetail": {
+        "type": "object",
+        "description": "Internal Server Error details",
+        "example": {
+          "type": "https://developers.gonitro.com/docs/build-nitro/errors#500-internal-server-error",
+          "title": "Internal Server Error",
+          "status": 500,
+          "detail": "An unexpected error occurred",
+          "instance": "/platform/transformations"
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ErrorResponse"
+          }
+        ]
+      },
+      "WatermarkParams": {
+        "title": "Watermark",
+        "type": "object",
+        "description": "Parameters controlling watermark placement, sizing, and appearance on each PDF page.",
+        "properties": {
+          "boundingBox": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "Bounding box coordinates `[x0, y0, x1, y1]` in PDF points. Defines the area where the watermark image will be placed.",
+            "example": [
+              210,
+              10,
+              290,
+              60
+            ]
+          },
+          "opacity": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 1,
+            "description": "Watermark transparency. `0.0` = fully transparent, `1.0` = fully opaque.",
+            "example": 0.75
+          },
+          "rotation": {
+            "type": "number",
+            "format": "float",
+            "default": 0,
+            "description": "Rotation angle in degrees to apply to the watermark image.",
+            "example": 15
+          },
+          "pageIndices": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "nullable": true,
+            "description": "Zero-based page indices where the watermark should be applied. If `null` or omitted, the watermark is applied to all pages. Negative values are rejected; out-of-range indices are ignored.",
+            "example": [
+              0,
+              1
+            ]
+          },
+          "flip": {
+            "type": "string",
+            "enum": [
+              "horizontal",
+              "vertical",
+              "both"
+            ],
+            "nullable": true,
+            "description": "Optionally mirror the watermark image horizontally, vertically, or both."
+          },
+          "rotateWithPage": {
+            "type": "boolean",
+            "default": false,
+            "description": "When true, the watermark rotates along with the page if the page itself has a rotation applied."
+          },
+          "centerOnPage": {
+            "type": "boolean",
+            "default": false,
+            "description": "When true, the watermark is centered on the page. `boundingBox` is still required. Also accepts `center_on_page`."
+          },
+          "contentDepth": {
+            "type": "string",
+            "enum": [
+              "above_existing",
+              "below_existing"
+            ],
+            "default": "below_existing",
+            "description": "Controls whether the watermark renders above or below the existing page content. Values use underscores, not hyphens. Also accepts `content_depth`."
+          },
+          "fitToPageWidth": {
+            "type": "boolean",
+            "default": false,
+            "description": "When true, scales the watermark image to fit the page width. Requires `boundingBox` for vertical positioning unless `fitToPageHeight` is also true. Also accepts `fit_to_page_width`."
+          },
+          "fitToPageHeight": {
+            "type": "boolean",
+            "default": false,
+            "description": "When true, scales the watermark image to fit the page height. Requires `boundingBox` for horizontal positioning unless `fitToPageWidth` is also true. Also accepts `fit_to_page_height`."
+          }
+        },
+        "required": [
+          "boundingBox"
+        ]
+      },
+      "PDFOptimizeParams": {
+        "title": "Optimize",
+        "type": "object",
+        "properties": {
+          "profile": {
+            "type": "string",
+            "enum": [
+              "web",
+              "print",
+              "archive",
+              "minimal-file-size",
+              "mixed-raster-content"
+            ],
+            "description": "Optimization profile that determines how the PDF is compressed and restructured. Choose based on the intended use case: screen viewing, high-quality printing, long-term archiving, maximum file size reduction, or documents containing mixed raster content.",
+            "example": "web"
+          }
+        },
+        "required": [
+          "profile"
+        ]
+      },
+      "PDFCompressParams": {
+        "title": "Compress",
+        "type": "object",
+        "description": "Compress has no parameters; it always targets the smallest file size. For control over the size/quality trade-off, use the Optimize operation and its `profile`.",
+        "properties": {}
+      },
+      "PDFOCRParams": {
+        "title": "OCR",
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "english",
+              "german",
+              "french",
+              "spanish",
+              "italian",
+              "finnish",
+              "swedish",
+              "danish",
+              "norwegian",
+              "dutch",
+              "portuguese",
+              "brazilian"
+            ],
+            "default": "english",
+            "description": "Language of the text in the document. Selecting the correct language improves character recognition accuracy.",
+            "example": "french"
+          },
+          "quality": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "default": "high",
+            "description": "Controls the trade-off between processing speed and recognition accuracy. `low` is fastest, `high` produces the most accurate results.",
+            "example": "high"
+          },
+          "isOutputPDFEditable": {
+            "type": "boolean",
+            "default": false,
+            "description": "When `true`, recognised text is rendered over the page image, making it editable. When `false` (default), text is placed behind the image, making the PDF searchable while preserving its visual appearance.",
+            "example": false
+          },
+          "compressionLevel": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "default": "low",
+            "description": "Compression level applied to the output PDF. `low` retains the best image quality, `high` produces the smallest file size.",
+            "example": "low"
+          },
+          "PDFVersion": {
+            "type": "string",
+            "enum": [
+              "pdf14",
+              "pdf15",
+              "pdf16",
+              "pdf17"
+            ],
+            "default": "pdf17",
+            "description": "PDF specification version for the output file. Defaults to `pdf17` (PDF 1.7) for the broadest compatibility.",
+            "example": "pdf17"
+          },
+          "pageIndices": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "nullable": true,
+            "description": "Zero-based indices of the pages to process. When `null` or omitted, OCR is applied to all pages in the document.",
+            "example": [
+              0,
+              1,
+              2
+            ]
+          }
+        }
+      },
+      "FormFillParams": {
+        "title": "Fill Forms",
+        "type": "object",
+        "properties": {
+          "strict": {
+            "type": "boolean",
+            "default": false,
+            "description": "Controls validation behavior when filling form fields. When `true`, requests fail with 422 if the input contains unknown field names or omits required fields; when `false`, unrecognized fields are silently ignored and only matching fields are filled.",
+            "example": true
+          },
+          "fields": {
+            "type": "array",
+            "nullable": true,
+            "default": null,
+            "description": "Inline field name/value pairs to fill, as an alternative to supplying the values in a CSV, JSON, XFDF, or FDF data file.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Name of the PDF form field to fill."
+                },
+                "value": {
+                  "description": "Value to set for the field. May be a string, number, boolean, or null.",
+                  "nullable": true,
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "field",
+                "value"
+              ]
+            },
+            "example": [
+              {
+                "field": "firstName",
+                "value": "Jane"
+              },
+              {
+                "field": "lastName",
+                "value": "Doe"
+              }
+            ]
+          }
+        }
+      },
+      "FormFieldDetection": {
+        "type": "object",
+        "description": "A single detected form field. The same shape is returned by Smart Detect Form Fields and accepted by Create Fillable Forms.",
+        "properties": {
+          "pageIndex": {
+            "type": "integer",
+            "description": "Zero-based index of the page the field belongs to.",
+            "example": 0
+          },
+          "fieldType": {
+            "type": "string",
+            "description": "The kind of form field.",
+            "enum": [
+              "TextBox",
+              "CheckBox"
+            ],
+            "example": "TextBox"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the form field. Becomes the AcroForm field name.",
+            "example": "firstName"
+          },
+          "boundingBox": {
+            "type": "array",
+            "description": "The field's position and size in PDF points, as `[x, y, width, height]`.",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "example": [
+              72,
+              680,
+              200,
+              18
+            ]
+          },
+          "value": {
+            "type": "string",
+            "description": "Optional initial value for the field.",
+            "default": "",
+            "example": ""
+          }
+        },
+        "required": [
+          "pageIndex",
+          "fieldType",
+          "name",
+          "boundingBox"
+        ]
+      },
+      "SmartDetectFormFieldsResponse": {
+        "type": "object",
+        "title": "Sync - Form Fields",
+        "description": "A flat list of detected form fields. Each field carries its own `pageIndex`. This is the exact payload you pass as `params` to the [Create Fillable Forms](https://developers.gonitro.com/docs/api-reference/platform/generations/create-fillable-forms) generations method.",
+        "properties": {
+          "formFields": {
+            "type": "array",
+            "description": "The detected form fields, one entry per field.",
+            "items": {
+              "$ref": "#/components/schemas/FormFieldDetection"
+            }
+          }
+        },
+        "required": [
+          "formFields"
+        ],
+        "example": {
+          "formFields": [
+            {
+              "pageIndex": 0,
+              "fieldType": "TextBox",
+              "name": "firstName",
+              "boundingBox": [
+                72,
+                680,
+                200,
+                18
+              ],
+              "value": ""
+            },
+            {
+              "pageIndex": 0,
+              "fieldType": "CheckBox",
+              "name": "agreeToTerms",
+              "boundingBox": [
+                72,
+                620,
+                14,
+                14
+              ],
+              "value": ""
+            }
+          ]
+        }
+      },
+      "CreateFillableFormsParams": {
+        "title": "Create Fillable Forms",
+        "type": "object",
+        "description": "A flat list of form fields to write into the PDF, each carrying its own `pageIndex`. This is the exact detected-fields payload returned by the [Smart Detect Form Fields](https://developers.gonitro.com/docs/api-reference/platform/extractions/smart-detect-form-fields) extraction method, which you typically pipe straight into this method with no transformation.",
+        "properties": {
+          "formFields": {
+            "type": "array",
+            "description": "The form fields to create, one entry per field.",
+            "items": {
+              "$ref": "#/components/schemas/FormFieldDetection"
+            }
+          }
+        },
+        "required": [
+          "formFields"
+        ],
+        "example": {
+          "formFields": [
+            {
+              "pageIndex": 0,
+              "fieldType": "TextBox",
+              "name": "firstName",
+              "boundingBox": [
+                72,
+                680,
+                200,
+                18
+              ],
+              "value": ""
+            },
+            {
+              "pageIndex": 0,
+              "fieldType": "CheckBox",
+              "name": "agreeToTerms",
+              "boundingBox": [
+                72,
+                620,
+                14,
+                14
+              ],
+              "value": ""
+            }
+          ]
+        }
+      },
+      "ExtractFillableFormDataParams": {
+        "title": "Fillable Form Data",
+        "type": "object",
+        "properties": {
+          "format": {
+            "type": "string",
+            "description": "Output format for the extracted form data.\n- `json` (default): structured JSON with one `formFields` entry per form-field widget\n- `xfdf`: Adobe XFDF form-data document of field name/value pairs\n- `fdf`: Adobe FDF form-data document of field name/value pairs\n- `csv`: CSV with columns `name,value,fieldType,pageIndex,x,y,width,height`, one row per widget",
+            "default": "json",
+            "enum": [
+              "json",
+              "xfdf",
+              "fdf",
+              "csv"
+            ]
+          }
+        }
+      },
+      "FillableFormField": {
+        "type": "object",
+        "description": "A single form-field widget read from the PDF's existing AcroForm.",
+        "properties": {
+          "pageIndex": {
+            "type": "integer",
+            "description": "Zero-based index of the page the field widget is on.",
+            "example": 0
+          },
+          "fieldType": {
+            "type": "string",
+            "description": "The kind of form field.",
+            "enum": [
+              "TextBox",
+              "CheckBox",
+              "RadioButton",
+              "ComboBox",
+              "ListBox",
+              "Signature"
+            ],
+            "example": "TextBox"
+          },
+          "name": {
+            "type": "string",
+            "description": "The fully-qualified AcroForm field name. Radio-button groups produce one entry per widget, repeating the group name.",
+            "example": "text_name"
+          },
+          "value": {
+            "type": "string",
+            "description": "The field's current value. `\"\"` when unfilled; check boxes report `\"true\"` or `\"false\"`.",
+            "example": "John"
+          },
+          "boundingBox": {
+            "type": "array",
+            "description": "The widget's position and size in PDF points, as `[x, y, width, height]`.",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "example": [
+              61.2,
+              130.5,
+              240,
+              18
+            ]
+          },
+          "choices": {
+            "type": "array",
+            "nullable": true,
+            "description": "The available options of a `ComboBox`/`ListBox` field, or a radio-button group's export values. `null` for other field types.",
+            "items": {
+              "type": "string"
+            },
+            "example": null
+          }
+        },
+        "required": [
+          "pageIndex",
+          "fieldType",
+          "name",
+          "value",
+          "boundingBox",
+          "choices"
+        ]
+      },
+      "ExtractFillableFormDataResponse": {
+        "type": "object",
+        "title": "Sync - Fillable Form Data",
+        "description": "A flat list of the form-field widgets in the PDF's existing AcroForm, with their names, current values, types, and positions. Empty when the PDF has no AcroForm.",
+        "properties": {
+          "formFields": {
+            "type": "array",
+            "description": "The extracted form fields, one entry per widget.",
+            "items": {
+              "$ref": "#/components/schemas/FillableFormField"
+            }
+          }
+        },
+        "required": [
+          "formFields"
+        ],
+        "example": {
+          "formFields": [
+            {
+              "pageIndex": 0,
+              "fieldType": "TextBox",
+              "name": "text_name",
+              "value": "John",
+              "boundingBox": [
+                61.2,
+                130.5,
+                240,
+                18
+              ],
+              "choices": null
+            },
+            {
+              "pageIndex": 0,
+              "fieldType": "CheckBox",
+              "name": "checkbox_active",
+              "value": "true",
+              "boundingBox": [
+                61.2,
+                190.1,
+                12,
+                12
+              ],
+              "choices": null
+            },
+            {
+              "pageIndex": 0,
+              "fieldType": "RadioButton",
+              "name": "radio_group_app",
+              "value": "App1",
+              "boundingBox": [
+                61.2,
+                220.7,
+                12,
+                12
+              ],
+              "choices": [
+                "App1",
+                "App2",
+                "App3"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

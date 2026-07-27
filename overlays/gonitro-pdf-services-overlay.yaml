@@ -1,0 +1,23 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Nitro PDF Services API
+  version: 1.0.0
+extends: openapi/gonitro-pdf-services-openapi.json
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: gonitro
+    x-apievangelist-note: >-
+      Assembled by API Evangelist from Nitro's published per-tool OpenAPI
+      reference fragments. The four POST endpoints (/conversions,
+      /transformations, /extractions, /generations) are polymorphic; the tool
+      is selected by the request body (see x-nitro-tools on each operation).
+    x-apievangelist-artifacts:
+      authentication: authentication/gonitro-authentication.yml
+      errors: errors/gonitro-error-codes.yml
+      conventions: conventions/gonitro-conventions.yml
+      mcp: mcp/gonitro-mcp.yml
+    x-apievangelist-limits:
+      max_file_size: 100 MB per request
+      max_pages: 500 per document
+      retention: files deleted ~15 minutes after completion

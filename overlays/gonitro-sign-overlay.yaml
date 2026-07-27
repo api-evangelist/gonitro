@@ -1,0 +1,21 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Nitro Sign API
+  version: 1.0.0
+extends: openapi/gonitro-sign-openapi.json
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: gonitro
+    x-apievangelist-artifacts:
+      authentication: authentication/gonitro-authentication.yml
+      errors: errors/gonitro-problem-types.yml
+      conventions: conventions/gonitro-conventions.yml
+      data_model: data-model/gonitro-data-model.yml
+      webhooks: asyncapi/gonitro-sign-asyncapi.yml
+    x-apievangelist-auth: oauth2-client-credentials (JWT bearer), token endpoint https://api.gonitro.dev/oauth/token
+    x-apievangelist-compliance: [ISO 27001, SOC 2, HIPAA, eIDAS QTSP]
+- target: $.servers
+  update:
+  - url: https://api.gonitro.dev
+    description: Nitro production API

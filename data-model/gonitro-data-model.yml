@@ -1,0 +1,59 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/gonitro-sign-openapi.json
+note: >-
+  Entity-relationship graph derived from the Nitro Sign OpenAPI path hierarchy
+  and schemas. Identifiers are UUIDv4. The PDF Services API is stateless
+  (per-request document processing plus transient jobs) and contributes the Job
+  entity only.
+entities:
+- name: Envelope
+  schema: ExtendedEnvelope
+  id: envelopeID (uuid)
+  description: A signing package containing documents, participants, and fields; has a lifecycle status (Draft, Sent, Cancelled, Sealed).
+  relationships:
+  - has_many: Document
+    via: envelopeID
+  - has_many: Participant
+    via: envelopeID
+- name: Document
+  schema: PendingDocumentResponse / SealedDocumentResponse
+  id: documentID (uuid)
+  description: A file within an envelope that participants read and sign.
+  relationships:
+  - belongs_to: Envelope
+    via: envelopeID
+  - has_many: Field
+    via: documentID
+- name: Participant
+  schema: Participant
+  id: participantID (uuid)
+  description: A person associated with an envelope (SIGNER, reviewer, or CC recipient).
+  relationships:
+  - belongs_to: Envelope
+    via: envelopeID
+  - has_many: SignerSigningUrl
+    via: participantID
+  - has_many: Field
+    via: participantID
+- name: Field
+  schema: CreateSignatureField / CreateNameField / CreateDateField / CreateCheckboxField / CreateInitialsField / CreateCompanyField / CreateTitleField / CreateCustomField
+  id: fieldID (uuid)
+  description: A placed input on a document (signature, initials, name, date, checkbox, company, title, custom) assigned to a participant.
+  relationships:
+  - belongs_to: Document
+    via: documentID
+  - belongs_to: Participant
+    via: participantID
+- name: SignerSigningUrl
+  schema: SignerSigningUrl
+  id: n/a
+  description: A time-limited signing URL for a SIGNER participant of a SENT envelope.
+  relationships:
+  - belongs_to: Participant
+    via: participantID
+- name: Job
+  schema: JobStatusResponse
+  id: jobID (uuid)
+  description: An asynchronous PDF Services or Sign conversion job; poll status then retrieve the result.
+  relationships: []

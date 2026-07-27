@@ -1,0 +1,11 @@
+generated: '2026-07-19'
+method: generated
+skills:
+- file: gonitro-create-and-send-envelope.md
+  name: Create and send a Nitro Sign envelope
+  api: openapi/gonitro-sign-openapi.json
+  operations: [getTokenRfc6749, createEnvelope, createDocument, createParticipant, createField, sendForSigning, getEnvelope]
+- file: gonitro-optimize-pdf.md
+  name: Optimize or transform a PDF with Nitro PDF Services
+  api: openapi/gonitro-pdf-services-openapi.json
+  operations: [getTokenRfc6749, transformDocument, getJobStatus, getJobResult]

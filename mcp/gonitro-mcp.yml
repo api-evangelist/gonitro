@@ -1,0 +1,41 @@
+generated: '2026-07-19'
+method: searched
+status: published
+source: https://www.gonitro.com/automate/mcp
+server:
+  name: Nitro PDF Services MCP
+  vendor: Nitro Software
+  official: true
+  transport: stdio
+  distribution: local-bundle
+  package: https://downloads.gonitro.com/mcp/nitro-pdf-services-node-0.22.0.mcpb
+  version: 0.22.0
+  release_stage: early-access
+  host_app: Claude Desktop
+  requirements:
+  - Active Nitro subscription or free trial account
+  - Claude Desktop installed
+  notes: >-
+    Signed .mcpb bundle that runs locally (no remote/hosted server URL). Wraps
+    the Nitro PDF Services API operations. A Claude app-store listing is noted
+    as forthcoming. Tools below are the documented capability surface mapped to
+    the underlying PDF Services API operations.
+tools:
+- name: convert_document
+  description: Convert between PDF and Office/image/HTML formats, and to PDF/A
+  source_operation: openapi/gonitro-pdf-services-openapi.json#convertDocument
+- name: transform_document
+  description: Compress, merge, split, rotate, delete pages, flatten, redact, OCR, optimize, watermark, protect/unprotect, set properties
+  source_operation: openapi/gonitro-pdf-services-openapi.json#transformDocument
+- name: extract_from_document
+  description: Extract text, tables, forms, invoices, PII, and properties from PDFs
+  source_operation: openapi/gonitro-pdf-services-openapi.json#extractFromDocument
+- name: generate_document
+  description: Fill forms and create fillable AcroForm PDFs
+  source_operation: openapi/gonitro-pdf-services-openapi.json#generateDocument
+- name: get_job_status
+  description: Retrieve the status of an asynchronous job
+  source_operation: openapi/gonitro-pdf-services-openapi.json#getJobStatus
+- name: get_job_result
+  description: Retrieve the result of a completed asynchronous job
+  source_operation: openapi/gonitro-pdf-services-openapi.json#getJobResult

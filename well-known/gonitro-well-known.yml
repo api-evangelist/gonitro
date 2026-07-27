@@ -1,0 +1,30 @@
+generated: '2026-07-19'
+method: searched
+source: live probes of /.well-known/ on api and web hosts
+notes: >-
+  No /.well-known/ discovery documents are published. The API host
+  api.gonitro.dev requires an Authorization bearer token at the edge and
+  returns 401 for all unauthenticated paths (including /.well-known/*); the
+  marketing and developer hosts return 404. No security.txt, OIDC discovery,
+  OAuth authorization-server metadata, api-catalog, or ai-plugin.json found.
+hosts:
+- host: https://api.gonitro.dev
+  documents:
+  - path: /.well-known/security.txt
+    status: 401
+  - path: /.well-known/openid-configuration
+    status: 401
+  - path: /.well-known/oauth-authorization-server
+    status: 401
+  - path: /.well-known/api-catalog
+    status: 401
+  - path: /.well-known/ai-plugin.json
+    status: 401
+- host: https://www.gonitro.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+- host: https://developers.gonitro.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404

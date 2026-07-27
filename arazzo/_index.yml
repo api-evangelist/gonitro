@@ -1,0 +1,7 @@
+generated: '2026-07-19'
+method: derived
+workflows:
+- file: gonitro-create-and-send-envelope.yml
+  workflowId: createAndSendEnvelope
+  title: Create and send a Nitro Sign envelope
+  summary: Authenticate, create an envelope, add a document, participant, and signature field, then send it for signing.

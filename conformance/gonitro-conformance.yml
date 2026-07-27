@@ -1,0 +1,49 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  openapi/gonitro-sign-openapi.json; https://www.gonitro.com/trust-center/compliance;
+  https://developers.gonitro.com/docs/build-nitro/errors;
+  https://developers.gonitro.com/docs/build-nitro/webhook
+standards:
+- id: oauth2
+  conforms: true
+  evidence: OAuth 2.0 client-credentials token endpoint (RFC 6749) returns access_token/token_type/expires_in
+- id: rfc6749-oauth2-token
+  conforms: true
+  evidence: /oauth/token operation getTokenRfc6749 returns an RFC 6749 OAuth2TokenResponse
+- id: rfc9457-problem-details
+  conforms: true
+  evidence: Sign API error responses use application/problem+json with *ProblemDetail schemas
+- id: rfc9421-http-message-signatures
+  conforms: true
+  evidence: Sign webhooks are signed with RFC 9421 (Content-Digest, Signature-Input, Signature; HMAC-SHA256)
+- id: jwt-bearer
+  conforms: true
+  evidence: bearerAuth securityScheme with bearerFormat JWT
+- id: pdf-a
+  conforms: true
+  evidence: PDF Services "PDF to PDF/A" endpoint produces ISO-standard PDF/A archival output
+- id: eidas
+  conforms: true
+  evidence: Accredited eIDAS Qualified Trust Service Provider (QTSP) by LSTI
+- id: esign-ueta
+  conforms: true
+  evidence: Nitro Sign supports ESIGN Act and UETA legal frameworks
+- id: soc2
+  conforms: true
+  evidence: SOC 2 (security, availability, processing integrity, confidentiality, privacy)
+- id: iso-27001
+  conforms: true
+  evidence: ISO/IEC 27001 certified information security management
+- id: hipaa
+  conforms: true
+  evidence: HIPAA compliance for protected health information
+- id: gdpr
+  conforms: true
+  evidence: GDPR compliance; EU-U.S. Data Privacy Framework (with UK and Swiss extensions)
+- id: json-api
+  conforms: false
+- id: fhir
+  conforms: false
+- id: scim
+  conforms: false

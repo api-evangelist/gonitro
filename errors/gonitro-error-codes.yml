@@ -1,0 +1,116 @@
+generated: '2026-07-19'
+method: searched
+source: https://developers.gonitro.com/docs/build-nitro/errors
+format: rfc9457
+envelope_fields:
+- type
+- title
+- status
+- detail
+- extensions
+note: >-
+  Documented Nitro API error reference. Error responses use problem-details
+  style (application/problem+json in the Sign OpenAPI). PDF Services and Sign
+  share the HTTP status semantics below. Titles, causes, and remediation are
+  quoted from the published error glossary.
+errors:
+- status: 400
+  title: Bad Request
+  cause: Missing required fields, invalid query syntax, or data sent in the wrong format
+  remediation: Verify request structure and field formatting
+- status: 400
+  title: PDF is password protected
+  cause: Encrypted PDF cannot be processed
+  remediation: Remove password protection before uploading
+- status: 400
+  title: Conversion failed
+  cause: File(s) could not be converted to the target format
+  remediation: Validate input file integrity and type
+- status: 400
+  title: Broken download URL
+  cause: URL provided for file download is broken, expired, or inaccessible
+  remediation: Verify URL validity and accessibility
+- status: 400
+  title: Page limit reached
+  cause: Document exceeds maximum page count
+  remediation: Divide document into smaller sections
+- status: 400
+  title: Cannot delete all pages
+  cause: Operation would remove the entire document
+  remediation: Retain at least one page
+- status: 400
+  title: Page index out of bounds
+  cause: Request references page indices that do not exist
+  remediation: Use indices between 0 and page count minus one
+- status: 400
+  title: PDF is not valid
+  cause: Uploaded file is malformed
+  remediation: Ensure proper PDF structure
+- status: 400
+  title: Watermark format unsupported
+  cause: Format not supported by the system
+  remediation: Consult endpoint documentation
+- status: 400
+  title: OCR failed
+  cause: OCR processing could not be completed
+  remediation: Validate the file is a proper PDF or image
+- status: 400
+  title: Form parsing error
+  cause: Form part in a multipart request could not be parsed
+  remediation: Verify correct content type per part
+- status: 400
+  title: Client disconnected
+  cause: Client disconnected before request completion
+  remediation: Maintain the connection throughout processing
+- status: 401
+  title: Unauthorized
+  cause: Missing or expired token, or access token in the wrong format
+  remediation: Include valid authentication credentials (bearer JWT)
+- status: 403
+  title: Forbidden
+  cause: Invalid or expired guest ID; insufficient permissions
+  remediation: Verify headers and account access rights
+- status: 404
+  title: Not Found
+  cause: Requested resource does not exist
+  remediation: Confirm correct endpoint and valid identifiers
+- status: 405
+  title: Method Not Allowed
+  cause: Resource does not accept the HTTP method used
+  remediation: Use the correct HTTP method for the endpoint
+- status: 406
+  title: Not Acceptable
+  cause: Accept header specifies an unsupported content type
+  remediation: Match the Accept header to supported formats
+- status: 408
+  title: Request Timeout
+  cause: Network issues or large-payload processing delays
+  remediation: Check connection and retry later
+- status: 409
+  title: Conflict
+  cause: Resource state conflicts with the operation (e.g. envelope in invalid state)
+  remediation: Resolve state before retrying
+- status: 410
+  title: Gone
+  cause: Requested resource is no longer available
+  remediation: Resubmit the original request
+- status: 413
+  title: Content too large
+  cause: File exceeds the size limit
+  remediation: Reduce file size
+- status: 415
+  title: Unsupported Media Type
+  cause: File format or media type not supported
+  remediation: Use supported formats; include type parameter
+- status: 422
+  title: Unprocessable Entity
+  cause: Semantic issues in a well-formed request
+  remediation: Check validation errors in the response
+- status: 429
+  title: Too Many Requests
+  cause: Exceeded the request rate limit
+  remediation: Wait per the retry-after value and reduce request frequency
+- status: 500
+  title: Internal Server Error
+  cause: Server-side failure or unhandled exception
+  remediation: Retry later; contact support if persistent

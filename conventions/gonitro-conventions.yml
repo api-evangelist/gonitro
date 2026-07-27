@@ -1,0 +1,68 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  https://developers.gonitro.com/docs/getting-started/basic-setup;
+  https://developers.gonitro.com/docs/build-nitro/good-practices;
+  https://developers.gonitro.com/docs/build-nitro/errors;
+  https://learn.microsoft.com/en-us/connectors/nitropdfservices/;
+  openapi/gonitro-sign-openapi.json
+api_base_url: https://api.gonitro.dev
+authentication:
+  style: oauth2-client-credentials-bearer-jwt
+  token_endpoint: https://api.gonitro.dev/oauth/token
+  header: 'Authorization: Bearer <access_token>'
+  ref: authentication/gonitro-authentication.yml
+idempotency:
+  supported: false
+  note: >-
+    No idempotency-key header or parameter is documented for the Nitro APIs.
+    Safety is achieved through the asynchronous job model (a job is created once
+    and polled) rather than client-supplied idempotency keys.
+pagination:
+  style: not-documented
+  note: >-
+    List endpoints (List Envelopes, List Documents, List Participants, List
+    Fields) return an `items` array in the JSON response. The getting-started
+    'Get Envelopes' walkthrough references a paginated response, but explicit
+    cursor/offset parameters are not published in the reference at capture time.
+  response_field: items
+async_jobs:
+  model: >-
+    Long-running conversions, transformations, and extractions may run
+    asynchronously. Submit the operation, receive a jobID, then poll job status
+    and retrieve the result.
+  status_operation: openapi/gonitro-pdf-services-openapi.json#getJobStatus
+  result_operation: openapi/gonitro-pdf-services-openapi.json#getJobResult
+  callback: >-
+    PDF Services supports a per-request callback (delivery block) that POSTs
+    {jobID, location} once the job completes. See asyncapi/.
+output_negotiation:
+  header: Accept
+  note: >-
+    Conversions and Transformations return JSON or binary depending on the
+    Accept header (default application/octet-stream). Extractions always return
+    JSON.
+rate_limiting:
+  documented: true
+  connector_limit: 100 requests per 60 seconds per connection (Microsoft connector)
+  retry_signal: retry-after (referenced by the 429 Too Many Requests error)
+  ref: errors/gonitro-error-codes.yml
+error_envelope:
+  format: rfc9457
+  media_type: application/problem+json
+  fields: [type, title, status, detail, extensions]
+  ref: errors/gonitro-problem-types.yml
+versioning:
+  scheme: single-version-public-api
+  note: >-
+    Public API launched September 2025; changes are additive with occasional
+    deprecations announced in the changelog. Nitro states a commitment to
+    backwards compatibility in its good-practices guidance.
+  ref: lifecycle/gonitro-lifecycle.yml
+platform_limits:
+  max_file_size: 100 MB per request
+  max_pages: 500 pages per individual document
+  retention: input and output files deleted ~15 minutes after completion
+webhooks:
+  ref: asyncapi/gonitro-sign-asyncapi.yml
+  signing: RFC 9421 HTTP Message Signatures (HMAC-SHA256) for Sign webhooks

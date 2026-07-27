@@ -1,0 +1,29 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  https://developers.gonitro.com/docs/api-reference/changelog;
+  https://developers.gonitro.com/docs/build-nitro/good-practices;
+  https://status.gonitro.com; openapi/gonitro-sign-openapi.json
+versioning:
+  scheme: single-version-public-api
+  current: v1 (public)
+  launched: '2025-09'
+  docs: https://developers.gonitro.com/docs/getting-started/basic-setup
+  note: >-
+    Nitro publishes one public API surface on api.gonitro.dev. Changes are
+    predominantly additive; the good-practices guide states a commitment to
+    backwards compatibility.
+deprecation:
+  policy: announced-in-changelog
+  docs: https://developers.gonitro.com/docs/api-reference/changelog
+  sunset_header: false
+  examples:
+  - date: '2026-03'
+    detail: >-
+      Three Sign endpoints deprecated and replaced by "Create Document by
+      Envelope ID".
+status_page: https://status.gonitro.com
+sla:
+  url: https://www.gonitro.com/legal/terms-of-service
+  note: Uptime commitments governed by enterprise agreements; no public numeric SLA published in developer docs.
+deprecated_operations: []

@@ -1,0 +1,98 @@
+asyncapi: 3.0.0
+info:
+  title: Nitro Sign & PDF Services Webhooks
+  version: 1.0.0
+  description: >-
+    Event surface for Nitro. Sign delivers envelope lifecycle webhooks (HTTP
+    POST) signed with RFC 9421 HTTP Message Signatures (HMAC-SHA256; headers
+    Content-Digest, Signature-Input, Signature). One webhook URL per application
+    is registered in the Nitro admin UI with the enabled events. PDF Services
+    supports a per-request completion callback that POSTs {jobID, location}.
+    Sign webhook delivery is documented as forthcoming in an upcoming release;
+    event names and payload shape below are captured from the published webhook
+    documentation.
+  x-generated:
+    generated: '2026-07-19'
+    method: generated
+    source: https://developers.gonitro.com/docs/build-nitro/webhook
+    spec_type: AsyncAPI
+defaultContentType: application/json
+servers:
+  subscriber:
+    host: your-endpoint.example.com
+    protocol: https
+    description: Your registered HTTPS webhook receiver.
+channels:
+  signEvents:
+    address: '{webhookUrl}'
+    description: Sign envelope lifecycle events delivered to the registered application webhook URL.
+    parameters:
+      webhookUrl:
+        description: The HTTPS URL registered in the Nitro admin UI.
+    messages:
+      EnvelopeCreated: { $ref: '#/components/messages/SignEvent' }
+      EnvelopeDocumentAdded: { $ref: '#/components/messages/SignEvent' }
+      EnvelopeDocumentDeleted: { $ref: '#/components/messages/SignEvent' }
+      EnvelopeSentForSignature: { $ref: '#/components/messages/SignEvent' }
+      EnvelopeCancelled: { $ref: '#/components/messages/SignEvent' }
+      SignatureRequestReassigned: { $ref: '#/components/messages/SignEvent' }
+      SignatureRequestDeclined: { $ref: '#/components/messages/SignEvent' }
+      SignatureRequestSigned: { $ref: '#/components/messages/SignEvent' }
+      EnvelopeSigningCompleted: { $ref: '#/components/messages/SignEvent' }
+      EnvelopeSealed: { $ref: '#/components/messages/SignEvent' }
+      OwnerMessaged: { $ref: '#/components/messages/SignEvent' }
+  pdfJobCallback:
+    address: '{callbackUrl}'
+    description: Per-request PDF Services completion callback (configured in the request delivery block).
+    parameters:
+      callbackUrl:
+        description: The callback URL supplied in the request delivery block.
+    messages:
+      JobCompleted: { $ref: '#/components/messages/JobCallback' }
+operations:
+  receiveSignEvent:
+    action: receive
+    channel: { $ref: '#/channels/signEvents' }
+    summary: Receive a signed Sign envelope lifecycle event.
+  receiveJobCallback:
+    action: receive
+    channel: { $ref: '#/channels/pdfJobCallback' }
+    summary: Receive a PDF Services job-completion callback.
+components:
+  messages:
+    SignEvent:
+      name: SignEvent
+      contentType: application/json
+      summary: A Sign envelope lifecycle event (RFC 9421 signed).
+      payload:
+        type: object
+        properties:
+          id: { type: string, description: Unique event identifier }
+          type:
+            type: string
+            description: Event type
+            enum:
+            - EnvelopeCreated
+            - EnvelopeDocumentAdded
+            - EnvelopeDocumentDeleted
+            - EnvelopeSentForSignature
+            - EnvelopeCancelled
+            - SignatureRequestReassigned
+            - SignatureRequestDeclined
+            - SignatureRequestSigned
+            - EnvelopeSigningCompleted
+            - EnvelopeSealed
+            - OwnerMessaged
+          created: { type: string, format: date-time, description: UTC timestamp }
+          data: { type: object, description: Event-specific payload (e.g. envelope, participant references) }
+        required: [id, type, created, data]
+    JobCallback:
+      name: JobCallback
+      contentType: application/json
+      summary: PDF Services async job completion callback.
+      payload:
+        type: object
+        properties:
+          jobID: { type: string, format: uuid }
+          location: { type: string, format: uri, description: URL to retrieve the job result }
+        required: [jobID, location]

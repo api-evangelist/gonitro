@@ -1,0 +1,111 @@
+generated: '2026-07-19'
+method: derived
+format: rfc9457
+source: openapi/gonitro-sign-openapi.json
+envelope_fields:
+- type
+- title
+- status
+- detail
+- instance
+note: Sign API errors use application/problem+json (RFC 9457). Some responses also offer an application/json
+  variant. Titles/types taken from the problem-detail schemas in the spec.
+problems:
+- status: 400
+  schema: BadRequestProblemDetail
+  media: application/problem+json
+  description: Invalid request
+  example_operations:
+  - convertFile
+  - createDocument
+  - createEnvelope
+  - createField
+  - createParticipant
+  - deleteEnvelope
+- status: 400
+  schema: OAuth2ErrorResponse
+  media: application/json
+  description: Bad Request
+  example_operations:
+  - getTokenRfc6749
+- status: 401
+  schema: OAuth2ErrorResponse
+  media: application/json
+  description: Unauthorized
+  example_operations:
+  - getTokenRfc6749
+- status: 401
+  schema: UnauthorizedProblemDetail
+  media: application/problem+json
+  description: Unauthorized - Invalid or missing JWT token
+  example_operations:
+  - cancelEnvelope
+  - convertFile
+  - createDocument
+  - createEnvelope
+  - createField
+  - createParticipant
+- status: 404
+  schema: DocumentNotFoundProblemDetail
+  media: application/problem+json
+  description: Document not found
+  example_operations:
+  - deleteDocument
+  - updateDocument
+- status: 404
+  schema: NotFoundProblemDetail
+  media: application/problem+json
+  description: Envelope not found
+  example_operations:
+  - cancelEnvelope
+  - createField
+  - createParticipant
+  - deleteField
+  - deleteFields
+  - deleteParticipant
+- status: 409
+  schema: EnvelopeInInvalidStateProblemDetail
+  media: application/problem+json
+  description: Envelope cannot be modified
+  example_operations:
+  - cancelEnvelope
+  - deleteDocument
+  - downloadSealedDocument
+  - downloadSealedEnvelope
+  - listSignerSigningUrls
+  - reorderDocuments
+- status: 413
+  schema: ContentTooLargeProblemDetail
+  media: application/problem+json
+  description: Content too large
+  example_operations:
+  - convertFile
+  - createDocument
+- status: 415
+  schema: UnsupportedMediaTypeDetail
+  media: application/problem+json
+  description: File format not supported
+  example_operations:
+  - convertFile
+  - createDocument
+- status: 422
+  schema: UnprocessableEntityProblemDetail
+  media: application/problem+json
+  description: The requested participant does not exist on the given package
+  example_operations:
+  - createDocument
+  - createField
+- status: 500
+  schema: InternalServerErrorProblemDetail
+  media: application/json
+  description: Internal server error during conversion process
+  example_operations:
+  - convertFile
+  - downloadConvertedFile
+  - getJobStatus
+- status: 500
+  schema: OAuth2ErrorResponse
+  media: application/json
+  description: Internal Server Error
+  example_operations:
+  - getTokenRfc6749

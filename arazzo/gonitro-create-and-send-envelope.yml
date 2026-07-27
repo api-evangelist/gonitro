@@ -1,0 +1,95 @@
+arazzo: 1.0.1
+info:
+  title: Create and send a Nitro Sign envelope
+  version: 1.0.0
+  summary: Authenticate, create an envelope, add a document, participant, and signature field, then send it for signing.
+sourceDescriptions:
+- name: sign
+  url: ../openapi/gonitro-sign-openapi.json
+  type: openapi
+workflows:
+- workflowId: createAndSendEnvelope
+  summary: End-to-end Nitro Sign envelope creation and dispatch.
+  inputs:
+    type: object
+    properties:
+      clientID: { type: string }
+      clientSecret: { type: string }
+      envelopeName: { type: string }
+      signerName: { type: string }
+      signerEmail: { type: string }
+  steps:
+  - stepId: getToken
+    operationId: getTokenRfc6749
+    requestBody:
+      contentType: application/json
+      payload:
+        clientID: $inputs.clientID
+        clientSecret: $inputs.clientSecret
+    outputs:
+      accessToken: $response.body#/access_token
+  - stepId: createEnvelope
+    operationId: createEnvelope
+    parameters:
+    - name: Authorization
+      in: header
+      value: "Bearer {$steps.getToken.outputs.accessToken}"
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.envelopeName
+    outputs:
+      envelopeID: $response.body#/id
+  - stepId: createDocument
+    operationId: createDocument
+    parameters:
+    - name: Authorization
+      in: header
+      value: "Bearer {$steps.getToken.outputs.accessToken}"
+    - name: envelopeID
+      in: path
+      value: $steps.createEnvelope.outputs.envelopeID
+    outputs:
+      documentID: $response.body#/id
+  - stepId: createParticipant
+    operationId: createParticipant
+    parameters:
+    - name: Authorization
+      in: header
+      value: "Bearer {$steps.getToken.outputs.accessToken}"
+    - name: envelopeID
+      in: path
+      value: $steps.createEnvelope.outputs.envelopeID
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.signerName
+        email: $inputs.signerEmail
+        role: SIGNER
+    outputs:
+      participantID: $response.body#/id
+  - stepId: createField
+    operationId: createField
+    parameters:
+    - name: Authorization
+      in: header
+      value: "Bearer {$steps.getToken.outputs.accessToken}"
+    - name: envelopeID
+      in: path
+      value: $steps.createEnvelope.outputs.envelopeID
+    - name: documentID
+      in: path
+      value: $steps.createDocument.outputs.documentID
+    outputs:
+      fieldID: $response.body#/id
+  - stepId: sendForSigning
+    operationId: sendForSigning
+    parameters:
+    - name: Authorization
+      in: header
+      value: "Bearer {$steps.getToken.outputs.accessToken}"
+    - name: envelopeID
+      in: path
+      value: $steps.createEnvelope.outputs.envelopeID
+  outputs:
+    envelopeID: $steps.createEnvelope.outputs.envelopeID

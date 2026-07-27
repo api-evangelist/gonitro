@@ -1,0 +1,26 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  npm and PyPI registry searches; developers.gonitro.com docs; github.com/Nitro
+notes: >-
+  Nitro publishes no first-party client SDK libraries on npm, PyPI, Maven,
+  NuGet, RubyGems, or crates.io (the "nitro"/"nitro-pdf" packages on npm are
+  unrelated third-party projects). The API is consumed directly over REST.
+  Nitro does distribute two first-party developer artifacts: a local MCP server
+  bundle and a Postman collection. These are catalogued below and in mcp/.
+packages:
+- language: node
+  registry: vendor-download
+  name: nitro-pdf-services-node (MCP bundle)
+  url: https://downloads.gonitro.com/mcp/nitro-pdf-services-node-0.22.0.mcpb
+  install: Install the .mcpb into Claude Desktop (Early Access)
+  kind: mcp-server
+  official: true
+- language: json
+  registry: github
+  name: Nitro Automation Platform APIs (Postman collection)
+  url: https://raw.githubusercontent.com/Nitro/nitro-platform-sample-code/main/postman/Nitro%20Automation%20Platform%20APIs.postman_collection.json
+  install: Import into Postman
+  kind: postman-collection
+  official: true
+sdks: []

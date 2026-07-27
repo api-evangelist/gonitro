@@ -1,0 +1,41 @@
+generated: '2026-07-19'
+method: searched
+source: https://developers.gonitro.com/docs/api-reference/changelog
+scheme: dated
+current_version: v1 (public)
+note: Recent window captured from the live changelog; the docs changelog is the source of truth.
+entries:
+- date: '2026-07'
+  breaking: false
+  additions:
+  - Extractions - "Extract Fillable Form Data" endpoint (extract existing AcroForm field data as JSON, XFDF, FDF, or CSV)
+- date: '2026-06'
+  breaking: false
+  additions:
+  - Extractions - "Smart Detect Form Fields" (returns bounding boxes for suggested field placement)
+  - Transformations - "Compress" and "Optimize" endpoints
+  - Generations - "Fill Forms" and "Create Fillable Forms" endpoints; Fill Forms now accepts XFDF and FDF data files
+- date: '2026-05'
+  breaking: false
+  additions:
+  - Transformations - Watermark, Optimize, and OCR endpoints
+  - Extractions - Invoice data extraction (with OCR for scanned documents)
+  - Conversions - "PDF to PDF/A" archival conversion
+  highlights:
+  - Platform limits increased - max file size 25 MB to 100 MB per request; max pages 200 to 500 per document
+- date: '2026-03'
+  breaking: true
+  changes:
+  - Three Sign endpoints deprecated and replaced by "Create Document by Envelope ID"
+- date: '2026-02'
+  breaking: false
+  additions:
+  - 17 new endpoints across Sign, Transformations, Extractions, and Conversions
+- date: '2026-01'
+  breaking: false
+  additions:
+  - Update and multi-field support for field management endpoints
+- date: '2025-09'
+  breaking: false
+  highlights:
+  - Public API launch (Nitro Sign and PDF Services)
