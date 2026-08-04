@@ -1,0 +1,769 @@
+{
+  "info": {
+    "_postman_id": "bbf671bc-a9b4-4438-a752-35c31072d32a",
+    "name": "Nitro PDF Services Public Authentication Jobs API",
+    "description": "REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro's published per-tool OpenAPI reference fragments; schemas preserved verbatim.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:44:48.000Z",
+    "updatedAt": "2026-07-28T01:44:48.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-bbf671bc-a9b4-4438-a752-35c31072d32a"
+  },
+  "item": [
+    {
+      "name": "jobs",
+      "item": [
+        {
+          "name": "{jobID}",
+          "item": [
+            {
+              "name": "status",
+              "item": [
+                {
+                  "name": "Get Job Status",
+                  "id": "ef25edce-3bb0-43ce-8131-9efb31f2af69",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{bearerToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/jobs/:jobID/status",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "jobs",
+                        ":jobID",
+                        "status"
+                      ],
+                      "variable": [
+                        {
+                          "id": "864671e9-cc24-4ad3-8718-da69637204b9",
+                          "key": "jobID",
+                          "value": "<string>",
+                          "description": "(Required) The unique identifier of the job."
+                        }
+                      ]
+                    },
+                    "description": "Get status of asynchronous Job.\n\n A Job is Nitro\u2019s asynchronous file processing for PDF Transformation, Conversion, and Extraction operations."
+                  },
+                  "response": [
+                    {
+                      "id": "e3f74c9b-3721-4b19-ac0a-38b4cb90968a",
+                      "name": "Job status and status-related data. \n Available statuses: `running`, `completed`, `failed`, `canceled`.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/jobs/:jobID/status",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "jobs",
+                            ":jobID",
+                            "status"
+                          ],
+                          "variable": [
+                            {
+                              "key": "jobID"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"jobID\": \"<string>\",\n  \"status\": \"running\",\n  \"progress\": 0\n}",
+                      "createdAt": "2026-07-28T01:44:48.000Z",
+                      "updatedAt": "2026-07-28T01:44:48.000Z",
+                      "uid": "35240-e3f74c9b-3721-4b19-ac0a-38b4cb90968a"
+                    },
+                    {
+                      "id": "1a219490-3ce6-4df0-8948-eab47a4ac9de",
+                      "name": "400 response",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/jobs/:jobID/status",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "jobs",
+                            ":jobID",
+                            "status"
+                          ],
+                          "variable": [
+                            {
+                              "key": "jobID"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T01:44:48.000Z",
+                      "updatedAt": "2026-07-28T01:44:48.000Z",
+                      "uid": "35240-1a219490-3ce6-4df0-8948-eab47a4ac9de"
+                    },
+                    {
+                      "id": "3e0b128e-c75f-4bd8-bd26-a608dbf6cfbc",
+                      "name": "401 response",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/jobs/:jobID/status",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "jobs",
+                            ":jobID",
+                            "status"
+                          ],
+                          "variable": [
+                            {
+                              "key": "jobID"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T01:44:48.000Z",
+                      "updatedAt": "2026-07-28T01:44:48.000Z",
+                      "uid": "35240-3e0b128e-c75f-4bd8-bd26-a608dbf6cfbc"
+                    },
+                    {
+                      "id": "4b8e03c9-6f7d-446f-addd-fdf4a411961a",
+                      "name": "404 response",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/jobs/:jobID/status",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "jobs",
+                            ":jobID",
+                            "status"
+                          ],
+                          "variable": [
+                            {
+                              "key": "jobID"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T01:44:48.000Z",
+                      "updatedAt": "2026-07-28T01:44:48.000Z",
+                      "uid": "35240-4b8e03c9-6f7d-446f-addd-fdf4a411961a"
+                    },
+                    {
+                      "id": "7d3ce930-aee0-4150-a56e-361d3e3d057d",
+                      "name": "410 response",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/jobs/:jobID/status",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "jobs",
+                            ":jobID",
+                            "status"
+                          ],
+                          "variable": [
+                            {
+                              "key": "jobID"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Gone",
+                      "code": 410,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T01:44:48.000Z",
+                      "updatedAt": "2026-07-28T01:44:48.000Z",
+                      "uid": "35240-7d3ce930-aee0-4150-a56e-361d3e3d057d"
+                    },
+                    {
+                      "id": "990f2973-20f5-42ed-ba5d-1175a28ed987",
+                      "name": "413 response",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/jobs/:jobID/status",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "jobs",
+                            ":jobID",
+                            "status"
+                          ],
+                          "variable": [
+                            {
+                              "key": "jobID"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Request Entity Too Large",
+                      "code": 413,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T01:44:48.000Z",
+                      "updatedAt": "2026-07-28T01:44:48.000Z",
+                      "uid": "35240-990f2973-20f5-42ed-ba5d-1175a28ed987"
+                    },
+                    {
+                      "id": "582150d4-b3a5-4e8b-a237-055b7dcd8f41",
+                      "name": "422 response",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/jobs/:jobID/status",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "jobs",
+                            ":jobID",
+                            "status"
+                          ],
+                          "variable": [
+                            {
+                              "key": "jobID"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+                      "code": 422,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T01:44:48.000Z",
+                      "updatedAt": "2026-07-28T01:44:48.000Z",
+                      "uid": "35240-582150d4-b3a5-4e8b-a237-055b7dcd8f41"
+                    },
+                    {
+                      "id": "0c69e587-80fe-4d51-85b3-e02873f2faa0",
+                      "name": "500 response",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/jobs/:jobID/status",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "jobs",
+                            ":jobID",
+                            "status"
+                          ],
+                          "variable": [
+                            {
+                              "key": "jobID"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T01:44:48.000Z",
+                      "updatedAt": "2026-07-28T01:44:48.000Z",
+                      "uid": "35240-0c69e587-80fe-4d51-85b3-e02873f2faa0"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:44:48.000Z",
+                  "updatedAt": "2026-07-28T01:44:48.000Z",
+                  "uid": "35240-ef25edce-3bb0-43ce-8131-9efb31f2af69"
+                }
+              ],
+              "id": "16480397-0b68-4ae0-8f20-46c28194b455",
+              "createdAt": "2026-07-28T01:44:48.000Z",
+              "updatedAt": "2026-07-28T01:44:48.000Z",
+              "uid": "35240-16480397-0b68-4ae0-8f20-46c28194b455"
+            },
+            {
+              "name": "Get Job Result",
+              "id": "39060647-646f-4c00-965b-d3ad717501e2",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/jobs/:jobID",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "jobs",
+                    ":jobID"
+                  ],
+                  "variable": [
+                    {
+                      "id": "37f316f4-721f-4d8b-85f5-a74bc1d40018",
+                      "key": "jobID",
+                      "value": "<string>",
+                      "description": "(Required) The unique identifier of the job."
+                    }
+                  ]
+                },
+                "description": "Get result of asynchronous Job.\n\n A Job is Nitro\u2019s asynchronous file processing for PDF Transformation, Conversion, and Extraction operations."
+              },
+              "response": [
+                {
+                  "id": "beb59a44-5731-4a30-945b-2be558980691",
+                  "name": "Job result",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/jobs/:jobID",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "jobs",
+                        ":jobID"
+                      ],
+                      "variable": [
+                        {
+                          "key": "jobID"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"jobID\": \"<string>\",\n  \"status\": \"completed\",\n  \"result\": {\n    \"file\": {\n      \"URL\": \"<uri>\",\n      \"contentType\": \"<string>\",\n      \"metadata\": {\n        \"fileSizeBytes\": \"<number>\",\n        \"pageCount\": \"<number>\"\n      }\n    }\n  }\n}",
+                  "createdAt": "2026-07-28T01:44:48.000Z",
+                  "updatedAt": "2026-07-28T01:44:48.000Z",
+                  "uid": "35240-beb59a44-5731-4a30-945b-2be558980691"
+                },
+                {
+                  "id": "a2128d65-db7c-4fdb-b97e-dfcd1c8444b9",
+                  "name": "400 response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/jobs/:jobID",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "jobs",
+                        ":jobID"
+                      ],
+                      "variable": [
+                        {
+                          "key": "jobID"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "text",
+                  "header": [],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": null,
+                  "createdAt": "2026-07-28T01:44:48.000Z",
+                  "updatedAt": "2026-07-28T01:44:48.000Z",
+                  "uid": "35240-a2128d65-db7c-4fdb-b97e-dfcd1c8444b9"
+                },
+                {
+                  "id": "62210f7f-3ba0-4d2f-895a-41cb1573e61d",
+                  "name": "401 response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/jobs/:jobID",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "jobs",
+                        ":jobID"
+                      ],
+                      "variable": [
+                        {
+                          "key": "jobID"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "text",
+                  "header": [],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": null,
+                  "createdAt": "2026-07-28T01:44:48.000Z",
+                  "updatedAt": "2026-07-28T01:44:48.000Z",
+                  "uid": "35240-62210f7f-3ba0-4d2f-895a-41cb1573e61d"
+                },
+                {
+                  "id": "2384f7f1-e8ce-48a2-9eb1-d352f9a398b7",
+                  "name": "404 response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/jobs/:jobID",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "jobs",
+                        ":jobID"
+                      ],
+                      "variable": [
+                        {
+                          "key": "jobID"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "text",
+                  "header": [],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": null,
+                  "createdAt": "2026-07-28T01:44:48.000Z",
+                  "updatedAt": "2026-07-28T01:44:48.000Z",
+                  "uid": "35240-2384f7f1-e8ce-48a2-9eb1-d352f9a398b7"
+                },
+                {
+                  "id": "f8fbe816-7de8-4bf3-a325-25b923323a51",
+                  "name": "413 response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/jobs/:jobID",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "jobs",
+                        ":jobID"
+                      ],
+                      "variable": [
+                        {
+                          "key": "jobID"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Request Entity Too Large",
+                  "code": 413,
+                  "_postman_previewlanguage": "text",
+                  "header": [],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": null,
+                  "createdAt": "2026-07-28T01:44:48.000Z",
+                  "updatedAt": "2026-07-28T01:44:48.000Z",
+                  "uid": "35240-f8fbe816-7de8-4bf3-a325-25b923323a51"
+                },
+                {
+                  "id": "a3cb1e59-9306-4d9e-ba11-009660817917",
+                  "name": "422 response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/jobs/:jobID",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "jobs",
+                        ":jobID"
+                      ],
+                      "variable": [
+                        {
+                          "key": "jobID"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+                  "code": 422,
+                  "_postman_previewlanguage": "text",
+                  "header": [],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": null,
+                  "createdAt": "2026-07-28T01:44:48.000Z",
+                  "updatedAt": "2026-07-28T01:44:48.000Z",
+                  "uid": "35240-a3cb1e59-9306-4d9e-ba11-009660817917"
+                },
+                {
+                  "id": "e7beae0a-c628-46e9-a26b-fee9f934a352",
+                  "name": "500 response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/jobs/:jobID",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "jobs",
+                        ":jobID"
+                      ],
+                      "variable": [
+                        {
+                          "key": "jobID"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "text",
+                  "header": [],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": null,
+                  "createdAt": "2026-07-28T01:44:48.000Z",
+                  "updatedAt": "2026-07-28T01:44:48.000Z",
+                  "uid": "35240-e7beae0a-c628-46e9-a26b-fee9f934a352"
+                }
+              ],
+              "createdAt": "2026-07-28T01:44:48.000Z",
+              "updatedAt": "2026-07-28T01:44:48.000Z",
+              "uid": "35240-39060647-646f-4c00-965b-d3ad717501e2"
+            }
+          ],
+          "id": "12bb2592-a0df-409e-bede-03ffb28a98b8",
+          "createdAt": "2026-07-28T01:44:48.000Z",
+          "updatedAt": "2026-07-28T01:44:48.000Z",
+          "uid": "35240-12bb2592-a0df-409e-bede-03ffb28a98b8"
+        }
+      ],
+      "id": "d8c8ab1a-3c83-4aad-b7e1-a2eb8756fd8b",
+      "createdAt": "2026-07-28T01:44:48.000Z",
+      "updatedAt": "2026-07-28T01:44:48.000Z",
+      "uid": "35240-d8c8ab1a-3c83-4aad-b7e1-a2eb8756fd8b"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.gonitro.dev"
+    }
+  ]
+}

@@ -1,0 +1,686 @@
+{
+  "info": {
+    "_postman_id": "8d046ac2-77e1-4c0c-a709-525fae9e6477",
+    "name": "Nitro PDF Services Public Authentication Transformations API",
+    "description": "REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro's published per-tool OpenAPI reference fragments; schemas preserved verbatim.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:44:52.000Z",
+    "updatedAt": "2026-07-28T01:44:52.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-8d046ac2-77e1-4c0c-a709-525fae9e6477"
+  },
+  "item": [
+    {
+      "name": "transformations",
+      "item": [
+        {
+          "name": "Watermark PDF",
+          "id": "acfd94bc-32fa-4f92-b86f-36714ac43de3",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Prefer",
+                "value": "respond-async"
+              },
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "description": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                  "key": "method",
+                  "value": "watermark",
+                  "type": "text"
+                },
+                {
+                  "description": "(Required) Parameters controlling watermark placement, sizing, and appearance on each PDF page.",
+                  "key": "params",
+                  "value": "[object Object]",
+                  "type": "text"
+                },
+                {
+                  "description": "(Required) ",
+                  "key": "files",
+                  "value": "<binary>,<binary>",
+                  "type": "text"
+                },
+                {
+                  "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                  "key": "delivery",
+                  "value": "[object Object]",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transformations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transformations"
+              ]
+            },
+            "description": "Overlay a watermark image onto specific pages of a PDF document\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: compress, delete, flatten, merge, ocr, optimize, protect, redact, rotate, set-properties, split, unprotect, watermark."
+          },
+          "response": [
+            {
+              "id": "10f1669e-d9f0-447d-bf6a-1c396abbc396",
+              "name": "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\n JSON responses include a file URL for synchronous tasks or a job status for asynchronous tasks.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Parameters controlling watermark placement, sizing, and appearance on each PDF page.",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/transformations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transformations"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"file\": {\n    \"URL\": \"<uri>\",\n    \"contentType\": \"<string>\",\n    \"metadata\": {\n      \"fileSizeBytes\": \"<number>\",\n      \"pageCount\": \"<number>\"\n    }\n  }\n}",
+              "createdAt": "2026-07-28T01:44:52.000Z",
+              "updatedAt": "2026-07-28T01:44:52.000Z",
+              "uid": "35240-10f1669e-d9f0-447d-bf6a-1c396abbc396"
+            },
+            {
+              "id": "39a76eb7-1ba9-4910-94a3-6b435531407b",
+              "name": "400 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Parameters controlling watermark placement, sizing, and appearance on each PDF page.",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/transformations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transformations"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:52.000Z",
+              "updatedAt": "2026-07-28T01:44:52.000Z",
+              "uid": "35240-39a76eb7-1ba9-4910-94a3-6b435531407b"
+            },
+            {
+              "id": "b74c8b62-3c10-4f11-a8c0-1705735c8c22",
+              "name": "401 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Parameters controlling watermark placement, sizing, and appearance on each PDF page.",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/transformations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transformations"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:52.000Z",
+              "updatedAt": "2026-07-28T01:44:52.000Z",
+              "uid": "35240-b74c8b62-3c10-4f11-a8c0-1705735c8c22"
+            },
+            {
+              "id": "f1459041-494f-48ce-86bd-6c659183681d",
+              "name": "404 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Parameters controlling watermark placement, sizing, and appearance on each PDF page.",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/transformations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transformations"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:52.000Z",
+              "updatedAt": "2026-07-28T01:44:52.000Z",
+              "uid": "35240-f1459041-494f-48ce-86bd-6c659183681d"
+            },
+            {
+              "id": "1fb8b065-b6a4-4416-be12-1df5301c0a4a",
+              "name": "413 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Parameters controlling watermark placement, sizing, and appearance on each PDF page.",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/transformations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transformations"
+                  ]
+                }
+              },
+              "status": "Request Entity Too Large",
+              "code": 413,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:52.000Z",
+              "updatedAt": "2026-07-28T01:44:52.000Z",
+              "uid": "35240-1fb8b065-b6a4-4416-be12-1df5301c0a4a"
+            },
+            {
+              "id": "217923c3-e5bf-4457-b2fb-10e0fe28381f",
+              "name": "415 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Parameters controlling watermark placement, sizing, and appearance on each PDF page.",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/transformations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transformations"
+                  ]
+                }
+              },
+              "status": "Unsupported Media Type",
+              "code": 415,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:52.000Z",
+              "updatedAt": "2026-07-28T01:44:52.000Z",
+              "uid": "35240-217923c3-e5bf-4457-b2fb-10e0fe28381f"
+            },
+            {
+              "id": "b84c0624-d0ca-4ede-ac44-09e147a07104",
+              "name": "422 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Parameters controlling watermark placement, sizing, and appearance on each PDF page.",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/transformations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transformations"
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:52.000Z",
+              "updatedAt": "2026-07-28T01:44:52.000Z",
+              "uid": "35240-b84c0624-d0ca-4ede-ac44-09e147a07104"
+            },
+            {
+              "id": "bae37a41-2ecd-44e7-b118-e9fd259179d0",
+              "name": "500 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Parameters controlling watermark placement, sizing, and appearance on each PDF page.",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/transformations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transformations"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:52.000Z",
+              "updatedAt": "2026-07-28T01:44:52.000Z",
+              "uid": "35240-bae37a41-2ecd-44e7-b118-e9fd259179d0"
+            }
+          ],
+          "createdAt": "2026-07-28T01:44:52.000Z",
+          "updatedAt": "2026-07-28T01:44:52.000Z",
+          "uid": "35240-acfd94bc-32fa-4f92-b86f-36714ac43de3"
+        }
+      ],
+      "id": "33a3bf9f-c3ca-45ff-907d-e64f26e03052",
+      "createdAt": "2026-07-28T01:44:52.000Z",
+      "updatedAt": "2026-07-28T01:44:52.000Z",
+      "uid": "35240-33a3bf9f-c3ca-45ff-907d-e64f26e03052"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.gonitro.dev"
+    }
+  ]
+}

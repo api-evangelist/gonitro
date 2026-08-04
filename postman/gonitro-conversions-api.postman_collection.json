@@ -1,0 +1,609 @@
+{
+  "info": {
+    "_postman_id": "28f8c7ae-7dce-4eee-9171-6333d746f521",
+    "name": "Nitro PDF Services Public Authentication Conversions API",
+    "description": "REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro's published per-tool OpenAPI reference fragments; schemas preserved verbatim.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:44:42.000Z",
+    "updatedAt": "2026-07-28T01:44:42.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-28f8c7ae-7dce-4eee-9171-6333d746f521"
+  },
+  "item": [
+    {
+      "name": "conversions",
+      "item": [
+        {
+          "name": "PDF to PDF/A",
+          "id": "a85ff9e1-831f-4259-a364-2c6b8f79f8f9",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Prefer",
+                "value": "respond-async"
+              },
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "description": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                  "key": "method",
+                  "value": "convert",
+                  "type": "text"
+                },
+                {
+                  "description": "(Required) ",
+                  "key": "params",
+                  "value": "[object Object]",
+                  "type": "text"
+                },
+                {
+                  "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                  "key": "file",
+                  "type": "file",
+                  "value": null
+                },
+                {
+                  "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                  "key": "delivery",
+                  "value": "[object Object]",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/conversions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "conversions"
+              ]
+            },
+            "description": "Convert a PDF file to PDF/A archival format\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: imgtopdf, misctopdf, mstopdf, pdfa, pdftoimg, pdftoms."
+          },
+          "response": [
+            {
+              "id": "b9c498a3-c272-4cb8-8a6a-d8bf0d1aba10",
+              "name": "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\n JSON responses include a file URL for synchronous tasks or a job status for asynchronous tasks.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/conversions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "conversions"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"file\": {\n    \"URL\": \"<uri>\",\n    \"contentType\": \"<string>\",\n    \"metadata\": {\n      \"fileSizeBytes\": \"<number>\",\n      \"pageCount\": \"<number>\"\n    }\n  }\n}",
+              "createdAt": "2026-07-28T01:44:42.000Z",
+              "updatedAt": "2026-07-28T01:44:42.000Z",
+              "uid": "35240-b9c498a3-c272-4cb8-8a6a-d8bf0d1aba10"
+            },
+            {
+              "id": "5ea7387e-7753-4721-a78e-3d8332083b39",
+              "name": "400 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/conversions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "conversions"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:42.000Z",
+              "updatedAt": "2026-07-28T01:44:42.000Z",
+              "uid": "35240-5ea7387e-7753-4721-a78e-3d8332083b39"
+            },
+            {
+              "id": "a27bfa8a-c468-4305-bbce-8bf6fd0e1725",
+              "name": "401 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/conversions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "conversions"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:42.000Z",
+              "updatedAt": "2026-07-28T01:44:42.000Z",
+              "uid": "35240-a27bfa8a-c468-4305-bbce-8bf6fd0e1725"
+            },
+            {
+              "id": "1ddeca63-b41c-4b80-80e3-27bb49af41fa",
+              "name": "404 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/conversions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "conversions"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:42.000Z",
+              "updatedAt": "2026-07-28T01:44:42.000Z",
+              "uid": "35240-1ddeca63-b41c-4b80-80e3-27bb49af41fa"
+            },
+            {
+              "id": "766d010c-5fbb-4e9d-a404-5d957a2d2f47",
+              "name": "413 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/conversions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "conversions"
+                  ]
+                }
+              },
+              "status": "Request Entity Too Large",
+              "code": 413,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:42.000Z",
+              "updatedAt": "2026-07-28T01:44:42.000Z",
+              "uid": "35240-766d010c-5fbb-4e9d-a404-5d957a2d2f47"
+            },
+            {
+              "id": "0cbee437-cd37-41e1-9d93-755fc7d96ba1",
+              "name": "422 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/conversions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "conversions"
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:42.000Z",
+              "updatedAt": "2026-07-28T01:44:42.000Z",
+              "uid": "35240-0cbee437-cd37-41e1-9d93-755fc7d96ba1"
+            },
+            {
+              "id": "e550ff0d-b036-4056-95b6-538ae6b6110a",
+              "name": "500 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/conversions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "conversions"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:42.000Z",
+              "updatedAt": "2026-07-28T01:44:42.000Z",
+              "uid": "35240-e550ff0d-b036-4056-95b6-538ae6b6110a"
+            }
+          ],
+          "createdAt": "2026-07-28T01:44:42.000Z",
+          "updatedAt": "2026-07-28T01:44:42.000Z",
+          "uid": "35240-a85ff9e1-831f-4259-a364-2c6b8f79f8f9"
+        }
+      ],
+      "id": "71338100-1c58-463e-aafa-392a9530b706",
+      "createdAt": "2026-07-28T01:44:42.000Z",
+      "updatedAt": "2026-07-28T01:44:42.000Z",
+      "uid": "35240-71338100-1c58-463e-aafa-392a9530b706"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.gonitro.dev"
+    }
+  ]
+}

@@ -1,0 +1,601 @@
+{
+  "info": {
+    "_postman_id": "e58090ae-7f9f-4f70-9101-eee4871ad324",
+    "name": "Nitro PDF Services Public Authentication Extractions API",
+    "description": "REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro's published per-tool OpenAPI reference fragments; schemas preserved verbatim.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:44:46.000Z",
+    "updatedAt": "2026-07-28T01:44:46.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-e58090ae-7f9f-4f70-9101-eee4871ad324"
+  },
+  "item": [
+    {
+      "name": "extractions",
+      "item": [
+        {
+          "name": "Extract Fillable Form Data from PDF",
+          "id": "80d682e4-c3af-4b33-9a3d-c3308bdea76c",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Prefer",
+                "value": "respond-async"
+              },
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "description": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                  "key": "method",
+                  "value": "extract-fillable-form-data",
+                  "type": "text"
+                },
+                {
+                  "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                  "key": "file",
+                  "type": "file",
+                  "value": null
+                },
+                {
+                  "key": "params",
+                  "value": "[object Object]",
+                  "type": "text"
+                },
+                {
+                  "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                  "key": "delivery",
+                  "value": "[object Object]",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/extractions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "extractions"
+              ]
+            },
+            "description": "Extract the data of a PDF's existing AcroForm \u2014 field names, current values, field types and positions \u2014 as JSON, XFDF, FDF, or CSV\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: extract-fillable-form-data, extract-invoices, forms, get-properties, pii, smart-detect-form-fields, tables, text, text-box."
+          },
+          "response": [
+            {
+              "id": "b034c07c-3771-4f6c-9b41-67fbb7358d37",
+              "name": "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\n JSON responses describe the extracted form-field data for synchronous tasks, or a job status for asynchronous tasks.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/extractions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "extractions"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"formFields\": [\n    {\n      \"pageIndex\": \"<integer>\",\n      \"fieldType\": \"ComboBox\",\n      \"name\": \"<string>\",\n      \"value\": \"<string>\",\n      \"boundingBox\": [\n        \"<number>\",\n        \"<number>\",\n        \"<number>\",\n        \"<number>\"\n      ],\n      \"choices\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"pageIndex\": \"<integer>\",\n      \"fieldType\": \"Signature\",\n      \"name\": \"<string>\",\n      \"value\": \"<string>\",\n      \"boundingBox\": [\n        \"<number>\",\n        \"<number>\",\n        \"<number>\",\n        \"<number>\"\n      ],\n      \"choices\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ]\n}",
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-b034c07c-3771-4f6c-9b41-67fbb7358d37"
+            },
+            {
+              "id": "616cb936-5dd8-4fa2-ab2a-b43889f6f95a",
+              "name": "400 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/extractions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "extractions"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-616cb936-5dd8-4fa2-ab2a-b43889f6f95a"
+            },
+            {
+              "id": "e4d2f3b4-6899-4026-95b5-45e995c3518d",
+              "name": "401 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/extractions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "extractions"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-e4d2f3b4-6899-4026-95b5-45e995c3518d"
+            },
+            {
+              "id": "a3e711c9-4b38-42c5-a3ba-b7189c3a216c",
+              "name": "404 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/extractions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "extractions"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-a3e711c9-4b38-42c5-a3ba-b7189c3a216c"
+            },
+            {
+              "id": "b22463ac-4f97-4d9b-a487-fc5425548467",
+              "name": "413 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/extractions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "extractions"
+                  ]
+                }
+              },
+              "status": "Request Entity Too Large",
+              "code": 413,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-b22463ac-4f97-4d9b-a487-fc5425548467"
+            },
+            {
+              "id": "1f0fd17f-af0b-4ed2-8d4c-104cb1098f40",
+              "name": "422 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/extractions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "extractions"
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-1f0fd17f-af0b-4ed2-8d4c-104cb1098f40"
+            },
+            {
+              "id": "43ac7fe4-1dc1-466e-85fa-9e79309b4108",
+              "name": "500 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) #### Binary file \n Standard multipart file binary upload field",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/extractions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "extractions"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-43ac7fe4-1dc1-466e-85fa-9e79309b4108"
+            }
+          ],
+          "createdAt": "2026-07-28T01:44:47.000Z",
+          "updatedAt": "2026-07-28T01:44:47.000Z",
+          "uid": "35240-80d682e4-c3af-4b33-9a3d-c3308bdea76c"
+        }
+      ],
+      "id": "fbc13dda-ad3e-4a54-8dfe-3c7b14214dc0",
+      "createdAt": "2026-07-28T01:44:46.000Z",
+      "updatedAt": "2026-07-28T01:44:46.000Z",
+      "uid": "35240-fbc13dda-ad3e-4a54-8dfe-3c7b14214dc0"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.gonitro.dev"
+    }
+  ]
+}

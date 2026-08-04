@@ -1,0 +1,469 @@
+{
+  "info": {
+    "_postman_id": "9be44fc5-1422-4167-b34e-38080637c6dd",
+    "name": "Nitro PDF Services Public Authentication Platform API",
+    "description": "REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro's published per-tool OpenAPI reference fragments; schemas preserved verbatim.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:44:49.000Z",
+    "updatedAt": "2026-07-28T01:44:49.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-9be44fc5-1422-4167-b34e-38080637c6dd"
+  },
+  "item": [
+    {
+      "name": "transformations",
+      "item": [
+        {
+          "name": "Request a transformation operation",
+          "id": "fd7285f4-420c-4f16-9a43-8a794441c290",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/transformations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transformations"
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "6d644414-0cc9-427b-bf9d-dd342907cd8f",
+              "name": "OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/transformations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transformations"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:49.000Z",
+              "updatedAt": "2026-07-28T01:44:49.000Z",
+              "uid": "35240-6d644414-0cc9-427b-bf9d-dd342907cd8f"
+            }
+          ],
+          "createdAt": "2026-07-28T01:44:49.000Z",
+          "updatedAt": "2026-07-28T01:44:49.000Z",
+          "uid": "35240-fd7285f4-420c-4f16-9a43-8a794441c290"
+        }
+      ],
+      "id": "926e3ef5-7fef-45e4-b3c0-af91f90d1de8",
+      "createdAt": "2026-07-28T01:44:49.000Z",
+      "updatedAt": "2026-07-28T01:44:49.000Z",
+      "uid": "35240-926e3ef5-7fef-45e4-b3c0-af91f90d1de8"
+    },
+    {
+      "name": "generations",
+      "item": [
+        {
+          "name": "Request a generation operation",
+          "id": "a1bc5d97-c32c-416f-8d6f-048895dfff09",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/generations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "generations"
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "0ad354b5-5b20-49b7-b45f-d70d6dec2a55",
+              "name": "OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/generations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "generations"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:49.000Z",
+              "updatedAt": "2026-07-28T01:44:49.000Z",
+              "uid": "35240-0ad354b5-5b20-49b7-b45f-d70d6dec2a55"
+            }
+          ],
+          "createdAt": "2026-07-28T01:44:49.000Z",
+          "updatedAt": "2026-07-28T01:44:49.000Z",
+          "uid": "35240-a1bc5d97-c32c-416f-8d6f-048895dfff09"
+        }
+      ],
+      "id": "98f8c352-dc19-4415-b24d-6175664ca1f7",
+      "createdAt": "2026-07-28T01:44:49.000Z",
+      "updatedAt": "2026-07-28T01:44:49.000Z",
+      "uid": "35240-98f8c352-dc19-4415-b24d-6175664ca1f7"
+    },
+    {
+      "name": "extractions",
+      "item": [
+        {
+          "name": "Request an extraction operation",
+          "id": "02308a80-5f52-4e08-8c21-fcdc839834b3",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/extractions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "extractions"
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "a431341a-9374-46aa-b5aa-9979cf2b2666",
+              "name": "OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/extractions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "extractions"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:49.000Z",
+              "updatedAt": "2026-07-28T01:44:49.000Z",
+              "uid": "35240-a431341a-9374-46aa-b5aa-9979cf2b2666"
+            }
+          ],
+          "createdAt": "2026-07-28T01:44:49.000Z",
+          "updatedAt": "2026-07-28T01:44:49.000Z",
+          "uid": "35240-02308a80-5f52-4e08-8c21-fcdc839834b3"
+        }
+      ],
+      "id": "fc6ecb3b-c912-4e38-9e95-4142858b2b07",
+      "createdAt": "2026-07-28T01:44:49.000Z",
+      "updatedAt": "2026-07-28T01:44:49.000Z",
+      "uid": "35240-fc6ecb3b-c912-4e38-9e95-4142858b2b07"
+    },
+    {
+      "name": "conversions",
+      "item": [
+        {
+          "name": "Request a conversion operation",
+          "id": "c9bbbe53-ce87-44ee-ac5a-c89f43c31a1d",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/conversions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "conversions"
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "dcbb9ca8-a89a-4299-9cc7-a6403bc3a022",
+              "name": "OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/conversions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "conversions"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:49.000Z",
+              "updatedAt": "2026-07-28T01:44:49.000Z",
+              "uid": "35240-dcbb9ca8-a89a-4299-9cc7-a6403bc3a022"
+            }
+          ],
+          "createdAt": "2026-07-28T01:44:49.000Z",
+          "updatedAt": "2026-07-28T01:44:49.000Z",
+          "uid": "35240-c9bbbe53-ce87-44ee-ac5a-c89f43c31a1d"
+        }
+      ],
+      "id": "db6d5f09-3a91-4609-b226-2ee3cc0b8e20",
+      "createdAt": "2026-07-28T01:44:49.000Z",
+      "updatedAt": "2026-07-28T01:44:49.000Z",
+      "uid": "35240-db6d5f09-3a91-4609-b226-2ee3cc0b8e20"
+    },
+    {
+      "name": "jobs",
+      "item": [
+        {
+          "name": "{jobID}",
+          "item": [
+            {
+              "name": "status",
+              "item": [
+                {
+                  "name": "Get the status of a job by its job id",
+                  "id": "5339665b-71b0-43d9-ba5d-7951746e8527",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/jobs/:jobID/status",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "jobs",
+                        ":jobID",
+                        "status"
+                      ],
+                      "variable": [
+                        {
+                          "id": "a3f645c2-b98a-4c7d-820b-ff8c6508e902",
+                          "key": "jobID"
+                        }
+                      ]
+                    }
+                  },
+                  "response": [
+                    {
+                      "id": "4f7bc7f7-9628-4a3f-a3a1-81f940e1f81c",
+                      "name": "OK",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/jobs/:jobID/status",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "jobs",
+                            ":jobID",
+                            "status"
+                          ],
+                          "variable": [
+                            {
+                              "key": "jobID"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T01:44:49.000Z",
+                      "updatedAt": "2026-07-28T01:44:49.000Z",
+                      "uid": "35240-4f7bc7f7-9628-4a3f-a3a1-81f940e1f81c"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:44:49.000Z",
+                  "updatedAt": "2026-07-28T01:44:49.000Z",
+                  "uid": "35240-5339665b-71b0-43d9-ba5d-7951746e8527"
+                }
+              ],
+              "id": "69c1cdee-4c2a-44fe-aba2-75f29fcf21e3",
+              "createdAt": "2026-07-28T01:44:49.000Z",
+              "updatedAt": "2026-07-28T01:44:49.000Z",
+              "uid": "35240-69c1cdee-4c2a-44fe-aba2-75f29fcf21e3"
+            },
+            {
+              "name": "Get the result of a job by its job id",
+              "id": "1fd984ae-3ce8-4c53-ad66-4444ec0125db",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/jobs/:jobID",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "jobs",
+                    ":jobID"
+                  ],
+                  "variable": [
+                    {
+                      "id": "19ef4cfc-c214-41db-afaa-be8564d9121b",
+                      "key": "jobID"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "c2d0e4f3-634c-4e58-9cb6-c6f0b03dbca1",
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/jobs/:jobID",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "jobs",
+                        ":jobID"
+                      ],
+                      "variable": [
+                        {
+                          "key": "jobID"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": null,
+                  "createdAt": "2026-07-28T01:44:49.000Z",
+                  "updatedAt": "2026-07-28T01:44:49.000Z",
+                  "uid": "35240-c2d0e4f3-634c-4e58-9cb6-c6f0b03dbca1"
+                }
+              ],
+              "createdAt": "2026-07-28T01:44:49.000Z",
+              "updatedAt": "2026-07-28T01:44:49.000Z",
+              "uid": "35240-1fd984ae-3ce8-4c53-ad66-4444ec0125db"
+            }
+          ],
+          "id": "6449bfe7-983e-43fd-bbee-a9b2ea6e7fd6",
+          "createdAt": "2026-07-28T01:44:49.000Z",
+          "updatedAt": "2026-07-28T01:44:49.000Z",
+          "uid": "35240-6449bfe7-983e-43fd-bbee-a9b2ea6e7fd6"
+        }
+      ],
+      "id": "eb5118fc-d8e9-481a-bf4c-e91f54897fd7",
+      "createdAt": "2026-07-28T01:44:49.000Z",
+      "updatedAt": "2026-07-28T01:44:49.000Z",
+      "uid": "35240-eb5118fc-d8e9-481a-bf4c-e91f54897fd7"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.gonitro.dev"
+    }
+  ]
+}

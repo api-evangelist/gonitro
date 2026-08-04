@@ -1,0 +1,732 @@
+{
+  "info": {
+    "_postman_id": "b518a2d0-0b3f-43a9-9af6-0b3cf4444574",
+    "name": "Nitro PDF Services Public Authentication Generations API",
+    "description": "REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro's published per-tool OpenAPI reference fragments; schemas preserved verbatim.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:44:47.000Z",
+    "updatedAt": "2026-07-28T01:44:47.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-b518a2d0-0b3f-43a9-9af6-0b3cf4444574"
+  },
+  "item": [
+    {
+      "name": "generations",
+      "item": [
+        {
+          "name": "Fill Forms",
+          "id": "8e7ee4d8-f588-4a3c-a418-768efda6ce18",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Prefer",
+                "value": "respond-async"
+              },
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "description": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                  "key": "method",
+                  "value": "fill-forms",
+                  "type": "text"
+                },
+                {
+                  "description": "(Required) ",
+                  "key": "params",
+                  "value": "[object Object]",
+                  "type": "text"
+                },
+                {
+                  "description": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                  "key": "file",
+                  "type": "file",
+                  "value": null
+                },
+                {
+                  "description": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                  "key": "files",
+                  "value": "<binary>,<binary>",
+                  "type": "text"
+                },
+                {
+                  "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                  "key": "delivery",
+                  "value": "[object Object]",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/generations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "generations"
+              ]
+            },
+            "description": "Generate PDF document with filled form fields\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: create-fillable-forms, fill-forms."
+          },
+          "response": [
+            {
+              "id": "72df49dc-5bea-416e-a5f3-c9958212e944",
+              "name": "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\nJSON responses include a file URL for synchronous tasks or a job status for asynchronous tasks.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/generations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "generations"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"file\": {\n    \"URL\": \"<uri>\",\n    \"contentType\": \"<string>\",\n    \"metadata\": {\n      \"fileSizeBytes\": \"<number>\",\n      \"pageCount\": \"<number>\"\n    }\n  }\n}",
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-72df49dc-5bea-416e-a5f3-c9958212e944"
+            },
+            {
+              "id": "04794bac-55f0-4637-811d-b85d39bcd160",
+              "name": "400 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/generations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "generations"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-04794bac-55f0-4637-811d-b85d39bcd160"
+            },
+            {
+              "id": "5a982e26-ede8-4ef5-94c6-75d9544d69ac",
+              "name": "401 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/generations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "generations"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-5a982e26-ede8-4ef5-94c6-75d9544d69ac"
+            },
+            {
+              "id": "a6b06569-428f-4e3d-a022-a2fcbde32385",
+              "name": "404 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/generations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "generations"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-a6b06569-428f-4e3d-a022-a2fcbde32385"
+            },
+            {
+              "id": "fe23681a-70fd-478d-a027-f029d64f953f",
+              "name": "413 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/generations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "generations"
+                  ]
+                }
+              },
+              "status": "Request Entity Too Large",
+              "code": 413,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-fe23681a-70fd-478d-a027-f029d64f953f"
+            },
+            {
+              "id": "ef28eb3c-2111-4a63-a956-64369e3e2330",
+              "name": "415 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/generations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "generations"
+                  ]
+                }
+              },
+              "status": "Unsupported Media Type",
+              "code": 415,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-ef28eb3c-2111-4a63-a956-64369e3e2330"
+            },
+            {
+              "id": "d03a9123-630d-4b37-aabb-d24e7ae0444e",
+              "name": "422 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/generations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "generations"
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-d03a9123-630d-4b37-aabb-d24e7ae0444e"
+            },
+            {
+              "id": "ff55385a-1c29-4a44-b91e-ce9e737ef47e",
+              "name": "500 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Prefer",
+                    "value": "respond-async"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ",
+                      "key": "params",
+                      "value": "[object Object]",
+                      "type": "text"
+                    },
+                    {
+                      "description": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                      "key": "files",
+                      "value": "<binary>,<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "This endpoint lets you supply your own URL to receive the single-file output. The URL may point to a custom API endpoint or a pre-signed S3 URL. \n\n The HTTP method defaults to PUT, but you can change it based on your implementation needs via the `verb` parameter. You can also provide custom headers, such as authentication headers or any others required by your endpoint.",
+                      "key": "delivery",
+                      "value": "[object Object]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/generations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "generations"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "responseTime": null,
+              "body": null,
+              "createdAt": "2026-07-28T01:44:47.000Z",
+              "updatedAt": "2026-07-28T01:44:47.000Z",
+              "uid": "35240-ff55385a-1c29-4a44-b91e-ce9e737ef47e"
+            }
+          ],
+          "createdAt": "2026-07-28T01:44:47.000Z",
+          "updatedAt": "2026-07-28T01:44:47.000Z",
+          "uid": "35240-8e7ee4d8-f588-4a3c-a418-768efda6ce18"
+        }
+      ],
+      "id": "0f82a399-6d7a-4823-8c2a-a979a8947602",
+      "createdAt": "2026-07-28T01:44:47.000Z",
+      "updatedAt": "2026-07-28T01:44:47.000Z",
+      "uid": "35240-0f82a399-6d7a-4823-8c2a-a979a8947602"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.gonitro.dev"
+    }
+  ]
+}
