@@ -1,0 +1,758 @@
+{
+  "item": [
+    {
+      "id": "fe2099d0-1dd2-46da-9340-28617ab21a07",
+      "name": "Conversions",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "cfba593e-35c3-47a1-968b-b872b861b7ce",
+          "name": "PDF to PDF/A",
+          "request": {
+            "name": "PDF to PDF/A",
+            "description": {
+              "content": "Convert a PDF file to PDF/A archival format\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: imgtopdf, misctopdf, mstopdf, pdfa, pdftoimg, pdftoms.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "conversions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "key": "Prefer",
+                "value": "<string>",
+                "description": ""
+              },
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "method",
+                  "value": "convert",
+                  "type": "text",
+                  "description": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)"
+                },
+                {
+                  "key": "params",
+                  "value": "{\"to\":\"pdfa\",\"conformance\":\"<string>\",\"imageQuality\":0.8,\"copyMetadata\":true}",
+                  "type": "text",
+                  "description": "(Required) "
+                },
+                {
+                  "key": "file",
+                  "value": "<binary>",
+                  "type": "text",
+                  "description": "(Required) "
+                },
+                {
+                  "key": "delivery",
+                  "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                  "type": "text",
+                  "description": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "9f20f75e-ed66-4841-b957-78a3a593dcc0",
+              "name": "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\n JSON responses include a file URL for synchronous tasks or a job status for asynchronous tasks.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "conversions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"to\":\"pdfa\",\"conformance\":\"2b\",\"imageQuality\":0.8,\"copyMetadata\":true}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"file\": {\n    \"URL\": \"http://HU.zkcwqsw3uJD0y19cfr\",\n    \"contentType\": \"application/json\",\n    \"metadata\": {\n      \"fileSizeBytes\": 9170.780929992548,\n      \"pageCount\": 3000.1304667625805\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "be6493f6-98fe-4298-8847-23a75b276411",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "conversions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"to\":\"pdfa\",\"conformance\":\"2b\",\"imageQuality\":0.8,\"copyMetadata\":true}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "0f25baa5-9860-4b01-8d23-fb44a41acc44",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "conversions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"to\":\"pdfa\",\"conformance\":\"2b\",\"imageQuality\":0.8,\"copyMetadata\":true}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "2dfb1aef-0bc8-4fa3-b2a2-0a026971e5b6",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "conversions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"to\":\"pdfa\",\"conformance\":\"2b\",\"imageQuality\":0.8,\"copyMetadata\":true}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "e02968b5-14f2-4ce5-9f5c-5f2166092c8d",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "conversions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"to\":\"pdfa\",\"conformance\":\"2b\",\"imageQuality\":0.8,\"copyMetadata\":true}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Request Entity Too Large",
+              "code": 413,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "3be06546-86b7-4c84-8e17-ead8a5f25832",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "conversions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"to\":\"pdfa\",\"conformance\":\"2b\",\"imageQuality\":0.8,\"copyMetadata\":true}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "bea9d860-8ab9-4ed7-9eb6-7c318c95f9a9",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "conversions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Conversions' endpoint method: `convert` (This can only be one of convert)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "convert",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"to\":\"pdfa\",\"conformance\":\"2b\",\"imageQuality\":0.8,\"copyMetadata\":true}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.gonitro.dev",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "a20b4297-7bd4-440d-8e01-fa8fe281b0fb",
+    "name": "Nitro PDF Services Public Authentication Conversions API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro's published per-tool OpenAPI reference fragments; schemas preserved verbatim.",
+      "type": "text/plain"
+    }
+  }
+}

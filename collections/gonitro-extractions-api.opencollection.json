@@ -1,0 +1,74 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Nitro PDF Services Public Authentication Extractions API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Extractions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Extract Fillable Form Data from PDF",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.gonitro.dev/extractions",
+            "headers": [
+              {
+                "name": "Accept",
+                "value": ""
+              },
+              {
+                "name": "Prefer",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "method",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "params",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "file",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "delivery",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Extract the data of a PDF's existing AcroForm — field names, current values, field types and positions — as JSON, XFDF, FDF, or CSV\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: extract-fillable-form-data, extract-invoices, forms, get-properties, pii, smart-detect-form-fields, tables, text, text-box."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,758 @@
+{
+  "item": [
+    {
+      "id": "6285fedb-50ad-493a-a31e-4c6761073758",
+      "name": "Extractions",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b862e2b2-9016-4419-83d1-4f7b497292e8",
+          "name": "Extract Fillable Form Data from PDF",
+          "request": {
+            "name": "Extract Fillable Form Data from PDF",
+            "description": {
+              "content": "Extract the data of a PDF's existing AcroForm — field names, current values, field types and positions — as JSON, XFDF, FDF, or CSV\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: extract-fillable-form-data, extract-invoices, forms, get-properties, pii, smart-detect-form-fields, tables, text, text-box.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "extractions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "key": "Prefer",
+                "value": "<string>",
+                "description": ""
+              },
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "method",
+                  "value": "extract-fillable-form-data",
+                  "type": "text",
+                  "description": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)"
+                },
+                {
+                  "key": "file",
+                  "value": "<binary>",
+                  "type": "text",
+                  "description": "(Required) "
+                },
+                {
+                  "key": "params",
+                  "value": "{\"format\":\"json\"}",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "delivery",
+                  "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                  "type": "text",
+                  "description": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "e995a4b7-83f8-4440-96dd-9c129bd10191",
+              "name": "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\n JSON responses describe the extracted form-field data for synchronous tasks, or a job status for asynchronous tasks.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "extractions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"format\":\"json\"}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"formFields\": [\n    {\n      \"pageIndex\": 0,\n      \"fieldType\": \"TextBox\",\n      \"name\": \"text_name\",\n      \"value\": \"John\",\n      \"boundingBox\": [\n        61.2,\n        130.5,\n        240,\n        18\n      ],\n      \"choices\": null\n    },\n    {\n      \"pageIndex\": 0,\n      \"fieldType\": \"TextBox\",\n      \"name\": \"text_name\",\n      \"value\": \"John\",\n      \"boundingBox\": [\n        61.2,\n        130.5,\n        240,\n        18\n      ],\n      \"choices\": null\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fd50bed7-90ae-4f57-911c-6e031a6c74ea",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "extractions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"format\":\"json\"}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "3074e6c5-2254-41bf-9490-9c3c4bb4af70",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "extractions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"format\":\"json\"}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "38ab612e-955c-4139-b49c-8ecedaab336a",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "extractions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"format\":\"json\"}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "ce5c1912-38a2-47d6-9ed8-24214ce210ea",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "extractions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"format\":\"json\"}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Request Entity Too Large",
+              "code": 413,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "c010de60-665d-4fb7-a544-7dbb43537bee",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "extractions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"format\":\"json\"}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "6094b22a-1d0a-43bd-ae2d-a45a8e5739a4",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "extractions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Extractions' endpoint method: `extract-fillable-form-data` (This can only be one of extract-fillable-form-data)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "extract-fillable-form-data",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"format\":\"json\"}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.gonitro.dev",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "5ee41b8b-01d8-413a-b469-67d53415f799",
+    "name": "Nitro PDF Services Public Authentication Extractions API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro's published per-tool OpenAPI reference fragments; schemas preserved verbatim.",
+      "type": "text/plain"
+    }
+  }
+}

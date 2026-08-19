@@ -1,0 +1,79 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Nitro PDF Services Public Authentication Generations API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Generations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Fill Forms",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.gonitro.dev/generations",
+            "headers": [
+              {
+                "name": "Accept",
+                "value": ""
+              },
+              {
+                "name": "Prefer",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "method",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "params",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "file",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "files",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "delivery",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Generate PDF document with filled form fields\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: create-fillable-forms, fill-forms."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

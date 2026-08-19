@@ -1,0 +1,74 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Nitro PDF Services Public Authentication Transformations API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Transformations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Watermark PDF",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.gonitro.dev/transformations",
+            "headers": [
+              {
+                "name": "Accept",
+                "value": ""
+              },
+              {
+                "name": "Prefer",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "method",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "params",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "files",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "delivery",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Overlay a watermark image onto specific pages of a PDF document\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: compress, delete, flatten, merge, ocr, optimize, protect, redact, rotate, set-properties, split, unprotect, watermark."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,82 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Nitro PDF Services Public Authentication Jobs API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Jobs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Job Result",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.gonitro.dev/jobs/:jobID",
+            "headers": [
+              {
+                "name": "Accept",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "jobID",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the job."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get result of asynchronous Job.\n\n A Job is Nitro’s asynchronous file processing for PDF Transformation, Conversion, and Extraction operations."
+        },
+        {
+          "info": {
+            "name": "Get Job Status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.gonitro.dev/jobs/:jobID/status",
+            "headers": [
+              {
+                "name": "Accept",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "jobID",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the job."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get status of asynchronous Job.\n\n A Job is Nitro’s asynchronous file processing for PDF Transformation, Conversion, and Extraction operations."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

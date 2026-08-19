@@ -1,0 +1,848 @@
+{
+  "item": [
+    {
+      "id": "86fa24cc-9c30-4761-a95d-cdaa6532d99f",
+      "name": "Transformations",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "5e038079-6e53-4268-ae74-92b77dc9367a",
+          "name": "Watermark PDF",
+          "request": {
+            "name": "Watermark PDF",
+            "description": {
+              "content": "Overlay a watermark image onto specific pages of a PDF document\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: compress, delete, flatten, merge, ocr, optimize, protect, redact, rotate, set-properties, split, unprotect, watermark.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "transformations"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "key": "Prefer",
+                "value": "<string>",
+                "description": ""
+              },
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "method",
+                  "value": "watermark",
+                  "type": "text",
+                  "description": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)"
+                },
+                {
+                  "key": "params",
+                  "value": "{\"boundingBox\":[\"<float>\",\"<float>\",\"<float>\",\"<float>\"],\"opacity\":1,\"rotation\":0,\"pageIndices\":[\"<integer>\",\"<integer>\"],\"flip\":\"<string>\",\"rotateWithPage\":false,\"centerOnPage\":false,\"contentDepth\":\"below_existing\",\"fitToPageWidth\":false,\"fitToPageHeight\":false}",
+                  "type": "text",
+                  "description": "(Required) "
+                },
+                {
+                  "key": "files",
+                  "value": "[\"<binary>\",\"<binary>\"]",
+                  "type": "text",
+                  "description": "(Required) "
+                },
+                {
+                  "key": "delivery",
+                  "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                  "type": "text",
+                  "description": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "d276108d-0e48-4c88-9d0b-f39a327ece47",
+              "name": "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\n JSON responses include a file URL for synchronous tasks or a job status for asynchronous tasks.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transformations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"boundingBox\":[210,10,290,60],\"opacity\":0.75,\"rotation\":15,\"pageIndices\":[0,1],\"flip\":\"<string>\",\"rotateWithPage\":false,\"centerOnPage\":false,\"contentDepth\":\"below_existing\",\"fitToPageWidth\":false,\"fitToPageHeight\":false}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"@SampleFile1.pdf\",\"@SampleFile2.pdf\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"file\": {\n    \"URL\": \"http://nHVJbOPdZAQ.pxyNxlOb9PODbMAxV1B+mGyXPCIjXTpzv9y..+LpDBeDN5mJRe-nK9ja6f6u4YHGsGeFyu0viaYo2lOGJvNqt\",\n    \"contentType\": \"application/json\",\n    \"metadata\": {\n      \"fileSizeBytes\": 3701.5804341997928,\n      \"pageCount\": 337.00390607588446\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ce063a00-10a3-434e-919a-d0a1169189b6",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transformations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"boundingBox\":[210,10,290,60],\"opacity\":0.75,\"rotation\":15,\"pageIndices\":[0,1],\"flip\":\"<string>\",\"rotateWithPage\":false,\"centerOnPage\":false,\"contentDepth\":\"below_existing\",\"fitToPageWidth\":false,\"fitToPageHeight\":false}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"@SampleFile1.pdf\",\"@SampleFile2.pdf\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "15226a7a-0126-46f9-b53e-d50ab9e6b06a",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transformations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"boundingBox\":[210,10,290,60],\"opacity\":0.75,\"rotation\":15,\"pageIndices\":[0,1],\"flip\":\"<string>\",\"rotateWithPage\":false,\"centerOnPage\":false,\"contentDepth\":\"below_existing\",\"fitToPageWidth\":false,\"fitToPageHeight\":false}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"@SampleFile1.pdf\",\"@SampleFile2.pdf\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "f29b0d8d-dd96-41d7-94b1-0cad0e8f2a1b",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transformations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"boundingBox\":[210,10,290,60],\"opacity\":0.75,\"rotation\":15,\"pageIndices\":[0,1],\"flip\":\"<string>\",\"rotateWithPage\":false,\"centerOnPage\":false,\"contentDepth\":\"below_existing\",\"fitToPageWidth\":false,\"fitToPageHeight\":false}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"@SampleFile1.pdf\",\"@SampleFile2.pdf\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "ea964b95-63d7-4e79-937f-d70f694dfd55",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transformations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"boundingBox\":[210,10,290,60],\"opacity\":0.75,\"rotation\":15,\"pageIndices\":[0,1],\"flip\":\"<string>\",\"rotateWithPage\":false,\"centerOnPage\":false,\"contentDepth\":\"below_existing\",\"fitToPageWidth\":false,\"fitToPageHeight\":false}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"@SampleFile1.pdf\",\"@SampleFile2.pdf\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Request Entity Too Large",
+              "code": 413,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "678c459c-fc89-47c6-8c27-eb065dc361ef",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transformations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"boundingBox\":[210,10,290,60],\"opacity\":0.75,\"rotation\":15,\"pageIndices\":[0,1],\"flip\":\"<string>\",\"rotateWithPage\":false,\"centerOnPage\":false,\"contentDepth\":\"below_existing\",\"fitToPageWidth\":false,\"fitToPageHeight\":false}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"@SampleFile1.pdf\",\"@SampleFile2.pdf\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unsupported Media Type",
+              "code": 415,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "b1c8bacd-9322-457a-8e2c-e75c650f39f0",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transformations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"boundingBox\":[210,10,290,60],\"opacity\":0.75,\"rotation\":15,\"pageIndices\":[0,1],\"flip\":\"<string>\",\"rotateWithPage\":false,\"centerOnPage\":false,\"contentDepth\":\"below_existing\",\"fitToPageWidth\":false,\"fitToPageHeight\":false}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"@SampleFile1.pdf\",\"@SampleFile2.pdf\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "5adb2697-da41-4909-9898-6d70be2f1192",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transformations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Transformations' endpoint method: `watermark` (This can only be one of watermark)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "watermark",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"boundingBox\":[210,10,290,60],\"opacity\":0.75,\"rotation\":15,\"pageIndices\":[0,1],\"flip\":\"<string>\",\"rotateWithPage\":false,\"centerOnPage\":false,\"contentDepth\":\"below_existing\",\"fitToPageWidth\":false,\"fitToPageHeight\":false}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"@SampleFile1.pdf\",\"@SampleFile2.pdf\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.gonitro.dev",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "f4261364-ee90-4ed9-bd93-a62efdeb0dce",
+    "name": "Nitro PDF Services Public Authentication Transformations API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro's published per-tool OpenAPI reference fragments; schemas preserved verbatim.",
+      "type": "text/plain"
+    }
+  }
+}

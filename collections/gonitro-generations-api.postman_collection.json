@@ -1,0 +1,925 @@
+{
+  "item": [
+    {
+      "id": "097dfa72-0ba6-4921-8600-36b7212c04aa",
+      "name": "Generations",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "f53c26bb-71c6-4a8b-b3b0-1d4eadc27797",
+          "name": "Fill Forms",
+          "request": {
+            "name": "Fill Forms",
+            "description": {
+              "content": "Generate PDF document with filled form fields\n\nThis endpoint is polymorphic: the operation performed is selected by the request body. Documented tools on this endpoint: create-fillable-forms, fill-forms.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "generations"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "key": "Prefer",
+                "value": "<string>",
+                "description": ""
+              },
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "method",
+                  "value": "fill-forms",
+                  "type": "text",
+                  "description": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)"
+                },
+                {
+                  "key": "params",
+                  "value": "{\"strict\":false,\"fields\":null}",
+                  "type": "text",
+                  "description": "(Required) "
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "description": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file."
+                },
+                {
+                  "key": "files",
+                  "value": "[\"<binary>\",\"<binary>\"]",
+                  "type": "text",
+                  "description": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format)."
+                },
+                {
+                  "key": "delivery",
+                  "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                  "type": "text",
+                  "description": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "081ea899-aa40-4cf5-b51d-03f4cd36d222",
+              "name": "Returns either JSON or binary output depending on the Accept header (defaults to JSON).\nJSON responses include a file URL for synchronous tasks or a job status for asynchronous tasks.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "generations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"strict\":true,\"fields\":[{\"field\":\"firstName\",\"value\":\"Jane\"},{\"field\":\"lastName\",\"value\":\"Doe\"}]}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"<binary>\",\"<binary>\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"file\": {\n    \"URL\": \"http://ZDdhVxRIECXdoEPOtjP.avdIiOwUNwyjBHJr3cR,XavC.pdvFwvhl\",\n    \"contentType\": \"application/json\",\n    \"metadata\": {\n      \"fileSizeBytes\": 7063.71456574014,\n      \"pageCount\": 2565.1929206430814\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2635b6fa-3b62-492b-87b6-b276b1ad1579",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "generations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"strict\":true,\"fields\":[{\"field\":\"firstName\",\"value\":\"Jane\"},{\"field\":\"lastName\",\"value\":\"Doe\"}]}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"<binary>\",\"<binary>\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "6aabd03b-99c4-4984-b19d-d5f6455a63df",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "generations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"strict\":true,\"fields\":[{\"field\":\"firstName\",\"value\":\"Jane\"},{\"field\":\"lastName\",\"value\":\"Doe\"}]}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"<binary>\",\"<binary>\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "334971e3-1ac4-4580-a7ad-2f71b40b51e8",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "generations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"strict\":true,\"fields\":[{\"field\":\"firstName\",\"value\":\"Jane\"},{\"field\":\"lastName\",\"value\":\"Doe\"}]}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"<binary>\",\"<binary>\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "02776a5f-faec-4bab-804d-5beb4b1138dd",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "generations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"strict\":true,\"fields\":[{\"field\":\"firstName\",\"value\":\"Jane\"},{\"field\":\"lastName\",\"value\":\"Doe\"}]}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"<binary>\",\"<binary>\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Request Entity Too Large",
+              "code": 413,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "27d4ed1c-030a-4894-915a-baf48332bb3a",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "generations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"strict\":true,\"fields\":[{\"field\":\"firstName\",\"value\":\"Jane\"},{\"field\":\"lastName\",\"value\":\"Doe\"}]}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"<binary>\",\"<binary>\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unsupported Media Type",
+              "code": 415,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "d78ac32f-eb7b-43f1-b51c-b7b4767ad11e",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "generations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"strict\":true,\"fields\":[{\"field\":\"firstName\",\"value\":\"Jane\"},{\"field\":\"lastName\",\"value\":\"Doe\"}]}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"<binary>\",\"<binary>\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "6a96e67f-7218-4d80-9366-08234f2a6c29",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "generations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Accept",
+                    "value": "*/*",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "Prefer",
+                    "value": "<string>",
+                    "description": ""
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The Generations' endpoint method: `fill-forms` (This can only be one of fill-forms)",
+                        "type": "text/plain"
+                      },
+                      "key": "method",
+                      "value": "fill-forms",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "params",
+                      "value": "{\"strict\":true,\"fields\":[{\"field\":\"firstName\",\"value\":\"Jane\"},{\"field\":\"lastName\",\"value\":\"Doe\"}]}",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF document when using inline field values via `params.fields`. Use this parameter when providing form field values directly instead of a data file.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "The source PDF and data file when using a data file. `files[0]` is the source PDF document (application/pdf). `files[1]` is the data file containing form field values (CSV, JSON, XFDF, or FDF format).",
+                        "type": "text/plain"
+                      },
+                      "key": "files",
+                      "value": "[\"<binary>\",\"<binary>\"]",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "delivery",
+                      "value": "{\"uploadResultTo\":{\"URL\":\"<uri>\",\"verb\":\"PUT\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]},\"callback\":{\"URL\":\"<uri>\",\"headers\":[{\"name\":\"<string>\",\"value\":\"<string>\"},{\"name\":\"<string>\",\"value\":\"<string>\"}]}}",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.gonitro.dev",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "9be5b75a-e90c-446c-8332-659e8cd83634",
+    "name": "Nitro PDF Services Public Authentication Generations API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro's published per-tool OpenAPI reference fragments; schemas preserved verbatim.",
+      "type": "text/plain"
+    }
+  }
+}
