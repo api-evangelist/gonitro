@@ -32,7 +32,7 @@ accessModel:
   - authentication
   generated: '2026-07-22'
   method: derived
-specificationVersion: '0.20'
+specificationVersion: '0.23'
 created: '2026-07-17'
 modified: '2026-07-19'
 image: https://www.gonitro.com/hubfs/EN%20-%20Featured%20Images%20-%20Priority%20Pages%20-%20Home%20-%201200x628.png
