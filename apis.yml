@@ -40,6 +40,19 @@ tags:
 - Company
 - Documents
 - PDF
+- E-Signature
+- Electronic Signatures
+- Document Automation
+- Document Conversion
+- Data Extraction
+- Redaction
+- OCR
+- Productivity
+- Compliance
+tags_raw:
+- Company
+- Documents
+- PDF
 - eSignature
 - Electronic Signatures
 - Document Automation
@@ -96,6 +109,8 @@ apis:
   humanURL: https://developers.gonitro.com/docs/api-reference/sign/create-envelope
   baseURL: https://api.gonitro.dev
   tags:
+  - Job
+  tags_raw:
   - Jobs
   properties:
   - type: OpenAPI
@@ -126,6 +141,8 @@ apis:
   humanURL: https://developers.gonitro.com/docs/api-reference/sign/create-envelope
   baseURL: https://api.gonitro.dev
   tags:
+  - Transformation
+  tags_raw:
   - Transformations
   properties:
   - type: OpenAPI
