@@ -52,7 +52,7 @@ tags:
 - Company
 - Documents
 - PDF
-- eSignature
+- E-Signature
 - Electronic Signatures
 - Document Automation
 - Document Conversion
@@ -153,7 +153,7 @@ apis:
   humanURL: https://developers.gonitro.com/docs/api-reference/sign/create-envelope
   baseURL: https://api.gonitro.dev
   tags:
-  - Transformations
+  - Transformation
   tags_raw:
   - Transformations
   properties:
