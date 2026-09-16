@@ -85,48 +85,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/gonitro-authentication-api-openapi.yml
-- aid: gonitro:gonitro-conversions-api
-  name: GoNitro Conversions API
-  description: The Conversions API from GoNitro — 1 operation(s) for conversions.
-  humanURL: https://developers.gonitro.com/docs/api-reference/sign/create-envelope
-  baseURL: https://api.gonitro.dev
-  tags:
-  - Conversions
-  properties:
-  - type: OpenAPI
-    url: openapi/gonitro-conversions-api-openapi.yml
-- aid: gonitro:gonitro-extractions-api
-  name: GoNitro Extractions API
-  description: The Extractions API from GoNitro — 1 operation(s) for extractions.
-  humanURL: https://developers.gonitro.com/docs/api-reference/sign/create-envelope
-  baseURL: https://api.gonitro.dev
-  tags:
-  - Extractions
-  properties:
-  - type: OpenAPI
-    url: openapi/gonitro-extractions-api-openapi.yml
-- aid: gonitro:gonitro-generations-api
-  name: GoNitro Generations API
-  description: The Generations API from GoNitro — 1 operation(s) for generations.
-  humanURL: https://developers.gonitro.com/docs/api-reference/sign/create-envelope
-  baseURL: https://api.gonitro.dev
-  tags:
-  - Generations
-  properties:
-  - type: OpenAPI
-    url: openapi/gonitro-generations-api-openapi.yml
-- aid: gonitro:gonitro-jobs-api
-  name: GoNitro Jobs API
-  description: The Jobs API from GoNitro — 2 operation(s) for jobs.
-  humanURL: https://developers.gonitro.com/docs/api-reference/sign/create-envelope
-  baseURL: https://api.gonitro.dev
-  tags:
-  - Job
-  tags_raw:
-  - Jobs
-  properties:
-  - type: OpenAPI
-    url: openapi/gonitro-jobs-api-openapi.yml
 - aid: gonitro:gonitro-platform-api
   name: GoNitro Platform API
   description: The Platform API from GoNitro — 6 operation(s) for platform.
@@ -147,18 +105,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/gonitro-sign-api-openapi.yml
-- aid: gonitro:gonitro-transformations-api
-  name: GoNitro Transformations API
-  description: The Transformations API from GoNitro — 1 operation(s) for transformations.
-  humanURL: https://developers.gonitro.com/docs/api-reference/sign/create-envelope
-  baseURL: https://api.gonitro.dev
-  tags:
-  - Transformation
-  tags_raw:
-  - Transformations
-  properties:
-  - type: OpenAPI
-    url: openapi/gonitro-transformations-api-openapi.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
