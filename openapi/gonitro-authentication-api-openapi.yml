@@ -1,13 +1,12 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Nitro PDF Services Public Authentication API
-  description: 'REST API for Nitro PDF Services: convert, transform, extract, and generate PDF documents, plus async job status/result retrieval. Machine-to-machine OAuth 2.0 client-credentials; short-lived bearer tokens. Assembled by API Evangelist from Nitro''s published per-tool OpenAPI reference fragments; schemas preserved verbatim.'
-  version: '1.0'
+  title: Nitro Sign Public Authentication API
+  description: REST API for Nitro Sign
+  version: '0.1'
 servers:
 - url: https://api.gonitro.dev
-  description: API server
 security:
-- BearerAuth: []
+- bearerAuth: []
 tags:
 - name: Authentication
 paths:
@@ -23,9 +22,7 @@ paths:
 
         This endpoint accepts a client ID and client secret and returns an access token that
 
-        can be used to authenticate API requests. The token follows standard OAuth 2.0 patterns.
-
-        '
+        can be used to authenticate API requests. The token follows standard OAuth 2.0 patterns.'
       operationId: getTokenRfc6749
       parameters:
       - name: Authorization
@@ -69,17 +66,16 @@ paths:
       security: []
 components:
   schemas:
-    OAuth2TokenResponse:
+    AuthTokenResponse:
       type: object
-      description: RFC 6749 compliant OAuth2 token response
       properties:
-        access_token:
+        accessToken:
           type: string
           description: The access token
-        token_type:
+        tokenType:
           type: string
           description: The token type (typically 'Bearer')
-        expires_in:
+        expiresIn:
           type: integer
           format: int64
           description: Token expiration time in seconds
@@ -96,6 +92,20 @@ components:
         error_uri:
           type: string
           description: URI identifying a human-readable web page with information about the error
+    OAuth2TokenResponse:
+      type: object
+      description: RFC 6749 compliant OAuth2 token response
+      properties:
+        access_token:
+          type: string
+          description: The access token
+        token_type:
+          type: string
+          description: The token type (typically 'Bearer')
+        expires_in:
+          type: integer
+          format: int64
+          description: Token expiration time in seconds
     AuthTokenRequest:
       type: object
       properties:
@@ -110,21 +120,8 @@ components:
       required:
       - clientID
       - clientSecret
-    AuthTokenResponse:
-      type: object
-      properties:
-        accessToken:
-          type: string
-          description: The access token
-        tokenType:
-          type: string
-          description: The token type (typically 'Bearer')
-        expiresIn:
-          type: integer
-          format: int64
-          description: Token expiration time in seconds
   securitySchemes:
-    BearerAuth:
+    bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT

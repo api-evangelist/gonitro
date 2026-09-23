@@ -1,62 +1,29 @@
 {
   "provider": "gonitro",
   "sources": [
-    "gonitro-authentication-api-openapi.yml",
-    "gonitro-conversions-api-openapi.yml",
-    "gonitro-extractions-api-openapi.yml",
-    "gonitro-generations-api-openapi.yml",
-    "gonitro-jobs-api-openapi.yml",
-    "gonitro-platform-api-openapi.yml",
-    "gonitro-sign-api-openapi.yml",
-    "gonitro-transformations-api-openapi.yml"
+    "_original/gonitro-sign-openapi.json"
   ],
   "outputs": [
     "gonitro-authentication-api-openapi.yml",
-    "gonitro-conversions-api-openapi.yml",
-    "gonitro-extractions-api-openapi.yml",
-    "gonitro-generations-api-openapi.yml",
-    "gonitro-jobs-api-openapi.yml",
     "gonitro-platform-api-openapi.yml",
-    "gonitro-sign-api-openapi.yml",
-    "gonitro-transformations-api-openapi.yml"
+    "gonitro-sign-api-openapi.yml"
   ],
   "archived": [],
-  "errors": [
-    "gonitro-conversions-api-openapi.yml: dangling $ref: #/components/responses/BadRequest",
-    "gonitro-conversions-api-openapi.yml: dangling $ref: #/components/responses/ContentTooLarge",
-    "gonitro-conversions-api-openapi.yml: dangling $ref: #/components/responses/InternalServerError",
-    "gonitro-conversions-api-openapi.yml: dangling $ref: #/components/responses/NotFound",
-    "gonitro-conversions-api-openapi.yml: dangling $ref: #/components/responses/Unauthorized",
-    "gonitro-conversions-api-openapi.yml: dangling $ref: #/components/responses/UnprocessableEntity",
-    "gonitro-extractions-api-openapi.yml: dangling $ref: #/components/responses/BadRequest",
-    "gonitro-extractions-api-openapi.yml: dangling $ref: #/components/responses/ContentTooLarge",
-    "gonitro-extractions-api-openapi.yml: dangling $ref: #/components/responses/InternalServerError",
-    "gonitro-extractions-api-openapi.yml: dangling $ref: #/components/responses/NotFound",
-    "gonitro-extractions-api-openapi.yml: dangling $ref: #/components/responses/Unauthorized",
-    "gonitro-extractions-api-openapi.yml: dangling $ref: #/components/responses/UnprocessableEntity",
-    "gonitro-generations-api-openapi.yml: dangling $ref: #/components/responses/BadRequest",
-    "gonitro-generations-api-openapi.yml: dangling $ref: #/components/responses/ContentTooLarge",
-    "gonitro-generations-api-openapi.yml: dangling $ref: #/components/responses/InternalServerError",
-    "gonitro-generations-api-openapi.yml: dangling $ref: #/components/responses/NotFound",
-    "gonitro-generations-api-openapi.yml: dangling $ref: #/components/responses/Unauthorized",
-    "gonitro-generations-api-openapi.yml: dangling $ref: #/components/responses/UnprocessableEntity",
-    "gonitro-generations-api-openapi.yml: dangling $ref: #/components/responses/UnsupportedMediaType",
-    "gonitro-jobs-api-openapi.yml: dangling $ref: #/components/responses/BadRequest",
-    "gonitro-jobs-api-openapi.yml: dangling $ref: #/components/responses/ContentTooLarge",
-    "gonitro-jobs-api-openapi.yml: dangling $ref: #/components/responses/FileNoLongerAvailable",
-    "gonitro-jobs-api-openapi.yml: dangling $ref: #/components/responses/InternalServerError",
-    "gonitro-jobs-api-openapi.yml: dangling $ref: #/components/responses/NotFound",
-    "gonitro-jobs-api-openapi.yml: dangling $ref: #/components/responses/Unauthorized",
-    "gonitro-jobs-api-openapi.yml: dangling $ref: #/components/responses/UnprocessableEntity",
-    "gonitro-transformations-api-openapi.yml: dangling $ref: #/components/responses/BadRequest",
-    "gonitro-transformations-api-openapi.yml: dangling $ref: #/components/responses/ContentTooLarge",
-    "gonitro-transformations-api-openapi.yml: dangling $ref: #/components/responses/InternalServerError",
-    "gonitro-transformations-api-openapi.yml: dangling $ref: #/components/responses/NotFound",
-    "gonitro-transformations-api-openapi.yml: dangling $ref: #/components/responses/Unauthorized",
-    "gonitro-transformations-api-openapi.yml: dangling $ref: #/components/responses/UnprocessableEntity",
-    "gonitro-transformations-api-openapi.yml: dangling $ref: #/components/responses/UnsupportedMediaType"
-  ],
+  "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "1 archived document(s) dropped as subsets of other archived documents",
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "gonitro-sign-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "gonitro-sign-openapi.json: declared missing tag: Authentication",
+    "gonitro-sign-openapi.json: declared missing tag: Platform",
+    "gonitro-sign-openapi.json: declared missing tag: Sign",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "_original/gonitro-pdf-services-openapi.json: archived document superseded by a larger archived document",
+    "gonitro-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "gonitro-platform-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "gonitro-sign-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
