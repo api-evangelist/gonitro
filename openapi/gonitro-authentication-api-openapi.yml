@@ -79,6 +79,20 @@ components:
           type: integer
           format: int64
           description: Token expiration time in seconds
+    AuthTokenRequest:
+      type: object
+      properties:
+        clientID:
+          type: string
+          description: The client ID for auth client credentials flow
+          minLength: 1
+        clientSecret:
+          type: string
+          description: The client jwtSecret for auth client credentials flow
+          minLength: 1
+      required:
+      - clientID
+      - clientSecret
     OAuth2ErrorResponse:
       type: object
       description: RFC 6749 compliant OAuth2 error response
@@ -106,20 +120,6 @@ components:
           type: integer
           format: int64
           description: Token expiration time in seconds
-    AuthTokenRequest:
-      type: object
-      properties:
-        clientID:
-          type: string
-          description: The client ID for auth client credentials flow
-          minLength: 1
-        clientSecret:
-          type: string
-          description: The client jwtSecret for auth client credentials flow
-          minLength: 1
-      required:
-      - clientID
-      - clientSecret
   securitySchemes:
     bearerAuth:
       type: http
