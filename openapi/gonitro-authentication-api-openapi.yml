@@ -66,19 +66,19 @@ paths:
       security: []
 components:
   schemas:
-    AuthTokenResponse:
+    OAuth2ErrorResponse:
       type: object
+      description: RFC 6749 compliant OAuth2 error response
       properties:
-        accessToken:
+        error:
           type: string
-          description: The access token
-        tokenType:
+          description: A single ASCII error code
+        error_description:
           type: string
-          description: The token type (typically 'Bearer')
-        expiresIn:
-          type: integer
-          format: int64
-          description: Token expiration time in seconds
+          description: Human-readable ASCII text providing additional information
+        error_uri:
+          type: string
+          description: URI identifying a human-readable web page with information about the error
     AuthTokenRequest:
       type: object
       properties:
@@ -93,19 +93,19 @@ components:
       required:
       - clientID
       - clientSecret
-    OAuth2ErrorResponse:
+    AuthTokenResponse:
       type: object
-      description: RFC 6749 compliant OAuth2 error response
       properties:
-        error:
+        accessToken:
           type: string
-          description: A single ASCII error code
-        error_description:
+          description: The access token
+        tokenType:
           type: string
-          description: Human-readable ASCII text providing additional information
-        error_uri:
-          type: string
-          description: URI identifying a human-readable web page with information about the error
+          description: The token type (typically 'Bearer')
+        expiresIn:
+          type: integer
+          format: int64
+          description: Token expiration time in seconds
     OAuth2TokenResponse:
       type: object
       description: RFC 6749 compliant OAuth2 token response
