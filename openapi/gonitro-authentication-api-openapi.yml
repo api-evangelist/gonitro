@@ -79,20 +79,6 @@ components:
         error_uri:
           type: string
           description: URI identifying a human-readable web page with information about the error
-    AuthTokenRequest:
-      type: object
-      properties:
-        clientID:
-          type: string
-          description: The client ID for auth client credentials flow
-          minLength: 1
-        clientSecret:
-          type: string
-          description: The client jwtSecret for auth client credentials flow
-          minLength: 1
-      required:
-      - clientID
-      - clientSecret
     AuthTokenResponse:
       type: object
       properties:
@@ -120,6 +106,20 @@ components:
           type: integer
           format: int64
           description: Token expiration time in seconds
+    AuthTokenRequest:
+      type: object
+      properties:
+        clientID:
+          type: string
+          description: The client ID for auth client credentials flow
+          minLength: 1
+        clientSecret:
+          type: string
+          description: The client jwtSecret for auth client credentials flow
+          minLength: 1
+      required:
+      - clientID
+      - clientSecret
   securitySchemes:
     bearerAuth:
       type: http
