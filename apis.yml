@@ -56,7 +56,6 @@ tags:
 - Documents
 - PDF
 - E-Signature
-- Electronic Signature
 - Document Automation
 - Document Conversion
 - Data Extraction
@@ -77,6 +76,7 @@ tags_raw:
 - OCR
 - Productivity
 - Compliance
+- Electronic Signature
 apis:
 - aid: gonitro:gonitro-authentication-api
   name: GoNitro Authentication API
