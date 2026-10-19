@@ -1,29 +1,25 @@
 {
   "provider": "gonitro",
   "sources": [
-    "_original/gonitro-sign-openapi.json"
+    "_original/gonitro-openapi.json"
   ],
   "outputs": [
     "gonitro-authentication-api-openapi.yml",
     "gonitro-platform-api-openapi.yml",
-    "gonitro-sign-api-openapi.yml"
+    "gonitro-sign-api-openapi.yml",
+    "gonitro-webhooks-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
-    "1 archived document(s) dropped as subsets of other archived documents",
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
-    "gonitro-sign-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "gonitro-sign-openapi.json: declared missing tag: Authentication",
-    "gonitro-sign-openapi.json: declared missing tag: Platform",
-    "gonitro-sign-openapi.json: declared missing tag: Sign",
-    "apis.yml register: already-registered"
+    "gonitro-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "gonitro-openapi.json: declared missing tag: Authentication",
+    "gonitro-openapi.json: declared missing tag: Platform",
+    "gonitro-openapi.json: declared missing tag: Sign",
+    "gonitro-openapi.json: declared missing tag: Webhooks",
+    "apis.yml register: written (+1 apis, 4 total)"
   ],
-  "skipped": [
-    "_original/gonitro-pdf-services-openapi.json: archived document superseded by a larger archived document",
-    "gonitro-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "gonitro-platform-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "gonitro-sign-api-openapi.yml: previously refined output, superseded by openapi/_original/"
-  ]
+  "skipped": []
 }

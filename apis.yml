@@ -108,6 +108,16 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/gonitro-sign-api-openapi.yml
+- aid: gonitro:gonitro-webhooks-api
+  name: GoNitro Webhooks API
+  description: The Webhooks API from GoNitro — 4 operation(s) for webhooks.
+  humanURL: https://developers.gonitro.com/docs/api-reference/sign/create-envelope
+  baseURL: https://api.gonitro.dev
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/gonitro-webhooks-api-openapi.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

@@ -1,0 +1,554 @@
+openapi: 3.2.0
+info:
+  title: Nitro Sign Public Webhooks API
+  description: REST API for Nitro Sign
+  version: '0.1'
+servers:
+- url: https://api.gonitro.dev
+  description: Europe
+- url: https://api.us.gonitro.dev
+  description: North America
+- url: https://api.au.gonitro.dev
+  description: Australia
+security:
+- bearerAuth: []
+tags:
+- name: Webhooks
+paths:
+  /webhooks/configs/test:
+    post:
+      tags:
+      - Webhooks
+      summary: Send a test event to a webhook endpoint
+      description: 'Relays the customer endpoint''s response: the HTTP status mirrors theirs, and the body (httpStatus, latencyMs, success, error) reports the outcome. A 4xx/5xx means their endpoint responded that way, not that this API failed.'
+      operationId: test
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookTestRequest'
+        required: true
+      responses:
+        '200':
+          description: Endpoint returned 2xx.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookTestResponse'
+        4XX:
+          description: Endpoint rejected the event.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookTestResponse'
+        5XX:
+          description: Endpoint errored.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookTestResponse'
+        '400':
+          description: Invalid request (e.g. malformed URL).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestProblemDetail'
+        '502':
+          description: Endpoint unreachable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookTestResponse'
+        '401':
+          description: Unauthorized - Invalid or missing JWT token
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenProblemDetail'
+  /webhooks/configs:
+    get:
+      tags:
+      - Webhooks
+      summary: List webhook configs for the authenticated application
+      operationId: list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookConfig'
+        '401':
+          description: Unauthorized - Invalid or missing JWT token
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenProblemDetail'
+    post:
+      tags:
+      - Webhooks
+      summary: Create webhook config
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookConfigCreate'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookConfig'
+        '400':
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestProblemDetail'
+        '409':
+          description: A webhook config already exists for this application
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ConflictProblemDetail'
+        '401':
+          description: Unauthorized - Invalid or missing JWT token
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenProblemDetail'
+  /webhooks/configs/{id}:
+    get:
+      tags:
+      - Webhooks
+      summary: Get webhook config by ID
+      operationId: getById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookConfig'
+        '404':
+          description: Webhook config not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/NotFoundProblemDetail'
+        '401':
+          description: Unauthorized - Invalid or missing JWT token
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenProblemDetail'
+    delete:
+      tags:
+      - Webhooks
+      summary: Delete webhook config
+      operationId: delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Webhook config not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/NotFoundProblemDetail'
+        '401':
+          description: Unauthorized - Invalid or missing JWT token
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenProblemDetail'
+    patch:
+      tags:
+      - Webhooks
+      summary: Update webhook config
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookConfigUpdate'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookConfig'
+        '400':
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestProblemDetail'
+        '404':
+          description: Webhook config not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/NotFoundProblemDetail'
+        '401':
+          description: Unauthorized - Invalid or missing JWT token
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenProblemDetail'
+  /webhooks/configs/event-types:
+    get:
+      tags:
+      - Webhooks
+      summary: List supported webhook event types
+      description: Returns the event types a webhook config can subscribe to, in envelope lifecycle order. To subscribe to all of them - including event types introduced in the future - send ["AllEvents"] as the config's events instead of an explicit list.
+      operationId: listEventTypes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventTypes'
+        '401':
+          description: Unauthorized - Invalid or missing JWT token
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedProblemDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenProblemDetail'
+components:
+  schemas:
+    WebhookEventTypes:
+      type: object
+      properties:
+        eventTypes:
+          type: array
+          description: Event types supported for webhook subscriptions, in envelope lifecycle order. Subscribe to all of them (including types added in the future) by sending ["AllEvents"] as the subscription instead of an explicit list.
+          example:
+          - EnvelopeCreated
+          - EnvelopeSentForSignature
+          - EnvelopeSigningCompleted
+          items:
+            type: string
+    WebhookConfig:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier
+        accountId:
+          type: string
+          description: Account identifier
+        applicationId:
+          type: string
+          description: Application identifier
+        url:
+          type: string
+          description: Endpoint URL
+        secret:
+          type: string
+          description: Signing secret, returned only once in the create response; store it securely
+        subscribedEvents:
+          type: array
+          description: Subscribed event types, or ["AllEvents"] when subscribed to all
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+    ConflictProblemDetail:
+      type: object
+      description: Conflict error details
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#409-conflict
+        title: Conflict
+        status: 409
+        detail: Too many documents in the same package
+        instance: /sign/envelopes/%s/documents
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    WebhookTestResponse:
+      type: object
+      properties:
+        httpStatus:
+          type: integer
+          format: int32
+          description: HTTP status returned by the customer endpoint, if any
+          example: 200
+        latencyMs:
+          type: integer
+          format: int64
+          description: Round-trip latency in milliseconds
+          example: 87
+        success:
+          type: boolean
+          description: Whether the customer endpoint returned a 2xx response
+          example: true
+        error:
+          type: string
+          description: Network-level error when no HTTP response was received
+          example: Connection refused
+    UnauthorizedProblemDetail:
+      type: object
+      description: Unauthorized error details
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#401-unauthorized
+        title: Unauthorized
+        status: 401
+        detail: Missing or invalid Authorization header
+        instance: /sign/envelopes
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    NotFoundProblemDetail:
+      type: object
+      description: Not Found error details
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#404-not-found
+        title: Not Found
+        status: 404
+        detail: Envelope with ID 'envelop-123' not found
+        instance: /sign/envelopes/envelop-123
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    WebhookConfigCreate:
+      type: object
+      properties:
+        url:
+          type: string
+          description: The customer endpoint URL to deliver webhooks to
+          example: https://customer.example.com/webhook
+          minLength: 1
+        events:
+          type: array
+          description: List of event types to subscribe to, or ["AllEvents"] to subscribe to all supported event types including ones introduced in the future
+          example:
+          - EnvelopeCreated
+          - EnvelopeSigningCompleted
+          items:
+            type: string
+          minItems: 1
+      required:
+      - events
+      - url
+    ForbiddenProblemDetail:
+      type: object
+      description: Forbidden error details
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#403-forbidden
+        title: Forbidden
+        status: 403
+        detail: Forbidden
+        instance: /webhooks/configs
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    WebhookConfigUpdate:
+      type: object
+      properties:
+        url:
+          type: string
+          description: New endpoint URL
+          example: https://customer.example.com/webhook-v2
+        events:
+          type: array
+          description: Updated event subscriptions, or ["AllEvents"] to subscribe to all supported event types including ones introduced in the future
+          example:
+          - EnvelopeCreated
+          items:
+            type: string
+    WebhookTestRequest:
+      type: object
+      properties:
+        url:
+          type: string
+          description: The customer endpoint URL to send a synthetic test event to
+          example: https://customer.example.com/webhook
+          minLength: 1
+      required:
+      - url
+    BadRequestProblemDetail:
+      type: object
+      description: Bad Request error details
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#400-bad-request
+        title: Bad Request
+        status: 400
+        detail: Request validation failed
+        instance: /sign/envelopes
+        validation_errors:
+          name: must not be blank
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

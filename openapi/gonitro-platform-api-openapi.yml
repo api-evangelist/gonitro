@@ -5,6 +5,11 @@ info:
   version: '0.1'
 servers:
 - url: https://api.gonitro.dev
+  description: Europe
+- url: https://api.us.gonitro.dev
+  description: North America
+- url: https://api.au.gonitro.dev
+  description: Australia
 security:
 - bearerAuth: []
 tags:
@@ -16,6 +21,15 @@ paths:
       - Platform
       summary: Request a transformation operation
       operationId: forwardTransformationsRequest
+      responses:
+        '200':
+          description: OK
+  /presigned-file-urls:
+    post:
+      tags:
+      - Platform
+      summary: Request presigned upload and download URL pairs for direct file transfer
+      operationId: requestPresignedFileUrls
       responses:
         '200':
           description: OK
@@ -60,7 +74,7 @@ paths:
       tags:
       - Platform
       summary: Get the status of a job by its job id
-      operationId: getJobStatus_1
+      operationId: getJobStatus
       responses:
         '200':
           description: OK

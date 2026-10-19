@@ -5,6 +5,11 @@ info:
   version: '0.1'
 servers:
 - url: https://api.gonitro.dev
+  description: Europe
+- url: https://api.us.gonitro.dev
+  description: North America
+- url: https://api.au.gonitro.dev
+  description: Australia
 security:
 - bearerAuth: []
 tags:
@@ -37,6 +42,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExtendedEnvelope'
+        '403':
+          description: Account is not entitled to cancel this envelope
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenProblemDetail'
         '404':
           description: Envelope not found
           content:
@@ -1030,103 +1041,6 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/UnauthorizedProblemDetail'
-  /sign/conversions:
-    post:
-      tags:
-      - Sign
-      summary: Convert File to PDF
-      description: '*This endpoint was deprecated* on March 24, 2026, and will be sunset on July 1, 2026. Please migrate your existing functionality to the current endpoint:
-
-        https://developers.gonitro.com/docs/api-reference/sign/create-document-by-envelope-id , which already supports multiple file types.
-
-
-        The **Convert File to PDF** endpoint transforms various file formats into PDF documents for use with the Nitro Sign API.
-
-
-        ### Input files
-
-        Supported input document types and formats:
-
-
-        | Document Type | Formats |
-
-        |---------------|---------|
-
-        | Doc | .doc, .docx, .dot, .xml, .docm, .dotx, .dotm, .rtf |
-
-        | Excel | .xlsx, .xls, .xlt, .xlsm, .xltx, .xltm |
-
-        | HTML | .html |
-
-        | Powerpoint | .pptx, .ppt |
-
-        | Image | .png, .jpg, .jpeg, .tif, .tiff, .gif |
-
-        | Other | .csv, .psd, .svg, .eps |
-
-
-        ### Output files
-
-        The **Convert File** Sign API endpoint only supports PDF files as output.
-
-
-        ### Asynchronous Processing
-
-        The **Convert File** endpoint supports only asynchronous processing. When you start a file format conversion, the request returns a job ID. Use this ID with the job endpoints to check the status and retrieve the results once the operation is complete.'
-      operationId: convertFile
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-                  description: The file to convert to PDF, provided as binary data.
-              required:
-              - file
-            encoding:
-              file:
-                contentType: multipart/form-data
-      responses:
-        '200':
-          description: File conversion initiated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConvertFileResponse'
-        '400':
-          description: Missing file
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequestProblemDetail'
-        '415':
-          description: File format not supported
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UnsupportedMediaTypeDetail'
-        '413':
-          description: File size exceeds maximum allowed limit
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ContentTooLargeProblemDetail'
-        '500':
-          description: Internal server error during conversion process
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InternalServerErrorProblemDetail'
-        '401':
-          description: Unauthorized - Invalid or missing JWT token
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/UnauthorizedProblemDetail'
-      deprecated: true
   /sign/envelopes/{envelopeID}/participants/{participantID}:
     delete:
       tags:
@@ -1553,6 +1467,24 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/BadRequestProblemDetail'
+        '403':
+          description: Account is not entitled to delete this envelope
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenProblemDetail'
+        '404':
+          description: Envelope not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/NotFoundProblemDetail'
+        '500':
+          description: Unexpected failure deleting the envelope
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorProblemDetail'
         '401':
           description: Unauthorized - Invalid or missing JWT token
           content:
@@ -1668,6 +1600,8 @@ paths:
           description: ZIP archive containing all original documents from the envelope
           content:
             application/octet-stream: {}
+        '204':
+          description: The envelope has no documents to download
         '404':
           description: Envelope not found
           content:
@@ -1716,15 +1650,34 @@ paths:
     get:
       tags:
       - Sign
-      summary: List Signer Signing URLs by Envelope ID
-      description: 'The **List Signer Signing URLs by Envelope ID** endpoint returns the signing URL and its
+      summary: List Participant Signing URLs by Envelope ID
+      description: 'The **List Participant Signing URLs by Envelope ID** endpoint returns the URL and its expiry
 
-        expiry for each signer of an envelope. Only participants with the SIGNER role are included;
+        for each participant of an envelope, for every role. Signers receive a URL into the signing
 
-        reviewers and CC recipients are excluded. The envelope must be in the SENT status; otherwise
+        experience; CC participants receive a read-only view URL.
 
-        the request is rejected with a 409 response.'
-      operationId: listSignerSigningUrls
+
+        This endpoint is for senders who distribute the links themselves, so it requires the envelope
+
+        to have `notificationsManagedBy` set to `sender`. When Nitro manages the notifications it has
+
+        already emailed every participant their own link, and the request is rejected with a 409
+
+        response. Envelopes default to `nitro` when created without the field.
+
+
+        Note that a sender-managed envelope can only be sent for signing when every signer
+
+        authenticates by SMS, so in practice this endpoint serves envelopes that meet that
+
+        requirement too.
+
+
+        The envelope must also be in the SENT status; otherwise the request is rejected with a 409
+
+        response.'
+      operationId: listParticipantSigningUrls
       parameters:
       - name: envelopeID
         in: path
@@ -1735,11 +1688,11 @@ paths:
           format: uuid
       responses:
         '200':
-          description: List signer signing URLs
+          description: List participant signing URLs
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignerSigningUrlList'
+                $ref: '#/components/schemas/ParticipantSigningUrlList'
         '404':
           description: Envelope not found
           content:
@@ -1747,11 +1700,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/NotFoundProblemDetail'
         '409':
-          description: Envelope is not in the SENT status
+          description: Envelope is not in the SENT status, or its notifications are managed by Nitro rather than the sender
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/EnvelopeInInvalidStateProblemDetail'
+                oneOf:
+                - $ref: '#/components/schemas/EnvelopeInInvalidStateProblemDetail'
+                - $ref: '#/components/schemas/NotificationsNotManagedBySenderProblemDetail'
         '401':
           description: Unauthorized - Invalid or missing JWT token
           content:
@@ -1803,92 +1758,1763 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/UnauthorizedProblemDetail'
-  /sign/conversions/{jobID}:download-converted:
-    get:
-      tags:
-      - Sign
-      summary: Get Converted File by Job ID
-      description: '*This endpoint was deprecated* on March 24, 2026, and will be sunset on July 1, 2026. Please migrate your existing functionality to the current endpoint: https://developers.gonitro.com/docs/api-reference/sign/create-document-by-envelope-id , which already supports multiple file types.
-
-
-        Downloads the file that was converted in a previous request.'
-      operationId: downloadConvertedFile
-      parameters:
-      - name: jobID
-        in: path
-        description: The ID of the conversion job
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Converted file downloaded successfully
-          content:
-            application/octet-stream: {}
-        '404':
-          description: Conversion job not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundProblemDetail'
-        '500':
-          description: Internal server error during file retrieval
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InternalServerErrorProblemDetail'
-        '401':
-          description: Unauthorized - Invalid or missing JWT token
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/UnauthorizedProblemDetail'
-      deprecated: true
-  /sign/conversions/{jobID}/status:
-    get:
-      tags:
-      - Sign
-      summary: Get Conversion Job Status
-      description: '*This endpoint was deprecated* on March 24, 2026, and will be sunset on July 1, 2026. Please migrate your existing functionality to the current endpoint: https://developers.gonitro.com/docs/api-reference/sign/create-document-by-envelope-id , which already supports multiple file types.
-
-
-        Get status of a conversion by job ID.'
-      operationId: getJobStatus
-      parameters:
-      - name: jobID
-        in: path
-        description: The ID of the conversion job
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Job status retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JobStatusResponse'
-        '404':
-          description: Job not found with the provided job ID
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundProblemDetail'
-        '500':
-          description: Internal server error while retrieving job status
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InternalServerErrorProblemDetail'
-        '401':
-          description: Unauthorized - Invalid or missing JWT token
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/UnauthorizedProblemDetail'
-      deprecated: true
 components:
   schemas:
+    DocumentNotFoundProblemDetail:
+      type: object
+      description: Document Not Found error details
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#404-not-found
+        title: Document not Found
+        status: 404
+        detail: Document with ID 'document-123' not found
+        instance: /sign/envelopes/envelop-123/documents/doc-123
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    CreateDateFieldResponse:
+      type: object
+      description: Create Date Field Response
+      properties:
+        type:
+          type: string
+          description: Enum that specifies which type of information an eSignature participant is expected to fill in.
+          enum:
+          - signature
+          - name
+          - checkbox
+          - date
+          - initials
+          - company
+          - title
+          - custom
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        format:
+          type: string
+          description: "For date field types, you can specify the format that will automatically populate when a signer participant opens the document in an envelope.\n\nThe default value is the date on which the signer opens the envelope. The signer can manually edit the date after it auto-populates, if needed.\n\nThe following date format options are supported (examples use September 10, 2025):\n  - `MM/DD/YYYY` → 09/10/2025\n  - `MM-DD-YYYY` → 09-10-2025\n  - `MMM DD YYYY` → Sep 10 2025\n  - `DD/MM/YYYY` → 10/09/2025\n  - `DD MMM YYYY` → 10 Sep 2025\n  - `DD MMMM YYYY` → 10 September 2025\n  - `YYYY/MM/DD` → 2025/09/10\n  - `YYYY-MM-DD` → 2025-09-10\n  - `YYYY-MMM-DD hh:mm` → 2025-Sep-10 14:30\n"
+        modifiable:
+          type: boolean
+          description: 'A boolean that indicates that the participant can change value of the field. By default
+
+            the value of the field is current date and the participant can''t change the value.'
+        ID:
+          type: string
+          format: uuid
+          description: Unique ID of the field
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        documentID:
+          type: string
+          format: uuid
+          description: ID of the document to which this field belongs.
+      required:
+      - boundingBox
+      - documentID
+      - participantID
+      - type
+      title: Date
+    ExtendedEnvelope:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          description: A unique UUIDv4 string that identifies the envelope in the Nitro system.
+        createdAt:
+          type: string
+          format: date-time
+          description: UTC timestamp indicating when the envelope was created.
+        lastModifiedAt:
+          type: string
+          format: date-time
+          description: UTC timestamp indicating the last time the envelope was updated. Matches `createdAt` at the time of creation.
+        name:
+          type: string
+          description: The name of the envelope.
+        status:
+          type: string
+          description: The internal status of the envelope. Defaults to drafted on creation.
+          enum:
+          - drafted
+          - sent
+          - processing
+          - sealed
+          - rejected
+          - cancelled
+          - deleted
+        mode:
+          type: string
+          description: Signing mode for the envelope.
+          enum:
+          - sequential
+          - parallel
+        notification:
+          $ref: '#/components/schemas/Notification'
+          description: 'Notification settings for the envelope. Omitted while `notificationsManagedBy` is `sender`: Nitro renders no copy for such an envelope, so it exposes none.'
+        notificationsManagedBy:
+          type: string
+          description: 'Who notifies the participants of this envelope: `nitro` or `sender`. Defaults to `nitro`.'
+          enum:
+          - nitro
+          - sender
+    Company:
+      type: object
+      description: Response representing a Company field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: string
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          example:
+          - 100
+          - 200
+          - 150
+          - 50
+          maxLength: 4
+          minLength: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        type:
+          type: string
+          enum:
+          - company
+          title: type
+        ID:
+          type: string
+          format: uuid
+          description: Unique ID of the field
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        documentID:
+          type: string
+          format: uuid
+          description: ID of the document to which this field belongs.
+      required:
+      - boundingBox
+      - documentID
+      - participantID
+      - type
+      title: Company
+    AccessCode:
+      description: Access code
+      properties:
+        accessCode:
+          type: string
+          description: Access code. It must contain between 4-32 characters.
+        type:
+          type: string
+          enum:
+          - AccessCode
+          title: type
+      title: Access Code
+    CreateCustomField:
+      description: Parameters to create a Custom field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        type:
+          type: string
+          enum:
+          - custom
+          title: type
+        label:
+          type: string
+          description: For custom field types, you must provide a descriptive label for the field.
+          minLength: 1
+      required:
+      - boundingBox
+      - participantID
+      - type
+      title: Custom
+    Custom:
+      type: object
+      description: Response representing a Custom field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: string
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          example:
+          - 100
+          - 200
+          - 150
+          - 50
+          maxLength: 4
+          minLength: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        label:
+          type: string
+          description: Descriptive label of the Custom field
+          minLength: 1
+        type:
+          type: string
+          enum:
+          - custom
+          title: type
+        ID:
+          type: string
+          format: uuid
+          description: Unique ID of the field
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        documentID:
+          type: string
+          format: uuid
+          description: ID of the document to which this field belongs.
+      required:
+      - boundingBox
+      - documentID
+      - label
+      - participantID
+      - type
+      title: Custom
+    SealedDocumentResponse:
+      type: object
+      description: Response for a sealed document
+      properties:
+        name:
+          type: string
+          description: Name of the file provided by the user.
+          minLength: 1
+        createdAt:
+          type: string
+          format: date-time
+          description: UTC timestamp indicating when the document was created.
+        status:
+          type: string
+          description: Current status of the document.
+          enum:
+          - pending
+          - uploaded
+          - failed
+          - signed
+          - sealed
+        sizeBytes:
+          type: integer
+          format: int64
+          description: Size in bytes of the document.
+        numPages:
+          type: integer
+          format: int32
+          description: Number of pages of the document.
+        ID:
+          type: string
+          format: uuid
+          description: Unique uuid identifier for the document.
+          minLength: 1
+      required:
+      - ID
+      - name
+      title: Sealed
+    Initials:
+      type: object
+      description: Response representing an Initials field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: string
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          example:
+          - 100
+          - 200
+          - 150
+          - 50
+          maxLength: 4
+          minLength: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        type:
+          type: string
+          enum:
+          - initials
+          title: type
+        ID:
+          type: string
+          format: uuid
+          description: Unique ID of the field
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        documentID:
+          type: string
+          format: uuid
+          description: ID of the document to which this field belongs.
+      required:
+      - boundingBox
+      - documentID
+      - participantID
+      - type
+      title: Initials
+    Name:
+      type: object
+      description: Response representing a Name field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: string
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          example:
+          - 100
+          - 200
+          - 150
+          - 50
+          maxLength: 4
+          minLength: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        type:
+          type: string
+          enum:
+          - name
+          title: type
+        ID:
+          type: string
+          format: uuid
+          description: Unique ID of the field
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        documentID:
+          type: string
+          format: uuid
+          description: ID of the document to which this field belongs.
+      required:
+      - boundingBox
+      - documentID
+      - participantID
+      - type
+      title: Name
+    CreateCustomFieldResponse:
+      type: object
+      description: Create Custom Field Response
+      properties:
+        type:
+          type: string
+          description: Enum that specifies which type of information an eSignature participant is expected to fill in.
+          enum:
+          - signature
+          - name
+          - checkbox
+          - date
+          - initials
+          - company
+          - title
+          - custom
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        label:
+          type: string
+          description: Descriptive label of the field.
+          minLength: 1
+        ID:
+          type: string
+          format: uuid
+          description: Unique ID of the field
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        documentID:
+          type: string
+          format: uuid
+          description: ID of the document to which this field belongs.
+      required:
+      - boundingBox
+      - documentID
+      - label
+      - participantID
+      - type
+      title: Custom
+    CreateInitialsFieldResponse:
+      type: object
+      description: Create Initials Field Response
+      properties:
+        type:
+          type: string
+          description: Enum that specifies which type of information an eSignature participant is expected to fill in.
+          enum:
+          - signature
+          - name
+          - checkbox
+          - date
+          - initials
+          - company
+          - title
+          - custom
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        ID:
+          type: string
+          format: uuid
+          description: Unique ID of the field
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        documentID:
+          type: string
+          format: uuid
+          description: ID of the document to which this field belongs.
+      required:
+      - boundingBox
+      - documentID
+      - participantID
+      - type
+      title: Initials
+    ParticipantSigningUrl:
+      type: object
+      properties:
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant
+        signingUrl:
+          type: string
+          description: The URL the participant uses to access the envelope. Signers are taken to the signing experience; CC participants are taken to a read-only view.
+        expiresAt:
+          type: string
+          format: date-time
+          description: Timestamp at which the URL expires
+      required:
+      - participantID
+    BadRequestProblemDetail:
+      type: object
+      description: Bad Request error details
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#400-bad-request
+        title: Bad Request
+        status: 400
+        detail: Request validation failed
+        instance: /sign/envelopes
+        validation_errors:
+          name: must not be blank
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    Participant:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant
+        email:
+          type: string
+          description: The email address of the participant
+        role:
+          type: string
+          description: The role of the participant
+        authentication:
+          description: Participant authentication
+          oneOf:
+          - $ref: '#/components/schemas/AccessCode'
+          - $ref: '#/components/schemas/SMS'
+    ContentTooLargeProblemDetail:
+      type: object
+      description: Content too large error details
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#413-content-too-large
+        title: Content too large
+        status: 413
+        detail: Uploaded document exceeds the file size limit of 20Mb
+        instance: /sign/envelopes/envelop-123/documents
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    NotFoundProblemDetail:
+      type: object
+      description: Not Found error details
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#404-not-found
+        title: Not Found
+        status: 404
+        detail: Envelope with ID 'envelop-123' not found
+        instance: /sign/envelopes/envelop-123
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    CreateNameField:
+      description: Parameters to create a Name field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        type:
+          type: string
+          enum:
+          - name
+          title: type
+      required:
+      - boundingBox
+      - participantID
+      - type
+      title: Name
+    ParticipantSigningUrlList:
+      type: object
+      description: '#### Fields'
+      properties:
+        items:
+          type: array
+          description: An array of participant signing URLs associated with the envelope
+          items:
+            $ref: '#/components/schemas/ParticipantSigningUrl'
+        total:
+          type: integer
+          format: int32
+          description: The total number of items available in the collection
+    CreateDateField:
+      description: Parameters to create a Date field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        type:
+          type: string
+          enum:
+          - date
+          title: type
+        format:
+          type: string
+          description: "For date field types, you can specify the format that will automatically populate when a signer participant opens the document in an envelope.\n\nThe default value is the date on which the signer opens the envelope. The signer can manually edit the date after it auto-populates, if needed.\n\nThe following date format options are supported (examples use September 10, 2025):\n  - `MM/DD/YYYY` → 09/10/2025\n  - `MM-DD-YYYY` → 09-10-2025\n  - `MMM DD YYYY` → Sep 10 2025\n  - `DD/MM/YYYY` → 10/09/2025\n  - `DD MMM YYYY` → 10 Sep 2025\n  - `DD MMMM YYYY` → 10 September 2025\n  - `YYYY/MM/DD` → 2025/09/10\n  - `YYYY-MM-DD` → 2025-09-10\n  - `YYYY-MMM-DD hh:mm` → 2025-Sep-10 14:30\n"
+        modifiable:
+          type: boolean
+          description: 'A boolean that indicates that the participant can change value of the field. By default
+
+            the value of the field is current date and the participant can''t change the value.'
+      required:
+      - boundingBox
+      - participantID
+      - type
+      title: Date
+    UpdateCheckboxField:
+      description: Parameters to update a Checkbox field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field.
+        type:
+          type: string
+          enum:
+          - checkbox
+          title: type
+      required:
+      - type
+      title: Checkbox
+    RenameDocumentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The new name for the document
+          example: Updated Document Name.pdf
+          maxLength: 255
+          minLength: 1
+      required:
+      - name
+    InternalServerErrorProblemDetail:
+      type: object
+      description: Internal Server Error details
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#500-internal-server-error
+        title: Internal Server Error
+        status: 500
+        detail: An unexpected error occurred
+        instance: /sign/envelopes
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    SMS:
+      description: SMS
+      properties:
+        countryCode:
+          type: string
+          description: Country code. It must start with `+` and be followed by 1-4 digits. For example +1, +55, +598
+        phoneNumber:
+          type: string
+          description: Phone number. Enter digits only, without a country code or formatting characters.
+        type:
+          type: string
+          enum:
+          - SMS
+          title: type
+      title: SMS
+    NotificationsNotManagedBySenderProblemDetail:
+      type: object
+      description: Signing URLs requested for an envelope whose notifications Nitro sends
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#409-conflict
+        title: Conflict
+        status: 409
+        detail: Signing URLs are only available when notificationsManagedBy is sender
+        instance: /sign/envelopes/%s/participants/signing-urls
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    SignedDocumentResponse:
+      type: object
+      description: Response for a signed document
+      properties:
+        name:
+          type: string
+          description: Name of the file provided by the user.
+          minLength: 1
+        createdAt:
+          type: string
+          format: date-time
+          description: UTC timestamp indicating when the document was created.
+        status:
+          type: string
+          description: Current status of the document.
+          enum:
+          - pending
+          - uploaded
+          - failed
+          - signed
+          - sealed
+        sizeBytes:
+          type: integer
+          format: int64
+          description: Size in bytes of the document.
+        numPages:
+          type: integer
+          format: int32
+          description: Number of pages of the document.
+        ID:
+          type: string
+          format: uuid
+          description: Unique uuid identifier for the document.
+          minLength: 1
+      required:
+      - ID
+      - name
+      title: Signed
+    UpdateTitleField:
+      description: Parameters to update a Title field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field.
+        type:
+          type: string
+          enum:
+          - title
+          title: type
+      required:
+      - type
+      title: Title
+    ParticipantCreate:
+      type: object
+      description: Request to create a new participant
+      properties:
+        email:
+          type: string
+          description: The email address of the participant
+        role:
+          type: string
+          description: 'Role of the participant.
+
+            - `signer`: A participant with the signer role can have fields assigned to them in order to sign the documents in the envelope.
+
+            - `cc`: A participant with the cc role has read-only access. They can view the documents but cannot interact with them, so you cannot assign fields to a cc participant.
+
+            '
+          enum:
+          - signer
+          - cc
+        authentication:
+          description: 'Participant authentication
+
+
+            When inviting a participant to a Nitro Sign flow, you must define how they will authenticate before signing the document.
+
+
+            There are two supported methods:
+
+
+            - Access code: A static code that you provide to the participant.
+
+            - SMS code: A dynamic code that is sent to the participant''s phone number.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/AccessCode'
+          - $ref: '#/components/schemas/SMS'
+      required:
+      - role
+    UpdateCompanyField:
+      description: Parameters to update a Company field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field.
+        type:
+          type: string
+          enum:
+          - company
+          title: type
+      required:
+      - type
+      title: Company
+    DeleteFieldsRequest:
+      type: object
+      description: A set of unique UUIDv4 strings that identify the fields in the Nitro system.
+      properties:
+        items:
+          type: array
+          description: An array of field IDs to be deleted from the envelope.
+          items:
+            type: string
+            format: uuid
+          title: items
+    CreateCompanyField:
+      description: Parameters to create a Company field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        type:
+          type: string
+          enum:
+          - company
+          title: type
+      required:
+      - boundingBox
+      - participantID
+      - type
+      title: Company
+    CreateCheckboxField:
+      description: Parameters to create a Checkbox field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        type:
+          type: string
+          enum:
+          - checkbox
+          title: type
+      required:
+      - boundingBox
+      - participantID
+      - type
+      title: Checkbox
+    EnvelopeInInvalidStateProblemDetail:
+      type: object
+      description: Envelope in invalid state
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#409-conflict
+        title: Conflict
+        status: 409
+        detail: Envelope in invalid state
+        instance: /sign/envelopes/%s:send-for-signing
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    CreateSignatureField:
+      description: Parameters to create a Signature field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        type:
+          type: string
+          enum:
+          - signature
+          title: type
+      required:
+      - boundingBox
+      - participantID
+      - type
+      title: Signature
+    FailedDocumentResponse:
+      type: object
+      description: Response for a failed document
+      properties:
+        name:
+          type: string
+          description: Name of the file provided by the user.
+          minLength: 1
+        createdAt:
+          type: string
+          format: date-time
+          description: UTC timestamp indicating when the document was created.
+        status:
+          type: string
+          description: Current status of the document.
+          enum:
+          - pending
+          - uploaded
+          - failed
+          - signed
+          - sealed
+        sizeBytes:
+          type: integer
+          format: int64
+          description: Size in bytes of the document.
+        numPages:
+          type: integer
+          format: int32
+          description: Number of pages of the document.
+        failureReason:
+          type: string
+          description: The failure reason of the document.
+        ID:
+          type: string
+          format: uuid
+          description: Unique uuid identifier for the document.
+          minLength: 1
+      required:
+      - ID
+      - name
+      title: Failed
+    UpdateInitialsField:
+      description: Parameters to update a Initials field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field.
+        type:
+          type: string
+          enum:
+          - initials
+          title: type
+      required:
+      - type
+      title: Initials
+    UpdateCustomField:
+      description: Parameters to update a Custom field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field.
+        type:
+          type: string
+          enum:
+          - custom
+          title: type
+        label:
+          type: string
+          description: For custom field types, you must provide a descriptive label for the field.
+      required:
+      - type
+      title: Custom
+    ParticipantList:
+      type: object
+      description: '#### Fields'
+      properties:
+        items:
+          type: array
+          description: An array of participants associated with the package
+          items:
+            $ref: '#/components/schemas/Participant'
+        total:
+          type: integer
+          format: int32
+          description: The total number of items available in the collection
+    EnvelopeList:
+      type: object
+      description: '#### Fields'
+      properties:
+        items:
+          type: array
+          description: An array of envelopes associated with the client's account.
+          items:
+            $ref: '#/components/schemas/Envelope'
+        nextPage:
+          type: string
+          description: A cursor token indicating the position of the last item in the `items` array, used to retrieve the next page of results.
+    CreateTitleField:
+      description: Parameters to create a Title field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        type:
+          type: string
+          enum:
+          - title
+          title: type
+      required:
+      - boundingBox
+      - participantID
+      - type
+      title: Title
+    CreateInitialsField:
+      description: Parameters to create a Initials field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        type:
+          type: string
+          enum:
+          - initials
+          title: type
+      required:
+      - boundingBox
+      - participantID
+      - type
+      title: Initials
+    UpdateNameField:
+      description: Parameters to update a Name field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field.
+        type:
+          type: string
+          enum:
+          - name
+          title: type
+      required:
+      - type
+      title: Name
+    Checkbox:
+      type: object
+      description: Response representing a Checkbox field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: string
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          example:
+          - 100
+          - 200
+          - 150
+          - 50
+          maxLength: 4
+          minLength: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        type:
+          type: string
+          enum:
+          - checkbox
+          title: type
+        ID:
+          type: string
+          format: uuid
+          description: Unique ID of the field
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        documentID:
+          type: string
+          format: uuid
+          description: ID of the document to which this field belongs.
+      required:
+      - boundingBox
+      - documentID
+      - participantID
+      - type
+      title: Checkbox
+    DeleteParticipantsRequest:
+      type: object
+      description: A set of unique UUIDv4 strings that identify the participants in the Nitro system.
+      properties:
+        items:
+          type: array
+          description: An array of participant IDs to be deleted from the envelope.
+          items:
+            type: string
+            format: uuid
+          title: items
+    EnvelopeUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The Envelope's name. It doesn't have to be unique. Optional field.
+        notification:
+          $ref: '#/components/schemas/Notification'
+          description: 'Notification settings for the envelope. Optional field, and rejected with a `400` whenever the envelope ends up with its notifications managed by the sender — either because the same request sets `notificationsManagedBy` to `sender`, or because the envelope is already sender-managed and the request leaves it that way. Nitro would never render that copy.
+
+            '
+        mode:
+          type: string
+          description: Signing mode for the envelope. Optional field.
+          enum:
+          - sequential
+          - parallel
+        notificationsManagedBy:
+          type: string
+          description: 'Who notifies the participants of this envelope: `nitro` or `sender`. Optional field, and only available to API applications.
+
+
+            Switching back to `nitro` requires a `notification` in the same request when the envelope has none of its own, since Nitro would otherwise have no copy to send.
+
+
+            While an envelope is `sender` managed, a `notification` is refused: Nitro would never render it. Send the copy in the same request that hands the notifications back to `nitro`.
+
+            '
+          enum:
+          - nitro
+          - sender
+    CreateCheckboxFieldResponse:
+      type: object
+      description: Create Checkbox Field Response
+      properties:
+        type:
+          type: string
+          description: Enum that specifies which type of information an eSignature participant is expected to fill in.
+          enum:
+          - signature
+          - name
+          - checkbox
+          - date
+          - initials
+          - company
+          - title
+          - custom
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        ID:
+          type: string
+          format: uuid
+          description: Unique ID of the field
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        documentID:
+          type: string
+          format: uuid
+          description: ID of the document to which this field belongs.
+      required:
+      - boundingBox
+      - documentID
+      - participantID
+      - type
+      title: Checkbox
+    Signature:
+      type: object
+      description: Response representing a Signature field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: string
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          example:
+          - 100
+          - 200
+          - 150
+          - 50
+          maxLength: 4
+          minLength: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        type:
+          type: string
+          enum:
+          - signature
+          title: type
+        ID:
+          type: string
+          format: uuid
+          description: Unique ID of the field
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        documentID:
+          type: string
+          format: uuid
+          description: ID of the document to which this field belongs.
+      required:
+      - boundingBox
+      - documentID
+      - participantID
+      - type
+      title: Signature
+    ReorderDocumentsRequest:
+      type: object
+      description: "The request body should contain an array named 'order' with the document IDs in the desired sequence.\nThis will update the order of documents within the envelope according to the provided list.\n\nExample:\n```json\n{\n  \"order\": [\n    \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n    \"ffa85f64-5709-6562-g3fc-1c963f66afa5\"\n  ]\n}\n```\n"
+      properties:
+        order:
+          type: array
+          description: An array of document IDs representing the new order of documents within the envelope.
+          items:
+            type: string
+            format: uuid
+          title: order
     UpdateDateField:
       description: Parameters to update a Date field
       properties:
@@ -1939,82 +3565,95 @@ components:
       required:
       - type
       title: Date
-    EnvelopeList:
+    UnprocessableEntityProblemDetail:
       type: object
-      description: '#### Fields'
+      description: Unprocessable Entity error details
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#422-unprocessable-entity
+        title: Unprocessable Entity
+        status: 422
+        detail: Too many documents in envelope
+        instance: /sign/envelopes
       properties:
-        items:
-          type: array
-          description: An array of envelopes associated with the client's account.
-          items:
-            $ref: '#/components/schemas/Envelope'
-        nextPage:
-          type: string
-          description: A cursor token indicating the position of the last item in the `items` array, used to retrieve the next page of results.
-    UpdateTitleField:
-      description: Parameters to update a Title field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field.
         type:
           type: string
-          enum:
-          - title
-          title: type
-      required:
-      - type
-      title: Title
-    RenameDocumentRequest:
-      type: object
-      properties:
-        name:
+          description: A URI reference that identifies the problem type
+        title:
           type: string
-          description: The new name for the document
-          example: Updated Document Name.pdf
-          maxLength: 255
-          minLength: 1
-      required:
-      - name
-    ParticipantList:
-      type: object
-      description: '#### Fields'
-      properties:
-        items:
-          type: array
-          description: An array of participants associated with the package
-          items:
-            $ref: '#/components/schemas/Participant'
-        total:
+          description: A short, human-readable summary of the problem type
+        status:
           type: integer
           format: int32
-          description: The total number of items available in the collection
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    ForbiddenProblemDetail:
+      type: object
+      description: Forbidden error details
+      example:
+        type: https://developers.gonitro.com/docs/build-nitro/errors#403-forbidden
+        title: Forbidden
+        status: 403
+        detail: Forbidden
+        instance: /webhooks/configs
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence
+        extensions:
+          type: object
+          additionalProperties: {}
+          description: Additional problem-specific properties
+    Envelope:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          description: A unique UUIDv4 string that identifies the envelope in the Nitro system.
+        createdAt:
+          type: string
+          format: date-time
+          description: UTC timestamp indicating when the envelope was created.
+        lastModifiedAt:
+          type: string
+          format: date-time
+          description: UTC timestamp indicating the last time the envelope was updated. Matches `createdAt` at the time of creation.
+        name:
+          type: string
+          description: The name of the envelope.
+        status:
+          type: string
+          description: The internal status of the envelope. Defaults to drafted on creation.
+          enum:
+          - drafted
+          - sent
+          - processing
+          - sealed
+          - rejected
+          - cancelled
+          - deleted
     SingleParticipantRequest:
       description: Create a single participant
       properties:
@@ -2111,362 +3750,6 @@ components:
       - participantID
       - type
       title: Company
-    CreateSignatureFieldResponse:
-      type: object
-      description: Create Signature Field Response
-      properties:
-        type:
-          type: string
-          description: Enum that specifies which type of information an eSignature participant is expected to fill in.
-          enum:
-          - signature
-          - name
-          - checkbox
-          - date
-          - initials
-          - company
-          - title
-          - custom
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        ID:
-          type: string
-          format: uuid
-          description: Unique ID of the field
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        documentID:
-          type: string
-          format: uuid
-          description: ID of the document to which this field belongs.
-      required:
-      - boundingBox
-      - documentID
-      - participantID
-      - type
-      title: Signature
-    CreateDateField:
-      description: Parameters to create a Date field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        type:
-          type: string
-          enum:
-          - date
-          title: type
-        format:
-          type: string
-          description: "For date field types, you can specify the format that will automatically populate when a signer participant opens the document in an envelope.\n\nThe default value is the date on which the signer opens the envelope. The signer can manually edit the date after it auto-populates, if needed.\n\nThe following date format options are supported (examples use September 10, 2025):\n  - `MM/DD/YYYY` → 09/10/2025\n  - `MM-DD-YYYY` → 09-10-2025\n  - `MMM DD YYYY` → Sep 10 2025\n  - `DD/MM/YYYY` → 10/09/2025\n  - `DD MMM YYYY` → 10 Sep 2025\n  - `DD MMMM YYYY` → 10 September 2025\n  - `YYYY/MM/DD` → 2025/09/10\n  - `YYYY-MM-DD` → 2025-09-10\n  - `YYYY-MMM-DD hh:mm` → 2025-Sep-10 14:30\n"
-        modifiable:
-          type: boolean
-          description: 'A boolean that indicates that the participant can change value of the field. By default
-
-            the value of the field is current date and the participant can''t change the value.'
-      required:
-      - boundingBox
-      - participantID
-      - type
-      title: Date
-    CreateInitialsField:
-      description: Parameters to create a Initials field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        type:
-          type: string
-          enum:
-          - initials
-          title: type
-      required:
-      - boundingBox
-      - participantID
-      - type
-      title: Initials
-    UpdateCheckboxField:
-      description: Parameters to update a Checkbox field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field.
-        type:
-          type: string
-          enum:
-          - checkbox
-          title: type
-      required:
-      - type
-      title: Checkbox
-    DocumentNotFoundProblemDetail:
-      type: object
-      description: Document Not Found error details
-      example:
-        type: https://developers.gonitro.com/docs/build-nitro/errors#404-not-found
-        title: Document not Found
-        status: 404
-        detail: Document with ID 'document-123' not found
-        instance: /sign/envelopes/envelop-123/documents/doc-123
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type
-        status:
-          type: integer
-          format: int32
-          description: The HTTP status code
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence
-        extensions:
-          type: object
-          additionalProperties: {}
-          description: Additional problem-specific properties
-    FailedDocumentResponse:
-      type: object
-      description: Response for a failed document
-      properties:
-        name:
-          type: string
-          description: Name of the file provided by the user.
-          minLength: 1
-        createdAt:
-          type: string
-          format: date-time
-          description: UTC timestamp indicating when the document was created.
-        status:
-          type: string
-          description: Current status of the document.
-          enum:
-          - pending
-          - uploaded
-          - failed
-          - signed
-          - sealed
-        sizeBytes:
-          type: integer
-          format: int64
-          description: Size in bytes of the document.
-        numPages:
-          type: integer
-          format: int32
-          description: Number of pages of the document.
-        failureReason:
-          type: string
-          description: The failure reason of the document.
-        ID:
-          type: string
-          format: uuid
-          description: Unique uuid identifier for the document.
-          minLength: 1
-      required:
-      - ID
-      - name
-      title: Failed
-    ExtendedEnvelope:
-      type: object
-      properties:
-        ID:
-          type: string
-          format: uuid
-          description: A unique UUIDv4 string that identifies the envelope in the Nitro system.
-        createdAt:
-          type: string
-          format: date-time
-          description: UTC timestamp indicating when the envelope was created.
-        lastModifiedAt:
-          type: string
-          format: date-time
-          description: UTC timestamp indicating the last time the envelope was updated. Matches `createdAt` at the time of creation.
-        name:
-          type: string
-          description: The name of the envelope.
-        status:
-          type: string
-          description: The internal status of the envelope. Defaults to drafted on creation.
-          enum:
-          - drafted
-          - sent
-          - processing
-          - sealed
-          - rejected
-          - cancelled
-          - deleted
-        mode:
-          type: string
-          description: Signing mode for the envelope.
-          enum:
-          - sequential
-          - parallel
-        notification:
-          $ref: '#/components/schemas/Notification'
-          description: Notification settings for the envelope.
-    Company:
-      type: object
-      description: Response representing a Company field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: string
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          example:
-          - 100
-          - 200
-          - 150
-          - 50
-          maxItems: 4
-          maxLength: 4
-          minItems: 4
-          minLength: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        type:
-          type: string
-          enum:
-          - company
-          title: type
-        ID:
-          type: string
-          format: uuid
-          description: Unique ID of the field
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        documentID:
-          type: string
-          format: uuid
-          description: ID of the document to which this field belongs.
-      required:
-      - boundingBox
-      - documentID
-      - participantID
-      - type
-      title: Company
     Notification:
       type: object
       properties:
@@ -2481,15 +3764,15 @@ components:
       required:
       - body
       - subject
-    NotFoundProblemDetail:
+    UnsupportedMediaTypeDetail:
       type: object
-      description: Not Found error details
+      description: Unsupported Media Type error details
       example:
-        type: https://developers.gonitro.com/docs/build-nitro/errors#404-not-found
-        title: Not Found
-        status: 404
-        detail: Envelope with ID 'envelop-123' not found
-        instance: /sign/envelopes/envelop-123
+        type: https://developers.gonitro.com/docs/build-nitro/errors#415-unsupported-media-type
+        title: Unsupported Media Type
+        status: 415
+        detail: 'The provided media type is not supported: application/pdf'
+        instance: /sign/envelopes/3fa85f64-5717-4562-b3fc-2c963f66afa6/documents
       properties:
         type:
           type: string
@@ -2511,111 +3794,6 @@ components:
           type: object
           additionalProperties: {}
           description: Additional problem-specific properties
-    SendReminders:
-      type: object
-      properties:
-        notification:
-          $ref: '#/components/schemas/Notification'
-          description: "The `notification` object defines the reminder notifications  sent to pending participants. It contains a `subject` and a `body` as nested parameters, and both fields support dynamic variables.\n\n**Dynamic Variables**\nYou can personalize notification emails by referencing dynamic variables in the subject or body.\nAvailable variables:\n    `envelope_name`: The name of the envelope being signed.\n    `sender_name_or_email`: The sender’s name, or their email address if the name is not available.\n\nSyntax:\nTo reference the variables, wrap them with `$()` in your message. Example: `$(envelope_name)`\n\n`notification` object example:\n``` json\n{\n    \"notification\": {\n        \"subject\": \"$(sender_name_or_email) is requesting your signature\",\n        \"body\": \"Hi,\\nPlease sign the $(envelope_name)\\nThank you,\\n$(sender_name_or_email)\"\n    }\n}\n```\n\n**Note**: If the `notification` object is not provided in the request (or an empty object `{}` is sent), reminder emails will be sent using the default notification template that was configured when the envelope was created.\n"
-    Name:
-      type: object
-      description: Response representing a Name field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: string
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          example:
-          - 100
-          - 200
-          - 150
-          - 50
-          maxItems: 4
-          maxLength: 4
-          minItems: 4
-          minLength: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        type:
-          type: string
-          enum:
-          - name
-          title: type
-        ID:
-          type: string
-          format: uuid
-          description: Unique ID of the field
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        documentID:
-          type: string
-          format: uuid
-          description: ID of the document to which this field belongs.
-      required:
-      - boundingBox
-      - documentID
-      - participantID
-      - type
-      title: Name
-    UpdateCustomField:
-      description: Parameters to update a Custom field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field.
-        type:
-          type: string
-          enum:
-          - custom
-          title: type
-        label:
-          type: string
-          description: For custom field types, you must provide a descriptive label for the field.
-      required:
-      - type
-      title: Custom
     CreateTitleFieldResponse:
       type: object
       description: Create Title Field Response
@@ -2675,14 +3853,6 @@ components:
       - participantID
       - type
       title: Title
-    ParticipantUpdate:
-      type: object
-      properties:
-        authentication:
-          description: Participant authentication. Optional field.
-          oneOf:
-          - $ref: '#/components/schemas/AccessCode'
-          - $ref: '#/components/schemas/SMS'
     Date:
       type: object
       description: Response representing a Date field
@@ -2709,9 +3879,7 @@ components:
           - 200
           - 150
           - 50
-          maxItems: 4
           maxLength: 4
-          minItems: 4
           minLength: 4
         required:
           type: boolean
@@ -2746,1009 +3914,6 @@ components:
       - participantID
       - type
       title: Date
-    UpdateCompanyField:
-      description: Parameters to update a Company field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field.
-        type:
-          type: string
-          enum:
-          - company
-          title: type
-      required:
-      - type
-      title: Company
-    ContentTooLargeProblemDetail:
-      type: object
-      description: Content too large error details
-      example:
-        type: https://developers.gonitro.com/docs/build-nitro/errors#413-content-too-large
-        title: Content too large
-        status: 413
-        detail: Uploaded document exceeds the file size limit of 20Mb
-        instance: /sign/envelopes/envelop-123/documents
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type
-        status:
-          type: integer
-          format: int32
-          description: The HTTP status code
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence
-        extensions:
-          type: object
-          additionalProperties: {}
-          description: Additional problem-specific properties
-    CreateCustomField:
-      description: Parameters to create a Custom field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        type:
-          type: string
-          enum:
-          - custom
-          title: type
-        label:
-          type: string
-          description: For custom field types, you must provide a descriptive label for the field.
-          minLength: 1
-      required:
-      - boundingBox
-      - participantID
-      - type
-      title: Custom
-    BulkParticipantResponse:
-      type: object
-      description: Response containing multiple created participants wrapped in an items array
-      properties:
-        items:
-          type: array
-          description: List of all participants created in this request. Each participant contains its unique ID and configuration.
-          items:
-            $ref: '#/components/schemas/Participant'
-            description: List of all participants created in this request. Each participant contains its unique ID and configuration.
-            title: Participants
-          title: Participants
-      required:
-      - items
-      title: Bulk Participant Response
-    Title:
-      type: object
-      description: Response representing a Title field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: string
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          example:
-          - 100
-          - 200
-          - 150
-          - 50
-          maxItems: 4
-          maxLength: 4
-          minItems: 4
-          minLength: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        type:
-          type: string
-          enum:
-          - title
-          title: type
-        ID:
-          type: string
-          format: uuid
-          description: Unique ID of the field
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        documentID:
-          type: string
-          format: uuid
-          description: ID of the document to which this field belongs.
-      required:
-      - boundingBox
-      - documentID
-      - participantID
-      - type
-      title: Title
-    Participant:
-      type: object
-      properties:
-        ID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant
-        email:
-          type: string
-          description: The email address of the participant
-        role:
-          type: string
-          description: The role of the participant
-        authentication:
-          description: Participant authentication
-          oneOf:
-          - $ref: '#/components/schemas/AccessCode'
-          - $ref: '#/components/schemas/SMS'
-    CreateSignatureField:
-      description: Parameters to create a Signature field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        type:
-          type: string
-          enum:
-          - signature
-          title: type
-      required:
-      - boundingBox
-      - participantID
-      - type
-      title: Signature
-    CreateTitleField:
-      description: Parameters to create a Title field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        type:
-          type: string
-          enum:
-          - title
-          title: type
-      required:
-      - boundingBox
-      - participantID
-      - type
-      title: Title
-    AccessCode:
-      description: Access code
-      properties:
-        accessCode:
-          type: string
-          description: Access code. It must contain between 4-32 characters.
-        type:
-          type: string
-          enum:
-          - AccessCode
-          title: type
-      title: Access Code
-    Initials:
-      type: object
-      description: Response representing an Initials field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: string
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          example:
-          - 100
-          - 200
-          - 150
-          - 50
-          maxItems: 4
-          maxLength: 4
-          minItems: 4
-          minLength: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        type:
-          type: string
-          enum:
-          - initials
-          title: type
-        ID:
-          type: string
-          format: uuid
-          description: Unique ID of the field
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        documentID:
-          type: string
-          format: uuid
-          description: ID of the document to which this field belongs.
-      required:
-      - boundingBox
-      - documentID
-      - participantID
-      - type
-      title: Initials
-    ParticipantCreate:
-      type: object
-      description: Request to create a new participant
-      properties:
-        email:
-          type: string
-          description: The email address of the participant
-        role:
-          type: string
-          description: 'Role of the participant.
-
-            - `signer`: A participant with the signer role can have fields assigned to them in order to sign the documents in the envelope.
-
-            - `cc`: A participant with the cc role has read-only access. They can view the documents but cannot interact with them, so you cannot assign fields to a cc participant.
-
-            '
-          enum:
-          - signer
-          - cc
-        authentication:
-          description: 'Participant authentication
-
-
-            When inviting a participant to a Nitro Sign flow, you must define how they will authenticate before signing the document.
-
-
-            There are two supported methods:
-
-
-            - Access code: A static code that you provide to the participant.
-
-            - SMS code: A dynamic code that is sent to the participant''s phone number.
-
-            '
-          oneOf:
-          - $ref: '#/components/schemas/AccessCode'
-          - $ref: '#/components/schemas/SMS'
-      required:
-      - role
-    CreateCustomFieldResponse:
-      type: object
-      description: Create Custom Field Response
-      properties:
-        type:
-          type: string
-          description: Enum that specifies which type of information an eSignature participant is expected to fill in.
-          enum:
-          - signature
-          - name
-          - checkbox
-          - date
-          - initials
-          - company
-          - title
-          - custom
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        label:
-          type: string
-          description: Descriptive label of the field.
-          minLength: 1
-        ID:
-          type: string
-          format: uuid
-          description: Unique ID of the field
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        documentID:
-          type: string
-          format: uuid
-          description: ID of the document to which this field belongs.
-      required:
-      - boundingBox
-      - documentID
-      - label
-      - participantID
-      - type
-      title: Custom
-    SMS:
-      description: SMS
-      properties:
-        countryCode:
-          type: string
-          description: Country code. It must start with `+` and be followed by 1-4 digits. For example +1, +55, +598
-        phoneNumber:
-          type: string
-          description: Phone number. Enter digits only, without a country code or formatting characters.
-        type:
-          type: string
-          enum:
-          - SMS
-          title: type
-      title: SMS
-    PendingDocumentResponse:
-      type: object
-      description: Response for a pending document
-      properties:
-        name:
-          type: string
-          description: Name of the file provided by the user.
-          minLength: 1
-        createdAt:
-          type: string
-          format: date-time
-          description: UTC timestamp indicating when the document was created.
-        status:
-          type: string
-          description: Current status of the document.
-          enum:
-          - pending
-          - uploaded
-          - failed
-          - signed
-          - sealed
-        ID:
-          type: string
-          format: uuid
-          description: Unique uuid identifier for the document.
-          minLength: 1
-      required:
-      - ID
-      - name
-      title: Pending
-    ReorderDocumentsRequest:
-      type: object
-      description: "The request body should contain an array named 'order' with the document IDs in the desired sequence.\nThis will update the order of documents within the envelope according to the provided list.\n\nExample:\n```json\n{\n  \"order\": [\n    \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n    \"ffa85f64-5709-6562-g3fc-1c963f66afa5\"\n  ]\n}\n```\n"
-      properties:
-        order:
-          type: array
-          description: An array of document IDs representing the new order of documents within the envelope.
-          items:
-            type: string
-            format: uuid
-          title: order
-    BadRequestProblemDetail:
-      type: object
-      description: Bad Request error details
-      example:
-        type: https://developers.gonitro.com/docs/build-nitro/errors#400-bad-request
-        title: Bad Request
-        status: 400
-        detail: Request validation failed
-        instance: /sign/envelopes
-        validation_errors:
-          name: must not be blank
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type
-        status:
-          type: integer
-          format: int32
-          description: The HTTP status code
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence
-        extensions:
-          type: object
-          additionalProperties: {}
-          description: Additional problem-specific properties
-    CreateInitialsFieldResponse:
-      type: object
-      description: Create Initials Field Response
-      properties:
-        type:
-          type: string
-          description: Enum that specifies which type of information an eSignature participant is expected to fill in.
-          enum:
-          - signature
-          - name
-          - checkbox
-          - date
-          - initials
-          - company
-          - title
-          - custom
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        ID:
-          type: string
-          format: uuid
-          description: Unique ID of the field
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        documentID:
-          type: string
-          format: uuid
-          description: ID of the document to which this field belongs.
-      required:
-      - boundingBox
-      - documentID
-      - participantID
-      - type
-      title: Initials
-    UpdateNameField:
-      description: Parameters to update a Name field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field.
-        type:
-          type: string
-          enum:
-          - name
-          title: type
-      required:
-      - type
-      title: Name
-    SignerSigningUrlList:
-      type: object
-      description: '#### Fields'
-      properties:
-        items:
-          type: array
-          description: An array of signer signing URLs associated with the package
-          items:
-            $ref: '#/components/schemas/SignerSigningUrl'
-        total:
-          type: integer
-          format: int32
-          description: The total number of items available in the collection
-    CreateNameField:
-      description: Parameters to create a Name field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        type:
-          type: string
-          enum:
-          - name
-          title: type
-      required:
-      - boundingBox
-      - participantID
-      - type
-      title: Name
-    CreateCheckboxFieldResponse:
-      type: object
-      description: Create Checkbox Field Response
-      properties:
-        type:
-          type: string
-          description: Enum that specifies which type of information an eSignature participant is expected to fill in.
-          enum:
-          - signature
-          - name
-          - checkbox
-          - date
-          - initials
-          - company
-          - title
-          - custom
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        ID:
-          type: string
-          format: uuid
-          description: Unique ID of the field
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        documentID:
-          type: string
-          format: uuid
-          description: ID of the document to which this field belongs.
-      required:
-      - boundingBox
-      - documentID
-      - participantID
-      - type
-      title: Checkbox
-    DeleteParticipantsRequest:
-      type: object
-      description: A set of unique UUIDv4 strings that identify the participants in the Nitro system.
-      properties:
-        items:
-          type: array
-          description: An array of participant IDs to be deleted from the envelope.
-          items:
-            type: string
-            format: uuid
-          title: items
-    JobStatusResponse:
-      type: object
-      properties:
-        jobID:
-          type: string
-          description: Unique identifier for the conversion job
-          example: 01234567-89ab-cdef-0123-456789abcdef
-        status:
-          type: string
-          description: The current status of the file conversion Job
-          enum:
-          - running
-          - completed
-          - failed
-    InternalServerErrorProblemDetail:
-      type: object
-      description: Internal Server Error details
-      example:
-        type: https://developers.gonitro.com/docs/build-nitro/errors#500-internal-server-error
-        title: Internal Server Error
-        status: 500
-        detail: An unexpected error occurred
-        instance: /sign/envelopes
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type
-        status:
-          type: integer
-          format: int32
-          description: The HTTP status code
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence
-        extensions:
-          type: object
-          additionalProperties: {}
-          description: Additional problem-specific properties
-    Signature:
-      type: object
-      description: Response representing a Signature field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: string
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          example:
-          - 100
-          - 200
-          - 150
-          - 50
-          maxItems: 4
-          maxLength: 4
-          minItems: 4
-          minLength: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        type:
-          type: string
-          enum:
-          - signature
-          title: type
-        ID:
-          type: string
-          format: uuid
-          description: Unique ID of the field
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        documentID:
-          type: string
-          format: uuid
-          description: ID of the document to which this field belongs.
-      required:
-      - boundingBox
-      - documentID
-      - participantID
-      - type
-      title: Signature
-    EnvelopeWebDocumentRequestMetadata:
-      type: object
-      properties:
-        name:
-          type: string
-          description: The user-given name for the uploaded document
-          minLength: 1
-        contentType:
-          type: string
-          description: The MIME type of the uploaded document. When provided, the file is accepted as-is without content detection and will be converted to PDF if needed. When omitted, defaults to application/pdf.
-          example: application/vnd.openxmlformats-officedocument.wordprocessingml.document
-      required:
-      - name
-    CreateCompanyField:
-      description: Parameters to create a Company field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        type:
-          type: string
-          enum:
-          - company
-          title: type
-      required:
-      - boundingBox
-      - participantID
-      - type
-      title: Company
-    SignedDocumentResponse:
-      type: object
-      description: Response for a signed document
-      properties:
-        name:
-          type: string
-          description: Name of the file provided by the user.
-          minLength: 1
-        createdAt:
-          type: string
-          format: date-time
-          description: UTC timestamp indicating when the document was created.
-        status:
-          type: string
-          description: Current status of the document.
-          enum:
-          - pending
-          - uploaded
-          - failed
-          - signed
-          - sealed
-        sizeBytes:
-          type: integer
-          format: int64
-          description: Size in bytes of the document.
-        numPages:
-          type: integer
-          format: int32
-          description: Number of pages of the document.
-        ID:
-          type: string
-          format: uuid
-          description: Unique uuid identifier for the document.
-          minLength: 1
-      required:
-      - ID
-      - name
-      title: Signed
-    UploadedDocumentResponse:
-      type: object
-      description: Response for an uploaded document
-      properties:
-        name:
-          type: string
-          description: Name of the file provided by the user.
-          minLength: 1
-        createdAt:
-          type: string
-          format: date-time
-          description: UTC timestamp indicating when the document was created.
-        status:
-          type: string
-          description: Current status of the document.
-          enum:
-          - pending
-          - uploaded
-          - failed
-          - signed
-          - sealed
-        sizeBytes:
-          type: integer
-          format: int64
-          description: Size in bytes of the document.
-        numPages:
-          type: integer
-          format: int32
-          description: Number of pages of the document.
-        ID:
-          type: string
-          format: uuid
-          description: Unique uuid identifier for the document.
-          minLength: 1
-      required:
-      - ID
-      - name
-      title: Uploaded
     UnauthorizedProblemDetail:
       type: object
       description: Unauthorized error details
@@ -3779,151 +3944,14 @@ components:
           type: object
           additionalProperties: {}
           description: Additional problem-specific properties
-    BulkParticipantRequest:
-      description: Create multiple participants wrapped in an items array
-      properties:
-        items:
-          type: array
-          description: List of participants to create.
-          items:
-            $ref: '#/components/schemas/ParticipantCreate'
-      title: Bulk Participant Request
-    Custom:
-      type: object
-      description: Response representing a Custom field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: string
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          example:
-          - 100
-          - 200
-          - 150
-          - 50
-          maxItems: 4
-          maxLength: 4
-          minItems: 4
-          minLength: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        label:
-          type: string
-          description: Descriptive label of the Custom field
-          minLength: 1
-        type:
-          type: string
-          enum:
-          - custom
-          title: type
-        ID:
-          type: string
-          format: uuid
-          description: Unique ID of the field
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        documentID:
-          type: string
-          format: uuid
-          description: ID of the document to which this field belongs.
-      required:
-      - boundingBox
-      - documentID
-      - label
-      - participantID
-      - type
-      title: Custom
-    ConvertFileResponse:
+    ParticipantUpdate:
       type: object
       properties:
-        jobID:
-          type: string
-          description: Unique identifier for the conversion job
-          example: 01234567-89ab-cdef-0123-456789abcdef
-        status:
-          type: string
-          description: The current status of the file conversion Job
-          enum:
-          - running
-          - completed
-          - failed
-        jobStatusURL:
-          type: string
-          description: URL to poll the current status of the file conversion job
-          example: https://api.gonitro.dev/sign/conversions/jobs/01234567-89ab-cdef-0123-456789abcdef/status
-      required:
-      - jobStatusURL
-    DeleteFieldsRequest:
-      type: object
-      description: A set of unique UUIDv4 strings that identify the fields in the Nitro system.
-      properties:
-        items:
-          type: array
-          description: An array of field IDs to be deleted from the envelope.
-          items:
-            type: string
-            format: uuid
-          title: items
-    SignerSigningUrl:
-      type: object
-      properties:
-        userId:
-          type: integer
-          format: int64
-          description: The signing-workflow user id of the signer
-        signingUrl:
-          type: string
-          description: The URL the signer uses to access and sign the envelope
-        expiresAt:
-          type: string
-          format: date-time
-          description: Timestamp at which the signing URL expires
-    UnsupportedMediaTypeDetail:
-      type: object
-      description: Unsupported Media Type error details
-      example:
-        type: https://developers.gonitro.com/docs/build-nitro/errors#415-unsupported-media-type
-        title: Unsupported Media Type
-        status: 415
-        detail: 'The provided media type is not supported: application/pdf'
-        instance: /sign/conversions
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type
-        status:
-          type: integer
-          format: int32
-          description: The HTTP status code
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence
-        extensions:
-          type: object
-          additionalProperties: {}
-          description: Additional problem-specific properties
+        authentication:
+          description: Participant authentication. Optional field.
+          oneOf:
+          - $ref: '#/components/schemas/AccessCode'
+          - $ref: '#/components/schemas/SMS'
     CreateNameFieldResponse:
       type: object
       description: Create Name Field Response
@@ -3983,75 +4011,9 @@ components:
       - participantID
       - type
       title: Name
-    EnvelopeCreate:
+    UploadedDocumentResponse:
       type: object
-      properties:
-        name:
-          type: string
-          description: The Envelope's name. It doesn't have to be unique.
-          minLength: 1
-        notification:
-          $ref: '#/components/schemas/Notification'
-          description: "The `notification` object defines the email sent to participants when an envelope is delivered for signing. It contains a `subject` and a `body` as nested parameters, and both fields support dynamic variables.\n\n**Dynamic Variables**\nYou can personalize notification emails by referencing dynamic variables in the subject or body.\nAvailable variables:\n    `envelope_name`: The name of the envelope being signed.\n    `sender_name_or_email`: The sender’s name, or their email address if the name is not available.\n\nSyntax:\nTo reference the variables, wrap them with `$()` in your message. Example: `$(envelope_name)`\n\n`notification` object example:\n``` json\n{\n    \"notification\": {\n        \"subject\": \"$(sender_name_or_email) is requesting your signature\",\n        \"body\": \"Hi,\\nPlease sign the $(envelope_name)\\nThank you,\\n$(sender_name_or_email)\"\n    }\n}\n```\n"
-        mode:
-          type: string
-          description: 'The Signing Mode in an enum that defines the signing order. It has two possible values:
-
-            - `sequential`: Participants receive notifications one at a time, in the order they were added to the envelope. Each new notification is triggered once the previous participant has completed their signing.
-
-            - `parallel`: All participants are notified at the same time and can sign the documents in the envelope independently, without waiting for others.
-
-            '
-          enum:
-          - sequential
-          - parallel
-      required:
-      - mode
-      - name
-      - notification
-    UpdateInitialsField:
-      description: Parameters to update a Initials field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field.
-        type:
-          type: string
-          enum:
-          - initials
-          title: type
-      required:
-      - type
-      title: Initials
-    SealedDocumentResponse:
-      type: object
-      description: Response for a sealed document
+      description: Response for an uploaded document
       properties:
         name:
           type: string
@@ -4086,7 +4048,133 @@ components:
       required:
       - ID
       - name
-      title: Sealed
+      title: Uploaded
+    CreateSignatureFieldResponse:
+      type: object
+      description: Create Signature Field Response
+      properties:
+        type:
+          type: string
+          description: Enum that specifies which type of information an eSignature participant is expected to fill in.
+          enum:
+          - signature
+          - name
+          - checkbox
+          - date
+          - initials
+          - company
+          - title
+          - custom
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: array
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          items:
+            type: number
+            format: float
+          maxItems: 4
+          minItems: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        ID:
+          type: string
+          format: uuid
+          description: Unique ID of the field
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        documentID:
+          type: string
+          format: uuid
+          description: ID of the document to which this field belongs.
+      required:
+      - boundingBox
+      - documentID
+      - participantID
+      - type
+      title: Signature
+    Title:
+      type: object
+      description: Response representing a Title field
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
+        boundingBox:
+          type: string
+          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
+
+
+            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
+
+            - `w, h` are the width and height of the bounding box, also in points (pt).
+
+
+            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+
+            '
+          example:
+          - 100
+          - 200
+          - 150
+          - 50
+          maxLength: 4
+          minLength: 4
+        required:
+          type: boolean
+          description: A boolean that indicates whether the participant must complete the field.
+        type:
+          type: string
+          enum:
+          - title
+          title: type
+        ID:
+          type: string
+          format: uuid
+          description: Unique ID of the field
+        participantID:
+          type: string
+          format: uuid
+          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
+        documentID:
+          type: string
+          format: uuid
+          description: ID of the document to which this field belongs.
+      required:
+      - boundingBox
+      - documentID
+      - participantID
+      - type
+      title: Title
+    BulkParticipantResponse:
+      type: object
+      description: Response containing multiple created participants wrapped in an items array
+      properties:
+        items:
+          type: array
+          description: List of all participants created in this request. Each participant contains its unique ID and configuration.
+          items:
+            $ref: '#/components/schemas/Participant'
+          title: Participants
+      required:
+      - items
+      title: Bulk Participant Response
     BulkFieldRequest:
       type: object
       description: Create multiple fields wrapped in an items array
@@ -4441,216 +4529,58 @@ components:
       required:
       - items
       title: Bulk Field
-    EnvelopeUpdate:
+    EnvelopeCreate:
       type: object
       properties:
         name:
           type: string
-          description: The Envelope's name. It doesn't have to be unique. Optional field.
+          description: The Envelope's name. It doesn't have to be unique.
+          minLength: 1
         notification:
           $ref: '#/components/schemas/Notification'
-          description: Notification settings for the envelope. Optional field.
+          description: "The `notification` object defines the email sent to participants when an envelope is delivered for signing. It contains a `subject` and a `body` as nested parameters, and both fields support dynamic variables.\n\n**Required unless `notificationsManagedBy` is `sender`.** It is optional in the schema because the requirement depends on `notificationsManagedBy`:\n- `notificationsManagedBy` omitted or `nitro`: `notification` is required, with a non-empty `subject` and `body`.\n- `notificationsManagedBy` is `sender`: `notification` must be omitted. Nitro sends no email for this envelope, so the copy would never be rendered. Sending both is rejected with a `400`.\n\n**Dynamic Variables**\nYou can personalize notification emails by referencing dynamic variables in the subject or body.\nAvailable variables:\n    `envelope_name`: The name of the envelope being signed.\n    `sender_name_or_email`: The sender’s name, or their email address if the name is not available.\n\nSyntax:\nTo reference the variables, wrap them with `$()` in your message. Example: `$(envelope_name)`\n\n`notification` object example:\n``` json\n{\n    \"notification\": {\n        \"subject\": \"$(sender_name_or_email) is requesting your signature\",\n        \"body\": \"Hi,\\nPlease sign the $(envelope_name)\\nThank you,\\n$(sender_name_or_email)\"\n    }\n}\n```\n"
         mode:
           type: string
-          description: Signing mode for the envelope. Optional field.
+          description: 'The Signing Mode is an enum that defines the signing order. It has two possible values:
+
+            - `sequential`: Participants receive notifications one at a time, in the order they were added to the envelope. Each new notification is triggered once the previous participant has completed their signing.
+
+            - `parallel`: All participants are notified at the same time and can sign the documents in the envelope independently, without waiting for others.
+
+            '
           enum:
           - sequential
           - parallel
-    Checkbox:
-      type: object
-      description: Response representing a Checkbox field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
+        notificationsManagedBy:
           type: string
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field''s bounding box on the page:
+          description: 'Who notifies the participants of this envelope. Two values are accepted:
+
+            - `nitro` (default): Nitro sends the participant notification emails, as it always has.
+
+            - `sender`: Nitro sends **no** automated email notifications to signers or CC recipients — including signature requests, reminders and signature completion notices. You distribute the signing links yourself, using the *List Signer Signing URLs by Envelope ID* endpoint and the envelope webhooks.
 
 
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
+            When set to `sender`, the `notification` object must be omitted — its `subject` and `body` would never be rendered, so sending both is rejected with a `400`. When it is omitted or set to `nitro`, the `notification` object is required.
 
 
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
+            **This setting is only available to API applications.**
+
+
+            By enabling this setting, you assume full responsibility for notifying signers and CC recipients of pending signature requests, deadlines, and completed documents through your own communication channels. Nitro Sign will not notify these participants on your behalf under any circumstances while this setting is enabled.
+
+
+            Depending on your use case and jurisdiction, failure to adequately notify signers may affect the enforceability of the resulting electronic signature or your compliance obligations under applicable e-signature laws (e.g., ESIGN Act, UETA, eIDAS). We strongly recommend consulting your legal or compliance team before enabling this setting in production.
+
+
+            This setting requires SMS authentication to be configured for all signers on the envelope, as an additional safeguard against unauthorized access to signing links. Sending the envelope for signing fails if any signer is missing it.
 
             '
-          example:
-          - 100
-          - 200
-          - 150
-          - 50
-          maxItems: 4
-          maxLength: 4
-          minItems: 4
-          minLength: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        type:
-          type: string
           enum:
-          - checkbox
-          title: type
-        ID:
-          type: string
-          format: uuid
-          description: Unique ID of the field
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        documentID:
-          type: string
-          format: uuid
-          description: ID of the document to which this field belongs.
+          - nitro
+          - sender
       required:
-      - boundingBox
-      - documentID
-      - participantID
-      - type
-      title: Checkbox
-    CreateCheckboxField:
-      description: Parameters to create a Checkbox field
-      properties:
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        type:
-          type: string
-          enum:
-          - checkbox
-          title: type
-      required:
-      - boundingBox
-      - participantID
-      - type
-      title: Checkbox
-    CreateDateFieldResponse:
-      type: object
-      description: Create Date Field Response
-      properties:
-        type:
-          type: string
-          description: Enum that specifies which type of information an eSignature participant is expected to fill in.
-          enum:
-          - signature
-          - name
-          - checkbox
-          - date
-          - initials
-          - company
-          - title
-          - custom
-        page:
-          type: integer
-          format: int32
-          description: The page number where the field appears. Pages follow 1-based indexing, so the first page is 1.
-        boundingBox:
-          type: array
-          description: 'An array of numbers in the format [x, y, w, h] that defines the field’s bounding box on the page:
-
-
-            - `x, y` are the coordinates of the top-left corner, measured in points (pt).
-
-            - `w, h` are the width and height of the bounding box, also in points (pt).
-
-
-            For more information on calculating positions, see the [Bounding Box Guide](https://developers.gonitro.com/docs/build-nitro/bounding-box).
-
-            '
-          items:
-            type: number
-            format: float
-          maxItems: 4
-          minItems: 4
-        required:
-          type: boolean
-          description: A boolean that indicates whether the participant must complete the field.
-        format:
-          type: string
-          description: "For date field types, you can specify the format that will automatically populate when a signer participant opens the document in an envelope.\n\nThe default value is the date on which the signer opens the envelope. The signer can manually edit the date after it auto-populates, if needed.\n\nThe following date format options are supported (examples use September 10, 2025):\n  - `MM/DD/YYYY` → 09/10/2025\n  - `MM-DD-YYYY` → 09-10-2025\n  - `MMM DD YYYY` → Sep 10 2025\n  - `DD/MM/YYYY` → 10/09/2025\n  - `DD MMM YYYY` → 10 Sep 2025\n  - `DD MMMM YYYY` → 10 September 2025\n  - `YYYY/MM/DD` → 2025/09/10\n  - `YYYY-MM-DD` → 2025-09-10\n  - `YYYY-MMM-DD hh:mm` → 2025-Sep-10 14:30\n"
-        modifiable:
-          type: boolean
-          description: 'A boolean that indicates that the participant can change value of the field. By default
-
-            the value of the field is current date and the participant can''t change the value.'
-        ID:
-          type: string
-          format: uuid
-          description: Unique ID of the field
-        participantID:
-          type: string
-          format: uuid
-          description: The unique identifier of the participant assigned to the field. Fields can only be created for participants with the signer role.
-        documentID:
-          type: string
-          format: uuid
-          description: ID of the document to which this field belongs.
-      required:
-      - boundingBox
-      - documentID
-      - participantID
-      - type
-      title: Date
-    UnprocessableEntityProblemDetail:
-      type: object
-      description: Unprocessable Entity error details
-      example:
-        type: https://developers.gonitro.com/docs/build-nitro/errors#422-unprocessable-entity
-        title: Unprocessable Entity
-        status: 422
-        detail: Too many documents in envelope
-        instance: /sign/envelopes
-      properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type
-        status:
-          type: integer
-          format: int32
-          description: The HTTP status code
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence
-        extensions:
-          type: object
-          additionalProperties: {}
-          description: Additional problem-specific properties
+      - mode
+      - name
     UpdateSignatureField:
       description: Parameters to update a Signature field
       properties:
@@ -4691,65 +4621,65 @@ components:
       required:
       - type
       title: Signature
-    Envelope:
+    EnvelopeWebDocumentRequestMetadata:
       type: object
       properties:
-        ID:
+        name:
           type: string
-          format: uuid
-          description: A unique UUIDv4 string that identifies the envelope in the Nitro system.
+          description: The user-given name for the uploaded document
+          minLength: 1
+        contentType:
+          type: string
+          description: The MIME type of the uploaded document. When provided, the file is accepted as-is without content detection and will be converted to PDF if needed. When omitted, defaults to application/pdf.
+          example: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+      required:
+      - name
+    PendingDocumentResponse:
+      type: object
+      description: Response for a pending document
+      properties:
+        name:
+          type: string
+          description: Name of the file provided by the user.
+          minLength: 1
         createdAt:
           type: string
           format: date-time
-          description: UTC timestamp indicating when the envelope was created.
-        lastModifiedAt:
-          type: string
-          format: date-time
-          description: UTC timestamp indicating the last time the envelope was updated. Matches `createdAt` at the time of creation.
-        name:
-          type: string
-          description: The name of the envelope.
+          description: UTC timestamp indicating when the document was created.
         status:
           type: string
-          description: The internal status of the envelope. Defaults to drafted on creation.
+          description: Current status of the document.
           enum:
-          - drafted
-          - sent
-          - processing
+          - pending
+          - uploaded
+          - failed
+          - signed
           - sealed
-          - rejected
-          - cancelled
-          - deleted
-    EnvelopeInInvalidStateProblemDetail:
-      type: object
-      description: Envelope in invalid state
-      example:
-        type: https://developers.gonitro.com/docs/build-nitro/errors#409-conflict
-        title: Conflict
-        status: 409
-        detail: Envelope in invalid state
-        instance: /sign/envelopes/%s:send-for-signing
+        ID:
+          type: string
+          format: uuid
+          description: Unique uuid identifier for the document.
+          minLength: 1
+      required:
+      - ID
+      - name
+      title: Pending
+    BulkParticipantRequest:
+      description: Create multiple participants wrapped in an items array
       properties:
-        type:
-          type: string
-          description: A URI reference that identifies the problem type
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type
-        status:
-          type: integer
-          format: int32
-          description: The HTTP status code
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence
-        instance:
-          type: string
-          description: A URI reference that identifies the specific occurrence
-        extensions:
-          type: object
-          additionalProperties: {}
-          description: Additional problem-specific properties
+        items:
+          type: array
+          description: List of participants to create.
+          items:
+            $ref: '#/components/schemas/ParticipantCreate'
+          minItems: 1
+      title: Bulk Participant Request
+    SendReminders:
+      type: object
+      properties:
+        notification:
+          $ref: '#/components/schemas/Notification'
+          description: "The `notification` object defines the reminder notifications  sent to pending participants. It contains a `subject` and a `body` as nested parameters, and both fields support dynamic variables.\n\n**Dynamic Variables**\nYou can personalize notification emails by referencing dynamic variables in the subject or body.\nAvailable variables:\n    `envelope_name`: The name of the envelope being signed.\n    `sender_name_or_email`: The sender’s name, or their email address if the name is not available.\n\nSyntax:\nTo reference the variables, wrap them with `$()` in your message. Example: `$(envelope_name)`\n\n`notification` object example:\n``` json\n{\n    \"notification\": {\n        \"subject\": \"$(sender_name_or_email) is requesting your signature\",\n        \"body\": \"Hi,\\nPlease sign the $(envelope_name)\\nThank you,\\n$(sender_name_or_email)\"\n    }\n}\n```\n\n**Note**: If the `notification` object is not provided in the request (or an empty object `{}` is sent), reminder emails will be sent using the default notification template that was configured when the envelope was created.\n"
   securitySchemes:
     bearerAuth:
       type: http

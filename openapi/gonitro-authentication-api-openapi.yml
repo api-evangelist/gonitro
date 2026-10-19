@@ -5,6 +5,11 @@ info:
   version: '0.1'
 servers:
 - url: https://api.gonitro.dev
+  description: Europe
+- url: https://api.us.gonitro.dev
+  description: North America
+- url: https://api.au.gonitro.dev
+  description: Australia
 security:
 - bearerAuth: []
 tags:
@@ -66,19 +71,6 @@ paths:
       security: []
 components:
   schemas:
-    OAuth2ErrorResponse:
-      type: object
-      description: RFC 6749 compliant OAuth2 error response
-      properties:
-        error:
-          type: string
-          description: A single ASCII error code
-        error_description:
-          type: string
-          description: Human-readable ASCII text providing additional information
-        error_uri:
-          type: string
-          description: URI identifying a human-readable web page with information about the error
     OAuth2TokenResponse:
       type: object
       description: RFC 6749 compliant OAuth2 token response
@@ -120,6 +112,19 @@ components:
       required:
       - clientID
       - clientSecret
+    OAuth2ErrorResponse:
+      type: object
+      description: RFC 6749 compliant OAuth2 error response
+      properties:
+        error:
+          type: string
+          description: A single ASCII error code
+        error_description:
+          type: string
+          description: Human-readable ASCII text providing additional information
+        error_uri:
+          type: string
+          description: URI identifying a human-readable web page with information about the error
   securitySchemes:
     bearerAuth:
       type: http
