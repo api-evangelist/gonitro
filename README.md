@@ -64,6 +64,160 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-GoNitro is a company surfaced as a portfolio company of 500-global and added to the API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+Nitro Software (GoNitro) is a document productivity company providing PDF editing, electronic signatures, redaction, and intelligent document automation for enterprises, small businesses, and professionals. Nitro exposes two public REST APIs on api.gonitro.dev: the Nitro PDF Services API (convert, transform, extract, and generate PDFs — conversions, compression, merge/split, OCR, redaction, PII detection, table and form extraction, and archival PDF/A) and the Nitro Sign API (enterprise eSignature envelope, document, participant, and field workflows with sealed documents and audit trails). Both use machine-to-machine OAuth 2.0 client-credentials, short-lived JWT bearer tokens, RFC 9457 problem+json errors, and asynchronous job processing. Nitro is ISO 27001, SOC 2, and HIPAA compliant and an accredited eIDAS Qualified Trust Service Provider.
 
-Backed by: 500-global — https://gonitros.com
+**Areas:** Company · Documents · PDF · E-Signature · Document Automation · Document Conversion · Data Extraction · Redaction · OCR · Productivity · Compliance
+
+## GoNitro on APIs.io
+
+Everything profiled for GoNitro is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/gonitro/](https://apis.io/providers/gonitro/)** — or go straight to one of the APIs or properties below.
+
+### APIs (3)
+
+- [GoNitro Authentication API](https://apis.io/apis/gonitro/gonitro-authentication-api/) — The Authentication API from GoNitro — 1 operation(s) for authentication.
+- [GoNitro Platform API](https://apis.io/apis/gonitro/gonitro-platform-api/) — The Platform API from GoNitro — 6 operation(s) for platform.
+- [GoNitro Sign API](https://apis.io/apis/gonitro/gonitro-sign-api/) — The Sign API from GoNitro — 22 operation(s) for sign.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### Arazzo workflows (1)
+
+Multi-step workflows that chain operations into a business task.
+
+- [Create and send a Nitro Sign envelope](https://apis.io/arazzos/gonitro/gonitro-create-and-send-envelope/)
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Nitro Sign & PDF Services Webhooks](https://apis.io/asyncapis/gonitro/gonitro-sign-asyncapi/)
+
+#### Event channels (2)
+
+Individual events and webhooks the provider emits.
+
+- [{callbackUrl}](https://apis.io/channels/gonitro/callbackurl/)
+- [{webhookUrl}](https://apis.io/channels/gonitro/webhookurl/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Nitro PDF Services MCP](https://apis.io/servers/gonitro/nitro-pdf-services-mcp/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Gonitro Agentic Access](https://apis.io/agentic-access/gonitro/gonitro-agentic-access/)
+
+#### Collections (16)
+
+Postman and Open Collection request collections.
+
+- [Nitro PDF Services Public Authentication API](https://apis.io/collections/gonitro/open-gonitro-authentication-api/)
+- [Nitro PDF Services Public Authentication Conversions API](https://apis.io/collections/gonitro/open-gonitro-conversions-api/)
+- [Nitro PDF Services Public Authentication Extractions API](https://apis.io/collections/gonitro/open-gonitro-extractions-api/)
+- [Nitro PDF Services Public Authentication Generations API](https://apis.io/collections/gonitro/open-gonitro-generations-api/)
+- [Nitro PDF Services Public Authentication Jobs API](https://apis.io/collections/gonitro/open-gonitro-jobs-api/)
+- [Nitro PDF Services Public Authentication Platform API](https://apis.io/collections/gonitro/open-gonitro-platform-api/)
+- [Nitro PDF Services Public Authentication Sign API](https://apis.io/collections/gonitro/open-gonitro-sign-api/)
+- [Nitro PDF Services Public Authentication Transformations API](https://apis.io/collections/gonitro/open-gonitro-transformations-api/)
+- [Nitro PDF Services Public Authentication API](https://apis.io/collections/gonitro/postman-gonitro-authentication-api/)
+- [Nitro PDF Services Public Authentication Conversions API](https://apis.io/collections/gonitro/postman-gonitro-conversions-api/)
+- [Nitro PDF Services Public Authentication Extractions API](https://apis.io/collections/gonitro/postman-gonitro-extractions-api/)
+- [Nitro PDF Services Public Authentication Generations API](https://apis.io/collections/gonitro/postman-gonitro-generations-api/)
+- [Nitro PDF Services Public Authentication Jobs API](https://apis.io/collections/gonitro/postman-gonitro-jobs-api/)
+- [Nitro PDF Services Public Authentication Platform API](https://apis.io/collections/gonitro/postman-gonitro-platform-api/)
+- [Nitro PDF Services Public Authentication Sign API](https://apis.io/collections/gonitro/postman-gonitro-sign-api/)
+- [Nitro PDF Services Public Authentication Transformations API](https://apis.io/collections/gonitro/postman-gonitro-transformations-api/)
+
+#### Overlays (2)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Gonitro Pdf Services Overlay](https://apis.io/overlays/gonitro/gonitro-pdf-services-overlay/)
+- [Gonitro Sign Overlay](https://apis.io/overlays/gonitro/gonitro-sign-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Gonitro Authentication](https://apis.io/security/gonitro/gonitro-authentication/)
+- [Gonitro Domain Security](https://apis.io/security/gonitro/gonitro-domain-security/)
+- [Gonitro Trust Center](https://apis.io/security/gonitro/gonitro-trust-center/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.gonitro.com)
+- [Documentation](https://developers.gonitro.com/docs)
+- [Getting started](https://developers.gonitro.com/docs/getting-started/basic-setup)
+- [API reference](https://developers.gonitro.com/docs/api-reference/changelog)
+- [Pricing](https://www.gonitro.com/pricing)
+- [Sign up](https://developers.gonitro.com/docs/authentication/credentials)
+- [Support](https://www.gonitro.com/support)
+- [Blog](https://www.gonitro.com/blog)
+- [Compliance](https://www.gonitro.com/trust-center/compliance)
+- [Terms of service](https://www.gonitro.com/legal/terms-of-service)
+- [Privacy policy](https://www.gonitro.com/legal/privacy-policy)
+- [GitHub](https://github.com/Nitro)
+- [Status](https://status.gonitro.com)
+
+## API Evangelist rating
+
+**Kin Score 56.9** — strong · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 73.2 |
+| Contract quality | 58.4 |
+| Contract governance | 18.2 |
+| Operational transparency | 50.0 |
+| Developer ergonomics | 63.7 |
+| Access clarity | 60.5 |
+
+**Agent readiness 29.7** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | — |
+| Event Surface Described | derived (partial credit) |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 29.4** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/gonitro/](https://apis.io/providers/gonitro/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for GoNitro: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/gonitro/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
